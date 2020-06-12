@@ -39,7 +39,8 @@ object VendorsMergerJob {
     city: Option[String],
     state: Option[String],
     zip_code: Option[String],
-    sub_ids: Seq[Long]
+    sub_ids: Seq[Long],
+    num_merged: Int
   )
 
   object UniqueVendor {
@@ -61,7 +62,8 @@ object VendorsMergerJob {
         city = vendor.city,
         state = vendor.state,
         zip_code = vendor.zip_code,
-        sub_ids = Seq(vendor.sub_id)
+        sub_ids = Seq(vendor.sub_id),
+        num_merged = 1
       )
     }
 
@@ -80,7 +82,8 @@ object VendorsMergerJob {
         city = left.city,
         state = left.state,
         zip_code = left.zip_code,
-        sub_ids = left.sub_ids ++ right.sub_ids
+        sub_ids = left.sub_ids ++ right.sub_ids,
+        num_merged = left.num_merged + right.num_merged
       )
     }
 

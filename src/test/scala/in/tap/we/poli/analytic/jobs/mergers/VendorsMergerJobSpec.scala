@@ -21,7 +21,8 @@ class VendorsMergerJobSpec extends FlatSpec with Matchers with VendorsMergerJobF
         names = Seq("Vendor1", "Vendor3"),
         city = Some("City1"),
         state = Some("State1"),
-        zip_code = Some("Zip1")
+        zip_code = Some("Zip1"),
+        num_merged = 2
       )
     }
   }
