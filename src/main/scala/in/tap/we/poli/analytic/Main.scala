@@ -4,7 +4,8 @@ import in.tap.base.spark.jobs.composite.CompositeJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.base.spark.main.{InArgs, OutArgs}
-import in.tap.we.poli.analytic.jobs.{CommitteesAggregateJob, FilerVendorTransactionsJob}
+import in.tap.we.poli.analytic.jobs.FilerVendorTransactionsJob
+import in.tap.we.poli.analytic.jobs.aggregations.{CommitteesAggregateJob, FilerVendorTransactionsJob}
 import org.apache.spark.sql.SparkSession
 
 object Main extends in.tap.base.spark.main.Main {
