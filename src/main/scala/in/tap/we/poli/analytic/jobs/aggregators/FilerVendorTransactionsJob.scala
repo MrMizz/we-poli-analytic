@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.aggregations
+package in.tap.we.poli.analytic.jobs.aggregators
 
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.aggregations.FilerVendorTransactionsJob._
+import in.tap.we.poli.analytic.jobs.aggregators.FilerVendorTransactionsJob._
 import in.tap.we.poli.models.OperatingExpenditures
 import org.apache.spark.sql.{Dataset, SparkSession}
 
