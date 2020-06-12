@@ -78,7 +78,7 @@ object VendorsMergerJob {
     def reduce(left: UniqueVendor, right: UniqueVendor): UniqueVendor = {
       UniqueVendor(
         name = left.name,
-        names = left.names ++ right.names,
+        names = (left.names ++ right.names).distinct,
         city = left.city,
         state = left.state,
         zip_code = left.zip_code,
