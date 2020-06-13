@@ -30,7 +30,25 @@ object VendorsTransformationJob {
     city: Option[String],
     state: Option[String],
     zip_code: Option[String]
-  )
+  ) {
+
+    lazy val uid1: Option[String] = {
+      for {
+        name <- name.map(_.toLowerCase)
+        city <- city.map(_.toLowerCase)
+        state <- state.map(_.toLowerCase)
+      } yield {
+        s"${name}_${city}_$state"
+      }
+    }
+
+    lazy val uids: Seq[String] = {
+      Seq(
+        uid1
+      ).flatten
+    }
+
+  }
 
   object Vendor {
 

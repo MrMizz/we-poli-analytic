@@ -34,6 +34,8 @@ class VendorsMergerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 object VendorsMergerJob {
 
   final case class UniqueVendor(
+    uid: String,
+    uids: Seq[String],
     name: Option[String],
     names: Seq[String],
     city: Option[String],
@@ -45,38 +47,36 @@ object VendorsMergerJob {
 
   object UniqueVendor {
 
-    def buildHash(vendor: Vendor): Option[String] = {
+    def fromVendor(vendor: Vendor): Option[UniqueVendor] = {
       for {
-        name <- vendor.name.map(_.toLowerCase)
-        city <- vendor.city.map(_.toLowerCase)
-        state <- vendor.state.map(_.toLowerCase)
+        uid <- vendor.uid1
       } yield {
-        s"${name}_${city}_$state"
+        UniqueVendor(
+          uid = uid,
+          uids = vendor.uids,
+          name = vendor.name,
+          names = vendor.name.toSeq,
+          city = vendor.city,
+          state = vendor.state,
+          zip_code = vendor.zip_code,
+          sub_ids = Seq(vendor.sub_id),
+          num_merged = 1
+        )
       }
-    }
-
-    def fromVendor(vendor: Vendor): UniqueVendor = {
-      UniqueVendor(
-        name = vendor.name,
-        names = vendor.name.toSeq,
-        city = vendor.city,
-        state = vendor.state,
-        zip_code = vendor.zip_code,
-        sub_ids = Seq(vendor.sub_id),
-        num_merged = 1
-      )
     }
 
     def fromVendorWithHash(vendor: Vendor): Option[(String, UniqueVendor)] = {
       for {
-        hash <- UniqueVendor.buildHash(vendor)
+        uniqueVendor <- fromVendor(vendor)
       } yield {
-        hash -> fromVendor(vendor)
+        uniqueVendor.uid -> uniqueVendor
       }
     }
 
     def reduce(left: UniqueVendor, right: UniqueVendor): UniqueVendor = {
       UniqueVendor(
+        uid = Seq(left.uid, right.uid).min,
+        uids = left.uids ++ right.uids,
         name = left.name,
         names = (left.names ++ right.names).distinct,
         city = left.city,

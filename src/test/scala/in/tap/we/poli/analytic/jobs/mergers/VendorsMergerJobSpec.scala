@@ -6,16 +6,21 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class VendorsMergerJobSpec extends FlatSpec with Matchers with VendorsMergerJobFixtures {
 
-  it should "build a unique hash from vendors" in {
-    // valid data
-    buildHash(vendor1) shouldBe Some("vendor1_city1_state1")
-    // missing name
-    buildHash(vendor2) shouldBe None
-  }
-
   it should "reduce two vendors found to be the same entity" in {
-    reduce(fromVendor(vendor1), fromVendor(vendor3)) shouldBe {
+    val (uniqueVendor, uidFromVendor1): (UniqueVendor, String) = {
+      for {
+        uniqueVendor1 <- fromVendor(vendor1)
+        uniqueVendor3 <- fromVendor(vendor3)
+        uidFromVendor1 <- vendor1.uid1
+      } yield {
+        reduce(uniqueVendor1, uniqueVendor3) -> uidFromVendor1
+      }
+    }.get
+
+    uniqueVendor shouldBe {
       UniqueVendor(
+        uid = uidFromVendor1,
+        uids = Seq(vendor1.uid1, vendor3.uid1).flatten,
         sub_ids = Seq(1L, 3L),
         name = Some("Vendor1"),
         names = Seq("Vendor1", "Vendor3"),
