@@ -4,7 +4,7 @@ import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob._
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformationJob.Vendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe

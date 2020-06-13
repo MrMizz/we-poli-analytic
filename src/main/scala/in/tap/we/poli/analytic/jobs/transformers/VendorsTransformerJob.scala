@@ -3,13 +3,13 @@ package in.tap.we.poli.analytic.jobs.transformers
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformationJob._
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob._
 import in.tap.we.poli.models.OperatingExpenditures
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-class VendorsTransformationJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+class VendorsTransformerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[OperatingExpenditures],
@@ -22,7 +22,7 @@ class VendorsTransformationJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 }
 
-object VendorsTransformationJob {
+object VendorsTransformerJob {
 
   final case class Vendor(
     sub_id: Long,
@@ -32,6 +32,9 @@ object VendorsTransformationJob {
     zip_code: Option[String]
   ) {
 
+    /**
+     * This UID will always be what it is.
+     */
     lazy val uid1: Option[String] = {
       for {
         name <- name.map(_.toLowerCase)

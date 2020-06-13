@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.transformers
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJobFixtures
 import org.scalatest.{FlatSpec, Matchers}
 
-class VendorsTransformationJobSpec extends FlatSpec with Matchers with VendorsMergerJobFixtures {
+class VendorsTransformerJobSpec extends FlatSpec with Matchers with VendorsMergerJobFixtures {
 
   it should "build a unique hash" in {
     // valid data

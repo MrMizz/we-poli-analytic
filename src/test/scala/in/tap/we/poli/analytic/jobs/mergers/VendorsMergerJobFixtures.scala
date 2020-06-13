@@ -1,6 +1,6 @@
 package in.tap.we.poli.analytic.jobs.mergers
 
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformationJob.Vendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 
 trait VendorsMergerJobFixtures {
 
