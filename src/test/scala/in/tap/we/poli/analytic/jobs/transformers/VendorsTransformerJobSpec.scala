@@ -7,9 +7,9 @@ class VendorsTransformerJobSpec extends FlatSpec with Matchers with VendorsMerge
 
   it should "build a unique hash" in {
     // valid data
-    vendor1.uid1 shouldBe Some("vendor1_city1_state1")
+    vendor1.hash1 shouldBe Some("vendor1_city1_state1")
     // missing name
-    vendor2.uid1 shouldBe None
+    vendor2.hash1 shouldBe None
   }
 
 }

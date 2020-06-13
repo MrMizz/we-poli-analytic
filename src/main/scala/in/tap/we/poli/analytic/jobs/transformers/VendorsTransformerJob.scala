@@ -25,17 +25,14 @@ class VendorsTransformerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 object VendorsTransformerJob {
 
   final case class Vendor(
-    sub_id: Long,
+    uid: Long,
     name: Option[String],
     city: Option[String],
     state: Option[String],
     zip_code: Option[String]
   ) {
 
-    /**
-     * This UID will always be what it is.
-     */
-    lazy val uid1: Option[String] = {
+    lazy val hash1: Option[String] = {
       for {
         name <- name.map(_.toLowerCase)
         city <- city.map(_.toLowerCase)
@@ -45,9 +42,9 @@ object VendorsTransformerJob {
       }
     }
 
-    lazy val uids: Seq[String] = {
+    lazy val hashes: Seq[String] = {
       Seq(
-        uid1
+        hash1
       ).flatten
     }
 
@@ -60,7 +57,7 @@ object VendorsTransformerJob {
         sub_id <- operatingExpenditures.SUB_ID
       } yield {
         Vendor(
-          sub_id = sub_id,
+          uid = sub_id,
           name = operatingExpenditures.NAME,
           city = operatingExpenditures.CITY,
           state = operatingExpenditures.STATE,
