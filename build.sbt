@@ -13,6 +13,7 @@ val versionSpark: String = "2.4.0"
 libraryDependencies ++= Seq(
   // Spark
   "in.tap" %% "spark-base" % "1.0.0-SNAPSHOT",
+  "in.tap" %% "spark-graph-proc" % "1.0.0-SNAPSHOT",
   // Models
   "in.tap" %% "we-poli-models" % "1.0.0-SNAPSHOT",
   // apache spark
