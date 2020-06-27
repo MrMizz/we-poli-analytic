@@ -24,6 +24,12 @@ class VendorsTransformerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 object VendorsTransformerJob {
 
+  val STOP_WORDS: Set[String] = {
+    Set("ltd", "llc", "inc")
+  }
+
+  val PUNCTUATION_REGEX: String = """\p{P}"""
+
   final case class Vendor(
     uid: Long,
     name: Option[String],
@@ -42,10 +48,46 @@ object VendorsTransformerJob {
       }
     }
 
+    lazy val hash2: Option[String] = {
+      for {
+        name <- cleanedName
+        city <- city.map(_.toLowerCase)
+        state <- state.map(_.toLowerCase)
+      } yield {
+        s"${name}_${city}_$state"
+      }
+    }
+
+    lazy val hash3: Option[String] = {
+      for {
+        name <- cleanedName
+        zip <- zip_code.map(_.toLowerCase.take(5))
+      } yield {
+        s"${name}_${zip}"
+      }
+    }
+
     lazy val hashes: Seq[String] = {
       Seq(
-        hash1
+        hash1,
+        hash2,
+        hash3
       ).flatten
+    }
+
+    private lazy val cleanedName: Option[String] = {
+      name.map { n: String =>
+        n.toLowerCase // to lower case
+          .replaceAll(PUNCTUATION_REGEX, "") // strip punctuation
+          .filterNot { char: Char =>
+            java.lang.Character.isDigit(char) // filter numeric
+          }
+          .split(" ") // tokenize
+          .filterNot { char: String =>
+            STOP_WORDS.contains(char) // filter stop words
+          }
+          .fold("")(_ + _) // join
+      }
     }
 
   }

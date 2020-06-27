@@ -1,13 +1,13 @@
-package in.tap.we.poli.analytic.jobs.mergers
+package in.tap.we.poli.analytic.jobs.transformers
 
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 
-trait VendorsMergerJobFixtures {
+trait VendorsTransformerJobFixtures {
 
   val vendor1: Vendor = {
     new Vendor(
       uid = 1L,
-      name = Some("Vendor1"),
+      name = Some("Vendor's, Inc. # 1"),
       city = Some("City1"),
       state = Some("State1"),
       zip_code = Some("Zip1")
@@ -17,7 +17,7 @@ trait VendorsMergerJobFixtures {
   val vendor2: Vendor = {
     new Vendor(
       uid = 2L,
-      name = Some("Vendor2"),
+      name = None,
       city = Some("City1"),
       state = Some("State1"),
       zip_code = Some("Zip1")

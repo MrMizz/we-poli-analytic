@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   // apache spark
   "org.apache.spark" %% "spark-core" % versionSpark,
   "org.apache.spark" %% "spark-sql" % versionSpark,
+  "org.apache.spark" %% "spark-graphx" % versionSpark,
   // Testing
   "org.scalatest" %% "scalatest" % "3.1.1" % Test
 )

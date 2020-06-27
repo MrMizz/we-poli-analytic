@@ -1,15 +1,14 @@
 package in.tap.we.poli.analytic.jobs.transformers
 
-import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJobFixtures
 import org.scalatest.{FlatSpec, Matchers}
 
-class VendorsTransformerJobSpec extends FlatSpec with Matchers with VendorsMergerJobFixtures {
+class VendorsTransformerJobSpec extends FlatSpec with Matchers with VendorsTransformerJobFixtures {
 
-  it should "build a unique hash" in {
-    // valid data
-    vendor1.hash1 shouldBe Some("vendor1_city1_state1")
+  it should "build unique hashes" in {
+    // valid name, city, state, zip
+    vendor1.hashes shouldBe Seq("vendor's, inc. # 1_city1_state1", "vendors_city1_state1", "vendors_zip1")
     // missing name
-    vendor2.hash1 shouldBe None
+    vendor2.hashes shouldBe Nil
   }
 
 }
