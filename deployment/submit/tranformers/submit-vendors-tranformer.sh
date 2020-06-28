@@ -1,4 +1,6 @@
 spark-submit \
+--master yarn \
+--deploy-mode cluster \
 --class in.tap.we.poli.analytic.Main \
 target/scala-2.11/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar \
 --step vendors-transformer \

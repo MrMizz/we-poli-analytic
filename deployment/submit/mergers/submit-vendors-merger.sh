@@ -1,4 +1,6 @@
 spark-submit \
+--master yarn \
+--deploy-mode cluster \
 --class in.tap.we.poli.analytic.Main \
 s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar \
 --step vendors-merger \
