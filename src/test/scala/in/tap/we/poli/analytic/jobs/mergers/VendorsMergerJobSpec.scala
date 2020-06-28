@@ -26,15 +26,15 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
 
   it should "merge vendors from connector" in {
     val resourcePath: String = {
-      "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/"
+      "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/mergers/vendors/"
     }
 
     val in1Path: String = {
-      s"$resourcePath/connectors/vendors/in"
+      s"$resourcePath/in1"
     }
 
     val in2Path: String = {
-      s"$resourcePath/connectors/vendors/out"
+      s"$resourcePath/in2"
     }
 
     val outPath: String = {
