@@ -53,7 +53,7 @@ object VendorsMergerJob {
     city: Option[String],
     state: Option[String],
     zip_code: Option[String],
-    num_merged: Int
+    num_merged: BigInt
   )
 
   object UniqueVendor {
