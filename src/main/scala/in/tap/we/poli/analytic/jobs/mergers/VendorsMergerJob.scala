@@ -49,10 +49,11 @@ object VendorsMergerJob {
     uid: Long,
     uids: Seq[Long],
     name: Option[String],
-    names: Seq[String],
+    names: Set[String],
     city: Option[String],
     state: Option[String],
     zip_code: Option[String],
+    memos: Set[String],
     num_merged: BigInt
   )
 
@@ -63,10 +64,11 @@ object VendorsMergerJob {
         uid = vendor.uid,
         uids = Seq(vendor.uid),
         name = vendor.name,
-        names = vendor.name.toSeq,
+        names = vendor.name.toSet,
         city = vendor.city,
         state = vendor.state,
         zip_code = vendor.zip_code,
+        memos = Set(vendor.memo).flatten.map(_.toLowerCase),
         num_merged = 1
       )
     }
@@ -76,10 +78,11 @@ object VendorsMergerJob {
         uid = Seq(left.uid, right.uid).min,
         uids = left.uids ++ right.uids,
         name = left.name,
-        names = (left.names ++ right.names).distinct,
+        names = left.names ++ right.names,
         city = left.city,
         state = left.state,
         zip_code = left.zip_code,
+        memos = left.memos ++ right.memos,
         num_merged = left.num_merged + right.num_merged
       )
     }

@@ -35,7 +35,8 @@ object VendorsTransformerJob {
     name: Option[String],
     city: Option[String],
     state: Option[String],
-    zip_code: Option[String]
+    zip_code: Option[String],
+    memo: Option[String]
   ) {
 
     lazy val hash1: Option[String] = {
@@ -63,7 +64,7 @@ object VendorsTransformerJob {
         name <- cleanedName
         zip <- zip_code.map(_.toLowerCase.take(5))
       } yield {
-        s"${name}_${zip}"
+        s"${name}_$zip"
       }
     }
 
@@ -103,7 +104,8 @@ object VendorsTransformerJob {
           name = operatingExpenditures.NAME,
           city = operatingExpenditures.CITY,
           state = operatingExpenditures.STATE,
-          zip_code = operatingExpenditures.ZIP_CODE
+          zip_code = operatingExpenditures.ZIP_CODE,
+          memo = operatingExpenditures.PURPOSE
         )
       }
     }

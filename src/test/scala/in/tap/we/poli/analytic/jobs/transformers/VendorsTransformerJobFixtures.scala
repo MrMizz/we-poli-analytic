@@ -10,7 +10,8 @@ trait VendorsTransformerJobFixtures {
       name = Some("Vendor's, Inc. # 1"),
       city = Some("City1"),
       state = Some("State1"),
-      zip_code = Some("Zip1")
+      zip_code = Some("Zip1"),
+      memo = None
     )
   }
 
@@ -20,7 +21,8 @@ trait VendorsTransformerJobFixtures {
       name = None,
       city = Some("City1"),
       state = Some("State1"),
-      zip_code = Some("Zip1")
+      zip_code = Some("Zip1"),
+      memo = None
     )
   }
 

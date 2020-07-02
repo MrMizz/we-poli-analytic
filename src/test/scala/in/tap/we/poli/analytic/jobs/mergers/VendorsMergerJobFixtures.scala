@@ -10,7 +10,8 @@ trait VendorsMergerJobFixtures {
       name = Some("Vendor1"),
       city = Some("City1"),
       state = Some("State1"),
-      zip_code = Some("Zip1")
+      zip_code = Some("Zip1"),
+      memo = Some("memo1")
     )
   }
 
@@ -20,7 +21,8 @@ trait VendorsMergerJobFixtures {
       name = Some("Vendor2"),
       city = Some("City1"),
       state = Some("State1"),
-      zip_code = Some("Zip1")
+      zip_code = Some("Zip1"),
+      memo = None
     )
   }
 
