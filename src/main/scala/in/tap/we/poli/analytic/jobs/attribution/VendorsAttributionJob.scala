@@ -1,11 +1,27 @@
 package in.tap.we.poli.analytic.jobs.attribution
 
+import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
+import in.tap.we.poli.analytic.jobs.attribution.VendorsAttributionJob.VendorVertex
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import org.apache.spark.graphx.VertexId
+import org.apache.spark.sql.{Dataset, SparkSession}
 
-class VendorsAttributionJob(inArgs: OneInArgs, outArgs: OneOutArgs)
+import scala.reflect.runtime.universe
+
+class VendorsAttributionJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+  implicit
+  val spark: SparkSession,
+  val readTypeTagA: universe.TypeTag[UniqueVendor],
+  val writeTypeTagA: universe.TypeTag[VendorVertex]
+) extends OneInOneOutJob[UniqueVendor, VendorVertex](inArgs, outArgs) {
+
+  override def transform(input: Dataset[UniqueVendor]): Dataset[VendorVertex] = {
+    input.map(VendorVertex.fromVendor)
+  }
+
+}
 
 object VendorsAttributionJob {
 
@@ -34,7 +50,7 @@ object VendorsAttributionJob {
       "consul"
     }
 
-    def fromVendor(uniqueVendor: UniqueVendor): (VertexId, VendorVertex) = {
+    def fromVendor(uniqueVendor: UniqueVendor): VendorVertex = {
       val hasBeenStaff: Option[Boolean] = {
         hasBeenStaffCheck(uniqueVendor.memos)
       }
@@ -44,7 +60,7 @@ object VendorsAttributionJob {
       val hasBeenAffiliated = {
         hasBeenAffiliatedCheck(hasBeenStaff, hasBeenConsultant)
       }
-      uniqueVendor.uid -> VendorVertex(
+      VendorVertex(
         uid = uniqueVendor.uid,
         name = uniqueVendor.name,
         city = uniqueVendor.city,
