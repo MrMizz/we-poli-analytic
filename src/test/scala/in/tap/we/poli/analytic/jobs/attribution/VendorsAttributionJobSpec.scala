@@ -8,7 +8,7 @@ class VendorsAttributionJobSpec extends FlatSpec with Matchers with VendorsAttri
     import VendorsAttributionJob._
 
     VendorVertex.fromVendor(uniqueVendor1) shouldBe {
-      1L ->VendorVertex(
+      1L -> VendorVertex(
         uid = 1L,
         name = Some("Mickey's Consulting"),
         city = Some("Los Angeles"),
