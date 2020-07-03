@@ -1,11 +1,11 @@
-package in.tap.we.poli.analytic.jobs.attribution
+package in.tap.we.poli.analytic.jobs.graph.vertices
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class VendorsAttributionJobSpec extends FlatSpec with Matchers with VendorsAttributionJobFixtures {
+class VendorsVertexJobSpec extends FlatSpec with Matchers with VendorsVertexJobFixtures {
 
   it should "attribute a vendor into a vertex" in {
-    import VendorsAttributionJob._
+    import VendorsVertexJob._
 
     VendorVertex.fromVendor(uniqueVendor1) shouldBe {
       VendorVertex(

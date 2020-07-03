@@ -1,8 +1,8 @@
-package in.tap.we.poli.analytic.jobs.attribution
+package in.tap.we.poli.analytic.jobs.graph.vertices
 
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 
-trait VendorsAttributionJobFixtures {
+trait VendorsVertexJobFixtures {
 
   val uniqueVendor1: UniqueVendor = {
     new UniqueVendor(

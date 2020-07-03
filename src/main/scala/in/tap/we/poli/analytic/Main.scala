@@ -4,8 +4,8 @@ import in.tap.base.spark.jobs.composite.CompositeJob
 import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.base.spark.main.{InArgs, OutArgs}
-import in.tap.we.poli.analytic.jobs.attribution.VendorsAttributionJob
 import in.tap.we.poli.analytic.jobs.connectors.VendorsConnectorJob
+import in.tap.we.poli.analytic.jobs.graph.vertices.VendorsVertexJob
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob
 import org.apache.spark.sql.SparkSession
@@ -21,7 +21,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "vendors-merger" =>
         new VendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-attribution" =>
-        new VendorsAttributionJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+        new VendorsVertexJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }

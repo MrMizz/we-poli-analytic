@@ -1,16 +1,16 @@
-package in.tap.we.poli.analytic.jobs.attribution
+package in.tap.we.poli.analytic.jobs.graph.vertices
 
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.attribution.VendorsAttributionJob.VendorVertex
+import in.tap.we.poli.analytic.jobs.graph.vertices.VendorsVertexJob.VendorVertex
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-class VendorsAttributionJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+class VendorsVertexJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[UniqueVendor],
@@ -23,7 +23,7 @@ class VendorsAttributionJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 }
 
-object VendorsAttributionJob {
+object VendorsVertexJob {
 
   final case class VendorVertex(
     uid: VertexId,

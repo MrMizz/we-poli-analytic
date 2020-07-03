@@ -6,5 +6,5 @@ s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAP
 --step vendors-attribution \
 --in1 s3://big-time-tap-in-spark/poli/merged/vendors/2020-07-02-01/ \
 --in1-format json \
---out1 s3://big-time-tap-in-spark/poli/attributed/vendors/2020-07-02-01/ \
+--out1 s3://big-time-tap-in-spark/poli/attributed/graph/vertices/vendors/2020-07-02-01/ \
 --out1-format json
