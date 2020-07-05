@@ -75,21 +75,21 @@ trait VendorsConnectorJobFixtures {
     )
   }
 
-    lazy val edge3: ExpenditureEdge = {
-      ExpenditureEdge(
-        src_id = 3L,
-        report_year = Some(2010L),
-        report_type = Some("report type 3"),
-        form_type = Some("form type 3"),
-        schedule_type = Some("schedule type 3"),
-        transaction_date = None,
-        transaction_amount = None,
-        primary_general_indicator = Some("pgi 3"),
-        disbursement_category = Some("disbursement category 3"),
-        entity_type = None,
-        transaction_id = Some("transaction id 3"),
-        back_reference_transaction_number = Some("back reference transaction number 3")
-      )
+  lazy val edge3: ExpenditureEdge = {
+    ExpenditureEdge(
+      src_id = 3L,
+      report_year = Some(2010L),
+      report_type = Some("report type 3"),
+      form_type = Some("form type 3"),
+      schedule_type = Some("schedule type 3"),
+      transaction_date = None,
+      transaction_amount = None,
+      primary_general_indicator = Some("pgi 3"),
+      disbursement_category = Some("disbursement category 3"),
+      entity_type = None,
+      transaction_id = Some("transaction id 3"),
+      back_reference_transaction_number = Some("back reference transaction number 3")
+    )
   }
 
 }
