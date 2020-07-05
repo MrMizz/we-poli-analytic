@@ -5,6 +5,7 @@ import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
 import in.tap.we.poli.models.Committee
+import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
@@ -26,7 +27,7 @@ class CommitteesVertexJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 object CommitteesVertexJob {
 
   final case class CommitteeVertex(
-    uid: String,
+    uid: VertexId,
     committee_names: Set[String],
     treasures_names: Set[String],
     streets: Set[String],
@@ -43,9 +44,16 @@ object CommitteesVertexJob {
 
   object CommitteeVertex {
 
-    def fromCommittee(committee: Committee): (String, CommitteeVertex) = {
-      committee.CMTE_ID -> CommitteeVertex(
-        uid = committee.CMTE_ID,
+    def fromStringToLongUID(committeeUID: String): VertexId = {
+      committeeUID.drop(1).toLong
+    }
+
+    def fromCommittee(committee: Committee): (VertexId, CommitteeVertex) = {
+      val vertexId: VertexId = {
+        fromStringToLongUID(committee.CMTE_ID)
+      }
+      vertexId -> CommitteeVertex(
+        uid = vertexId,
         committee_names = committee.CMTE_NM.toSet,
         treasures_names = committee.TRES_NM.toSet,
         streets = committee.CMTE_ST1.toSet ++ committee.CMTE_ST2,

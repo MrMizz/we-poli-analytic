@@ -11,4 +11,15 @@ class VendorsTransformerJobSpec extends FlatSpec with Matchers with VendorsTrans
     vendor2.hashes shouldBe Nil
   }
 
+  it should "extract edges from expenditures report" in {
+    import VendorsTransformerJob.Vendor
+    Vendor.fromOperatingExpenditures(operatingExpenditures1).map(_.edge) shouldBe {
+      Some(edge1)
+    }
+
+    Vendor.fromOperatingExpenditures(operatingExpenditures2).map(_.edge) shouldBe {
+      Some(edge2)
+    }
+  }
+
 }

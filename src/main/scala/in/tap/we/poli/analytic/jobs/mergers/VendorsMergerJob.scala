@@ -45,6 +45,8 @@ class VendorsMergerJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
 
 object VendorsMergerJob {
 
+  import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
+
   final case class UniqueVendor(
     uid: Long,
     uids: Seq[Long],
@@ -54,6 +56,7 @@ object VendorsMergerJob {
     state: Option[String],
     zip_code: Option[String],
     memos: Set[String],
+    edges: Set[ExpenditureEdge],
     num_merged: BigInt
   )
 
@@ -69,6 +72,7 @@ object VendorsMergerJob {
         state = vendor.state,
         zip_code = vendor.zip_code,
         memos = Set(vendor.memo).flatten.map(_.toLowerCase),
+        edges = Set(vendor.edge),
         num_merged = 1
       )
     }
@@ -83,6 +87,7 @@ object VendorsMergerJob {
         state = left.state,
         zip_code = left.zip_code,
         memos = left.memos ++ right.memos,
+        edges = left.edges ++ right.edges,
         num_merged = left.num_merged + right.num_merged
       )
     }

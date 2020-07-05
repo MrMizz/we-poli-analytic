@@ -24,11 +24,15 @@ class VendorsTransformerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 object VendorsTransformerJob {
 
+  import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
+
   val STOP_WORDS: Set[String] = {
     Set("ltd", "llc", "inc")
   }
 
-  val PUNCTUATION_REGEX: String = """\p{P}"""
+  val PUNCTUATION_REGEX: String = {
+    """\p{P}"""
+  }
 
   final case class Vendor(
     uid: Long,
@@ -36,7 +40,8 @@ object VendorsTransformerJob {
     city: Option[String],
     state: Option[String],
     zip_code: Option[String],
-    memo: Option[String]
+    memo: Option[String],
+    edge: ExpenditureEdge
   ) {
 
     lazy val hash1: Option[String] = {
@@ -105,7 +110,8 @@ object VendorsTransformerJob {
           city = operatingExpenditures.CITY,
           state = operatingExpenditures.STATE,
           zip_code = operatingExpenditures.ZIP_CODE,
-          memo = operatingExpenditures.PURPOSE
+          memo = operatingExpenditures.PURPOSE,
+          edge = ExpenditureEdge.fromOperatingExpenditures(operatingExpenditures)
         )
       }
     }
