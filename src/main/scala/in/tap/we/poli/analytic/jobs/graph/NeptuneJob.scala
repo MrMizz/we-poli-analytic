@@ -5,9 +5,8 @@ import in.tap.base.spark.jobs.in.dataset.TwoInJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.TwoOutArgs
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob.{NeptuneEdge, NeptuneVertex}
-import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJob.AgnosticVertex
-import org.apache.spark.graphx.Edge
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe
@@ -22,14 +21,14 @@ class NeptuneJob(val inArgs: TwoInArgs, val outArgs: TwoOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[AgnosticVertex],
-  val readTypeTagB: universe.TypeTag[Edge[ExpenditureEdge]]
+  val readTypeTagB: universe.TypeTag[AggregateExpenditureEdge]
 ) extends CompositeJob(inArgs, outArgs)
-    with TwoInJob[AgnosticVertex, Edge[ExpenditureEdge]] {
+    with TwoInJob[AgnosticVertex, AggregateExpenditureEdge] {
 
   override def execute(): Unit = {
     import spark.implicits._
 
-    val (vertices: Dataset[AgnosticVertex], edges: Dataset[Edge[ExpenditureEdge]]) = read
+    val (vertices: Dataset[AgnosticVertex], edges: Dataset[AggregateExpenditureEdge]) = read
 
     val neptuneVertices: Dataset[NeptuneVertex] = {
       vertices.map(NeptuneVertex.apply)
@@ -41,7 +40,7 @@ class NeptuneJob(val inArgs: TwoInArgs, val outArgs: TwoOutArgs)(
         .zipWithUniqueId()
         .cache()
         .map {
-          case (edge: Edge[ExpenditureEdge], uid: Long) =>
+          case (edge: AggregateExpenditureEdge, uid: Long) =>
             NeptuneEdge(uid, edge)
         }
         .toDS
@@ -90,11 +89,11 @@ object NeptuneJob {
 
   object NeptuneEdge {
 
-    def apply(rowId: Long, edge: Edge[ExpenditureEdge]): NeptuneEdge = {
+    def apply(rowId: Long, edge: AggregateExpenditureEdge): NeptuneEdge = {
       new NeptuneEdge(
         `~id` = rowId,
-        `~from` = edge.srcId,
-        `~to` = edge.dstId
+        `~from` = edge.src_id,
+        `~to` = edge.dst_id
       )
     }
 

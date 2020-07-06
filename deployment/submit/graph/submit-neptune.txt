@@ -6,7 +6,7 @@ s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAP
 --step neptune \
 --in1 s3://big-time-tap-in-spark/poli/graph/vertices/union/2020-07-05-01/ \
 --in1-format parquet \
---in2 s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/2020-07-05-01/ \
+--in2 s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/2020-07-06-01/ \
 --in2-format json \
 --out1 s3://big-time-tap-in-spark/poli/graph/neptune/vertices/2020-07-06-01/ \
 --out1-format no-op \
