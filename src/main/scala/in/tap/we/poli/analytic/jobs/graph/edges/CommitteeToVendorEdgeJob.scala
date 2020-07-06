@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.graph.edges
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{AggregateExpenditureEdge, ExpenditureEdge}
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.models.OperatingExpenditures
 import org.apache.spark.graphx.{Edge, VertexId}
@@ -15,16 +15,37 @@ class CommitteeToVendorEdgeJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[UniqueVendor],
-  val writeTypeTagA: universe.TypeTag[Edge[ExpenditureEdge]]
-) extends OneInOneOutJob[UniqueVendor, Edge[ExpenditureEdge]](inArgs, outArgs) {
+  val writeTypeTagA: universe.TypeTag[AggregateExpenditureEdge]
+) extends OneInOneOutJob[UniqueVendor, AggregateExpenditureEdge](inArgs, outArgs) {
 
-  override def transform(input: Dataset[UniqueVendor]): Dataset[Edge[ExpenditureEdge]] = {
-    input.flatMap(ExpenditureEdge.fromUniqueVendor)
+  override def transform(input: Dataset[UniqueVendor]): Dataset[AggregateExpenditureEdge] = {
+    import spark.implicits._
+    input
+      .flatMap(ExpenditureEdge.fromUniqueVendor)
+      .rdd
+      .reduceByKey(_ ++ _)
+      .map {
+        case ((srcId: VertexId, dstId: VertexId), edges: Seq[ExpenditureEdge]) =>
+          AggregateExpenditureEdge(
+            src_id = srcId,
+            dst_id = dstId,
+            num_edges = edges.size,
+            edges = edges
+          )
+      }
+      .toDS
   }
 
 }
 
 object CommitteeToVendorEdgeJob {
+
+  final case class AggregateExpenditureEdge(
+    src_id: VertexId,
+    dst_id: VertexId,
+    num_edges: BigInt,
+    edges: Seq[ExpenditureEdge]
+  )
 
   final case class ExpenditureEdge(
     src_id: VertexId,
@@ -45,15 +66,11 @@ object CommitteeToVendorEdgeJob {
 
     import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex.fromStringToLongUID
 
-    def fromUniqueVendor(uniqueVendor: UniqueVendor): Seq[Edge[ExpenditureEdge]] = {
+    def fromUniqueVendor(uniqueVendor: UniqueVendor): Seq[((VertexId, VertexId), Seq[ExpenditureEdge])] = {
       uniqueVendor
         .edges
         .map { expenditureEdge: ExpenditureEdge =>
-          Edge(
-            srcId = expenditureEdge.src_id,
-            dstId = uniqueVendor.uid,
-            attr = expenditureEdge
-          )
+          (expenditureEdge.src_id, uniqueVendor.uid) -> Seq(expenditureEdge)
         }
         .toSeq
     }
