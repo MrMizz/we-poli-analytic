@@ -1,6 +1,7 @@
 package in.tap.we.poli.analytic.jobs.graph.vertices
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
+import in.tap.we.poli.analytic.jobs.graph.vertices.VendorsVertexJob.VendorVertex
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 
 trait VendorsVertexJobFixtures {
@@ -47,6 +48,45 @@ trait VendorsVertexJobFixtures {
       memos = Set("media consulting"),
       num_merged = 1,
       edges = Set(edge5)
+    )
+  }
+
+  val vendorVertex1: VendorVertex = {
+    VendorVertex(
+      uid = 1L,
+      name = Some("Mickey's Consulting"),
+      city = Some("Los Angeles"),
+      zip = None,
+      state = None,
+      has_been_affiliated = Some(true),
+      has_been_consultant = Some(true),
+      has_been_staff = Some(true)
+    )
+  }
+
+  val vendorVertex2: VendorVertex = {
+    VendorVertex(
+      uid = 2L,
+      name = Some("Domino's"),
+      city = Some("Los Angeles"),
+      zip = None,
+      state = Some("CA"),
+      has_been_affiliated = None,
+      has_been_consultant = None,
+      has_been_staff = None
+    )
+  }
+
+  val vendorVertex3: VendorVertex = {
+    VendorVertex(
+      uid = 5L,
+      name = Some("Raphael Saadiq"),
+      city = Some("Los Angeles"),
+      zip = None,
+      state = Some("CA"),
+      has_been_affiliated = Some(true),
+      has_been_consultant = Some(true),
+      has_been_staff = None
     )
   }
 

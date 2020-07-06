@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.graph.vertices
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
 import in.tap.we.poli.models.Committee
 
-trait CommitteesVertexFixtures {
+trait CommitteesVertexJobFixtures {
 
   val committee1: Committee = {
     Committee(

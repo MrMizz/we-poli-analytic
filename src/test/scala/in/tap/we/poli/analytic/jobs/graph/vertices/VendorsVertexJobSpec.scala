@@ -8,42 +8,15 @@ class VendorsVertexJobSpec extends FlatSpec with Matchers with VendorsVertexJobF
     import VendorsVertexJob._
 
     VendorVertex.fromVendor(uniqueVendor1) shouldBe {
-      VendorVertex(
-        uid = 1L,
-        name = Some("Mickey's Consulting"),
-        city = Some("Los Angeles"),
-        zip = None,
-        state = None,
-        has_been_affiliated = Some(true),
-        has_been_consultant = Some(true),
-        has_been_staff = Some(true)
-      )
+      vendorVertex1
     }
 
     VendorVertex.fromVendor(uniqueVendor2) shouldBe {
-      VendorVertex(
-        uid = 2L,
-        name = Some("Domino's"),
-        city = Some("Los Angeles"),
-        zip = None,
-        state = Some("CA"),
-        has_been_affiliated = None,
-        has_been_consultant = None,
-        has_been_staff = None
-      )
+      vendorVertex2
     }
 
     VendorVertex.fromVendor(uniqueVendor3) shouldBe {
-      VendorVertex(
-        uid = 5L,
-        name = Some("Raphael Saadiq"),
-        city = Some("Los Angeles"),
-        zip = None,
-        state = Some("CA"),
-        has_been_affiliated = Some(true),
-        has_been_consultant = Some(true),
-        has_been_staff = None
-      )
+      vendorVertex3
     }
   }
 

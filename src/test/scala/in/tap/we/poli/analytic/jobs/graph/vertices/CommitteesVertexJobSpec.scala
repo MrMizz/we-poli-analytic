@@ -2,7 +2,7 @@ package in.tap.we.poli.analytic.jobs.graph.vertices
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class CommitteesVertexJobSpec extends FlatSpec with Matchers with CommitteesVertexFixtures {
+class CommitteesVertexJobSpec extends FlatSpec with Matchers with CommitteesVertexJobFixtures {
 
   it should "build vertices from committees" in {
     import CommitteesVertexJob.CommitteeVertex
