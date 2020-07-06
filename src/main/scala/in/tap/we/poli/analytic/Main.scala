@@ -2,9 +2,10 @@ package in.tap.we.poli.analytic
 
 import in.tap.base.spark.jobs.composite.CompositeJob
 import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
-import in.tap.base.spark.main.OutArgs.OneOutArgs
+import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.VendorsConnectorJob
+import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob
@@ -29,6 +30,8 @@ object Main extends in.tap.base.spark.main.Main {
         new VerticesUnionJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "committee-to-vendor-edge" =>
         new CommitteeToVendorEdgeJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "neptune" =>
+        new NeptuneJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[TwoOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }
