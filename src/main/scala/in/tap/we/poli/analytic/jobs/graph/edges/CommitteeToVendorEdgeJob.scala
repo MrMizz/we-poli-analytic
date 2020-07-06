@@ -6,11 +6,15 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{AggregateExpenditureEdge, ExpenditureEdge}
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.models.OperatingExpenditures
-import org.apache.spark.graphx.{Edge, VertexId}
+import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
+/**
+ * We Aggregate the Edges from One Committee to One Vendor,
+ * for a bread-and-butter query from DynamoDB, where the property data lives.
+ */
 class CommitteeToVendorEdgeJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
