@@ -1,0 +1,1 @@
+curl -X GET "https://poli-dev.cluster-ccagdblghqt8.us-west-2.neptune.amazonaws.com:8182/loader/e8079c9a-c436-40f4-a237-32238554c042?errors=true"
