@@ -6,5 +6,5 @@ s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAP
 --step committees-vertex \
 --in1 s3://big-time-tap-in-spark/poli/parsed/committees/ \
 --in1-format json \
---out1 s3://big-time-tap-in-spark/poli/graph/vertices/committees/2020-07-05-01/ \
+--out1 s3://big-time-tap-in-spark/poli/graph/vertices/committees/2020-07-07-01/ \
 --out1-format json

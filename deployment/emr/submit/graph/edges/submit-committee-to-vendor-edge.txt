@@ -4,7 +4,7 @@ spark-submit \
 --class in.tap.we.poli.analytic.Main \
 s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar \
 --step committee-to-vendor-edge \
---in1 s3://big-time-tap-in-spark/poli/merged/vendors/2020-07-05-01/ \
+--in1 s3://big-time-tap-in-spark/poli/merged/vendors/2020-07-07-01/ \
 --in1-format json \
---out1 s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/2020-07-06-01/ \
+--out1 s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/2020-07-07-01/ \
 --out1-format json

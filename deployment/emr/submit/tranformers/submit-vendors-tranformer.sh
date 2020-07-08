@@ -6,5 +6,5 @@ s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAP
 --step vendors-transformer \
 --in1 s3://big-time-tap-in-spark/poli/parsed/operating-expenditures/ \
 --in1-format json \
---out1 s3://big-time-tap-in-spark/poli/transformed/vendors/2020-07-05-01/ \
+--out1 s3://big-time-tap-in-spark/poli/transformed/vendors/2020-07-07-01/ \
 --out1-format json
