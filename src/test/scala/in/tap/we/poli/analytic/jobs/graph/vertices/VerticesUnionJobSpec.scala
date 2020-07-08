@@ -8,7 +8,7 @@ class VerticesUnionJobSpec extends FlatSpec with Matchers with VerticesUnionJobF
     import VerticesUnionJob.AgnosticVertex
     AgnosticVertex.fromCommitteeVertex(committeeVertex1) shouldBe {
       AgnosticVertex(
-        uid = 1L,
+        uid = 11L,
         is_committee = true,
         is_vendor = false,
         committee_attr = Some(committeeVertex1),

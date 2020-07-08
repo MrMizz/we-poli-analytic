@@ -45,7 +45,7 @@ object CommitteesVertexJob {
   object CommitteeVertex {
 
     def fromStringToLongUID(committeeUID: String): VertexId = {
-      committeeUID.drop(1).toLong
+      committeeUID.replace("C", "1").toLong
     }
 
     def fromCommittee(committee: Committee): (VertexId, CommitteeVertex) = {

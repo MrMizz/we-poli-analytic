@@ -32,7 +32,7 @@ trait VendorsTransformerJobFixtures {
 
   lazy val edge1: ExpenditureEdge = {
     ExpenditureEdge(
-      src_id = 3L,
+      src_id = 13L,
       report_year = Some(2010L),
       report_type = Some("report type 1"),
       form_type = Some("form type 1"),
@@ -49,7 +49,7 @@ trait VendorsTransformerJobFixtures {
 
   lazy val edge2: ExpenditureEdge = {
     ExpenditureEdge(
-      src_id = 4L,
+      src_id = 14L,
       report_year = Some(2010L),
       report_type = Some("report type 2"),
       form_type = Some("form type 2"),
