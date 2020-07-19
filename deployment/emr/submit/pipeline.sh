@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-QJ4GDWIXI7YB"
+CLUSTER="j-3RG7JT12GRKAO"
 RUN_DATE="2020-07-19-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
 ###################################################
 ### TRANSFORMERS
 ###################################################
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=VendorsTransformer,\
 Args=[\
 --deploy-mode,cluster,\
@@ -24,7 +24,7 @@ $JAR_PATH,\
 ###################################################
 ### CONNECTORS
 ###################################################
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=VendorsConnector,\
 Args=[\
 --deploy-mode,cluster,\
@@ -41,7 +41,7 @@ $JAR_PATH,\
 ###################################################
 ### MERGERS
 ###################################################
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=VendorsMerger,\
 Args=[\
 --deploy-mode,cluster,\
@@ -60,7 +60,7 @@ $JAR_PATH,\
 ###################################################
 ### GRAPH
 ###################################################
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=CommitteeToVendorEdges,\
 Args=[\
 --deploy-mode,cluster,\
@@ -74,7 +74,7 @@ $JAR_PATH,\
 --out1-format,json\
 ]
 
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=CommitteeVertices,\
 Args=[\
 --deploy-mode,cluster,\
@@ -90,7 +90,7 @@ $JAR_PATH,\
 --out1-format,json\
 ]
 
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=VendorVertices,\
 Args=[\
 --deploy-mode,cluster,\
@@ -104,7 +104,7 @@ $JAR_PATH,\
 --out1-format,json\
 ]
 
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=VertexUnion,\
 Args=[\
 --deploy-mode,cluster,\
@@ -120,7 +120,7 @@ $JAR_PATH,\
 --out1-format,parquet\
 ]
 
-noglob aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=Neptune,\
 Args=[\
 --deploy-mode,cluster,\
