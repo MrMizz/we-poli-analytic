@@ -1,41 +1,92 @@
 package in.tap.we.poli.analytic.jobs.graph.vertices
 
-import in.tap.base.spark.jobs.composite.OneInOneOutJob
-import in.tap.base.spark.main.InArgs.OneInArgs
+import in.tap.base.spark.jobs.composite.TwoInOneOutJob
+import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
 import in.tap.we.poli.models.Committee
 import org.apache.spark.graphx.VertexId
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-/**
- * TODO:
- *  union with Unique Vendors.
- *  there are a few cases where vendors appear in Operating Expenditures
- *  that are not listed in the Committee Master File.
- * @param inArgs
- * @param outArgs
- * @param spark
- * @param readTypeTagA
- * @param writeTypeTagA
- */
-class CommitteesVertexJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+class CommitteesVertexJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[Committee],
+  val readTypeTagB: universe.TypeTag[AggregateExpenditureEdge],
   val writeTypeTagA: universe.TypeTag[CommitteeVertex]
-) extends OneInOneOutJob[Committee, CommitteeVertex](inArgs, outArgs) {
+) extends TwoInOneOutJob[Committee, AggregateExpenditureEdge, CommitteeVertex](inArgs, outArgs) {
 
-  override def transform(input: Dataset[Committee]): Dataset[CommitteeVertex] = {
+  override def transform(input: (Dataset[Committee], Dataset[AggregateExpenditureEdge])): Dataset[CommitteeVertex] = {
     import spark.implicits._
-    input.map(CommitteeVertex.fromCommittee).rdd.reduceByKey(CommitteeVertex.reduce).map(_._2).toDS
+    val (committees: Dataset[Committee], edges: Dataset[AggregateExpenditureEdge]) = {
+      input
+    }
+    val vertices: RDD[(VertexId, (CommitteeVertex, Boolean))] = {
+      committees
+        .map(CommitteeVertex.fromCommittee)
+        .rdd
+        .reduceByKey(CommitteeVertex.reduce)
+        .map {
+          case (vertexId: VertexId, vertex: CommitteeVertex) =>
+            vertexId -> (vertex, true)
+        }
+    }
+    val srcVertices: RDD[(VertexId, (CommitteeVertex, Boolean))] = {
+      edges
+        .map(_.src_id)
+        .distinct
+        .map { vertexId: VertexId =>
+          vertexId -> (CommitteesVertexJob.emptyCommitteeVertex(vertexId), false)
+        }
+        .rdd
+    }
+    vertices
+      .union(srcVertices)
+      .reduceByKey { (left: (CommitteeVertex, Boolean), right: (CommitteeVertex, Boolean)) =>
+        Seq(left, right).maxBy(_._2)
+      }
+      .map {
+        case (_, (vertex: CommitteeVertex, _)) =>
+          vertex
+      }
+      .toDS
   }
 
 }
 
 object CommitteesVertexJob {
+
+  /**
+   * There are a few cases where vendors appear in Operating Expenditures,
+   * while not appearing in the Master Committee File.
+   * This is a big problem for populating a graph DB (Neptune),
+   * so we'll need to ensure we have at least an Empty Vertex
+   * for these cases.
+   *
+   * @param uid missing committee id
+   * @return empty vertex
+   */
+  def emptyCommitteeVertex(uid: VertexId): CommitteeVertex = {
+    CommitteeVertex(
+      uid = uid,
+      committee_names = Set.empty[String],
+      treasures_names = Set.empty[String],
+      streets = Set.empty[String],
+      cities = Set.empty[String],
+      states = Set.empty[String],
+      zip_codes = Set.empty[String],
+      committee_designations = Set.empty[String],
+      committee_types = Set.empty[String],
+      committee_party_affiliations = Set.empty[String],
+      interest_group_categories = Set.empty[String],
+      connected_organization_names = Set.empty[String],
+      candidate_ids = Set.empty[String]
+    )
+  }
 
   final case class CommitteeVertex(
     uid: VertexId,

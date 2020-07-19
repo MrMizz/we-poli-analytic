@@ -25,7 +25,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "vendors-vertex" =>
         new VendorsVertexJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "committees-vertex" =>
-        new CommitteesVertexJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+        new CommitteesVertexJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vertices-union" =>
         new VerticesUnionJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "committee-to-vendor-edge" =>
