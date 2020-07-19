@@ -1,0 +1,30 @@
+[
+  {
+    "InstanceCount": 10,
+    "BidPrice": "OnDemandPrice",
+    "EbsConfiguration": {
+      "EbsOptimized": true
+    },
+    "InstanceGroupType": "CORE",
+    "InstanceType": "m4.xlarge",
+    "Name": "Core Instance Group"
+  },
+  {
+    "InstanceCount": 1,
+    "EbsConfiguration": {
+      "EbsBlockDeviceConfigs": [
+        {
+          "VolumeSpecification": {
+            "SizeInGB": 20,
+            "VolumeType": "gp2"
+          },
+          "VolumesPerInstance": 1
+        }
+      ],
+      "EbsOptimized": true
+    },
+    "InstanceGroupType": "MASTER",
+    "InstanceType": "m4.xlarge",
+    "Name": "Master Instance Group"
+  }
+]
