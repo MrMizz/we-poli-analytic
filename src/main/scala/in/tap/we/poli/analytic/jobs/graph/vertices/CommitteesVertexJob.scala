@@ -10,6 +10,17 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
+/**
+ * TODO:
+ *  union with Unique Vendors.
+ *  there are a few cases where vendors appear in Operating Expenditures
+ *  that are not listed in the Committee Master File.
+ * @param inArgs
+ * @param outArgs
+ * @param spark
+ * @param readTypeTagA
+ * @param writeTypeTagA
+ */
 class CommitteesVertexJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
