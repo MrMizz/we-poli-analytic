@@ -30,10 +30,8 @@ object VerticesUnionJob {
 
   final case class AgnosticVertex(
     uid: VertexId,
-    is_committee: Boolean,
-    is_vendor: Boolean,
-    committee_attr: Option[CommitteeVertex],
-    vendor_attr: Option[VendorVertex]
+    name: Option[String],
+    is_committee: Boolean
   )
 
   object AgnosticVertex {
@@ -41,20 +39,16 @@ object VerticesUnionJob {
     def fromCommitteeVertex(committeeVertex: CommitteeVertex): AgnosticVertex = {
       AgnosticVertex(
         uid = committeeVertex.uid,
-        is_committee = true,
-        is_vendor = false,
-        committee_attr = Some(committeeVertex),
-        vendor_attr = None
+        name = committeeVertex.name,
+        is_committee = true
       )
     }
 
     def fromVendorVertex(vendorVertex: VendorVertex): AgnosticVertex = {
       AgnosticVertex(
         uid = vendorVertex.uid,
-        is_committee = false,
-        is_vendor = true,
-        committee_attr = None,
-        vendor_attr = Some(vendorVertex)
+        name = vendorVertex.name,
+        is_committee = false
       )
     }
 

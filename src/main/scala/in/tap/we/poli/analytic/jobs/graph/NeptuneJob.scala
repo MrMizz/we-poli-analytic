@@ -65,8 +65,7 @@ object NeptuneJob {
 
   final case class NeptuneVertex(
     `~id`: Long,
-    `is_committee:Bool`: Boolean,
-    `is_vendor:Bool`: Boolean
+    `is_committee:Bool`: Boolean
   )
 
   object NeptuneVertex {
@@ -74,8 +73,7 @@ object NeptuneJob {
     def apply(agnosticVertex: AgnosticVertex): NeptuneVertex = {
       new NeptuneVertex(
         `~id` = agnosticVertex.uid,
-        `is_committee:Bool` = agnosticVertex.is_committee,
-        `is_vendor:Bool` = agnosticVertex.is_vendor
+        `is_committee:Bool` = agnosticVertex.is_committee
       )
     }
 

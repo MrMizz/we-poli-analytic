@@ -5,6 +5,7 @@ import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
+import in.tap.we.poli.analytic.jobs.mergers.utils.MergerUtils
 import in.tap.we.poli.models.Committee
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.RDD
@@ -73,6 +74,7 @@ object CommitteesVertexJob {
   def emptyCommitteeVertex(uid: VertexId): CommitteeVertex = {
     CommitteeVertex(
       uid = uid,
+      name = None,
       committee_names = Set.empty[String],
       treasures_names = Set.empty[String],
       streets = Set.empty[String],
@@ -90,6 +92,7 @@ object CommitteesVertexJob {
 
   final case class CommitteeVertex(
     uid: VertexId,
+    name: Option[String],
     committee_names: Set[String],
     treasures_names: Set[String],
     streets: Set[String],
@@ -116,6 +119,7 @@ object CommitteesVertexJob {
       }
       vertexId -> CommitteeVertex(
         uid = vertexId,
+        name = committee.CMTE_NM,
         committee_names = committee.CMTE_NM.toSet,
         treasures_names = committee.TRES_NM.toSet,
         streets = committee.CMTE_ST1.toSet ++ committee.CMTE_ST2,
@@ -132,9 +136,13 @@ object CommitteesVertexJob {
     }
 
     def reduce(left: CommitteeVertex, right: CommitteeVertex): CommitteeVertex = {
+      val names: Set[String] = {
+        left.committee_names ++ right.committee_names
+      }
       CommitteeVertex(
         uid = left.uid,
-        committee_names = left.committee_names ++ right.committee_names,
+        name = MergerUtils.getMostCommon[String](names.toSeq),
+        committee_names = names,
         treasures_names = left.treasures_names ++ right.treasures_names,
         streets = left.streets ++ right.streets,
         cities = left.cities ++ right.cities,

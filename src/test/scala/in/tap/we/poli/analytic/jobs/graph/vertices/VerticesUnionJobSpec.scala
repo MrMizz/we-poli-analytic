@@ -9,20 +9,16 @@ class VerticesUnionJobSpec extends FlatSpec with Matchers with VerticesUnionJobF
     AgnosticVertex.fromCommitteeVertex(committeeVertex1) shouldBe {
       AgnosticVertex(
         uid = 11L,
-        is_committee = true,
-        is_vendor = false,
-        committee_attr = Some(committeeVertex1),
-        vendor_attr = None
+        name = Some("comittee1"),
+        is_committee = true
       )
     }
 
     AgnosticVertex.fromVendorVertex(vendorVertex1) shouldBe {
       AgnosticVertex(
         uid = 1L,
-        is_committee = false,
-        is_vendor = true,
-        committee_attr = None,
-        vendor_attr = Some(vendorVertex1)
+        name = Some("Mickey's Consulting"),
+        is_committee = false
       )
     }
   }
