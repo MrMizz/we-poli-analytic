@@ -5,6 +5,7 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.VendorsConnectorJob
+import in.tap.we.poli.analytic.jobs.dynamo.VertexDataJob
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
@@ -32,6 +33,8 @@ object Main extends in.tap.base.spark.main.Main {
         new CommitteeToVendorEdgeJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "neptune" =>
         new NeptuneJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[TwoOutArgs])
+      case "dynamo-vertex" =>
+        new VertexDataJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }
