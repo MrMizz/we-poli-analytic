@@ -129,7 +129,7 @@ Args=[\
 $JAR_PATH,\
 --step,neptune,\
 --in1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
---in1-format,parquet,\
+--in1-format,json,\
 --in2,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --in2-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/graph/neptune/vertices/$RUN_DATE/,\
