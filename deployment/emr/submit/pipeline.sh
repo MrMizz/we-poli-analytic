@@ -117,7 +117,7 @@ $JAR_PATH,\
 --in2,s3://big-time-tap-in-spark/poli/graph/vertices/vendors/$RUN_DATE/,\
 --in2-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
---out1-format,parquet\
+--out1-format,json\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
