@@ -55,8 +55,8 @@ object VerticesUnionJob {
         uid = vendorVertex.uid,
         name = vendorVertex.name,
         streets = Set.empty[String],
-        cities = Set(vendorVertex.city),
-        states = Set(vendorVertex.state),
+        cities = vendorVertex.city.toSet,
+        states = vendorVertex.state.toSet,
         is_committee = false
       )
     }
