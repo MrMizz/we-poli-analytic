@@ -31,6 +31,9 @@ object VerticesUnionJob {
   final case class AgnosticVertex(
     uid: VertexId,
     name: Option[String],
+    streets: Set[String],
+    cities: Set[String],
+    states: Set[String],
     is_committee: Boolean
   )
 
@@ -40,6 +43,9 @@ object VerticesUnionJob {
       AgnosticVertex(
         uid = committeeVertex.uid,
         name = committeeVertex.name,
+        streets = committeeVertex.streets,
+        cities = committeeVertex.cities,
+        states = committeeVertex.states,
         is_committee = true
       )
     }
@@ -48,6 +54,9 @@ object VerticesUnionJob {
       AgnosticVertex(
         uid = vendorVertex.uid,
         name = vendorVertex.name,
+        streets = Set.empty[String],
+        cities = Set(vendorVertex.city),
+        states = Set(vendorVertex.state),
         is_committee = false
       )
     }
