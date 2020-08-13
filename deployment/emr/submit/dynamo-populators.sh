@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-3PT3K7U2GCYOJ"
-RUN_DATE="2020-08-07-01"
+CLUSTER="j-2LOLVR9OWYR3S"
+RUN_DATE="2020-08-12-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
