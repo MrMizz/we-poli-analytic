@@ -21,7 +21,7 @@ class VendorsConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   override def transform(input: Dataset[Vendor]): Dataset[(VertexId, VertexId)] = {
     import spark.implicits._
 
-    val vertices: RDD[(VertexId, Option[String])] = {
+    val vertices: RDD[(VertexId, String)] = {
       input.map(VendorsConnectorJob.fromVendorToVertex).rdd
     }
 
@@ -43,7 +43,7 @@ class VendorsConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 object VendorsConnectorJob {
 
-  def fromVendorToVertex(vendor: Vendor): (VertexId, Option[String]) = {
+  def fromVendorToVertex(vendor: Vendor): (VertexId, String) = {
     vendor.uid -> vendor.name
   }
 

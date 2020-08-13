@@ -27,7 +27,7 @@ object VendorsVertexJob {
 
   final case class VendorVertex(
     uid: VertexId,
-    name: Option[String],
+    name: String,
     city: Option[String],
     zip: Option[String],
     state: Option[String],

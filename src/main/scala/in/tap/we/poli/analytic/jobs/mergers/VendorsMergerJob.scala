@@ -50,7 +50,7 @@ object VendorsMergerJob {
   final case class UniqueVendor(
     uid: Long,
     uids: Seq[Long],
-    name: Option[String],
+    name: String,
     names: Set[String],
     city: Option[String],
     state: Option[String],
@@ -67,7 +67,7 @@ object VendorsMergerJob {
         uid = vendor.uid,
         uids = Seq(vendor.uid),
         name = vendor.name,
-        names = vendor.name.toSet,
+        names = Set(vendor.name),
         city = vendor.city,
         state = vendor.state,
         zip_code = vendor.zip_code,

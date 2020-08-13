@@ -28,7 +28,7 @@ class CommitteesVertexJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
     }
     val vertices: RDD[(VertexId, (CommitteeVertex, Boolean))] = {
       committees
-        .map(CommitteeVertex.fromCommittee)
+        .flatMap(CommitteeVertex.fromCommittee)
         .rdd
         .reduceByKey(CommitteeVertex.reduce)
         .map {
@@ -74,7 +74,7 @@ object CommitteesVertexJob {
   def emptyCommitteeVertex(uid: VertexId): CommitteeVertex = {
     CommitteeVertex(
       uid = uid,
-      name = None,
+      name = "DUMMY VERTEX",
       committee_names = Set.empty[String],
       treasures_names = Set.empty[String],
       streets = Set.empty[String],
@@ -92,7 +92,7 @@ object CommitteesVertexJob {
 
   final case class CommitteeVertex(
     uid: VertexId,
-    name: Option[String],
+    name: String,
     committee_names: Set[String],
     treasures_names: Set[String],
     streets: Set[String],
@@ -113,26 +113,30 @@ object CommitteesVertexJob {
       committeeUID.replace("C", "1").toLong
     }
 
-    def fromCommittee(committee: Committee): (VertexId, CommitteeVertex) = {
+    def fromCommittee(committee: Committee): Option[(VertexId, CommitteeVertex)] = {
       val vertexId: VertexId = {
         fromStringToLongUID(committee.CMTE_ID)
       }
-      vertexId -> CommitteeVertex(
-        uid = vertexId,
-        name = committee.CMTE_NM,
-        committee_names = committee.CMTE_NM.toSet,
-        treasures_names = committee.TRES_NM.toSet,
-        streets = committee.CMTE_ST1.toSet ++ committee.CMTE_ST2,
-        cities = committee.CMTE_CITY.toSet,
-        states = committee.CMTE_ST.toSet,
-        zip_codes = committee.CMTE_ZIP.toSet,
-        committee_designations = committee.CMTE_DSGN.toSet,
-        committee_types = committee.CMTE_TP.toSet,
-        committee_party_affiliations = committee.CMTE_PTY_AFFILIATION.toSet,
-        interest_group_categories = committee.ORG_TP.toSet,
-        connected_organization_names = committee.CONNECTED_ORG_NM.toSet,
-        candidate_ids = committee.CAND_ID.toSet
-      )
+      for {
+        name <- committee.CMTE_NM
+      } yield {
+        vertexId -> CommitteeVertex(
+          uid = vertexId,
+          name = name,
+          committee_names = committee.CMTE_NM.toSet,
+          treasures_names = committee.TRES_NM.toSet,
+          streets = committee.CMTE_ST1.toSet ++ committee.CMTE_ST2,
+          cities = committee.CMTE_CITY.toSet,
+          states = committee.CMTE_ST.toSet,
+          zip_codes = committee.CMTE_ZIP.toSet,
+          committee_designations = committee.CMTE_DSGN.toSet,
+          committee_types = committee.CMTE_TP.toSet,
+          committee_party_affiliations = committee.CMTE_PTY_AFFILIATION.toSet,
+          interest_group_categories = committee.ORG_TP.toSet,
+          connected_organization_names = committee.CONNECTED_ORG_NM.toSet,
+          candidate_ids = committee.CAND_ID.toSet
+        )
+      }
     }
 
     def reduce(left: CommitteeVertex, right: CommitteeVertex): CommitteeVertex = {
@@ -141,7 +145,7 @@ object CommitteesVertexJob {
       }
       CommitteeVertex(
         uid = left.uid,
-        name = MergerUtils.getMostCommon[String](names.toSeq),
+        name = MergerUtils.getMostCommon[String](names.toSeq).getOrElse(names.head),
         committee_names = names,
         treasures_names = left.treasures_names ++ right.treasures_names,
         streets = left.streets ++ right.streets,

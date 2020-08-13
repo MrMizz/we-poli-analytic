@@ -8,7 +8,7 @@ trait CommitteesVertexJobFixtures {
   val committee1: Committee = {
     Committee(
       CMTE_ID = "C1",
-      CMTE_NM = Some("comittee1"),
+      CMTE_NM = Some("committee1"),
       TRES_NM = Some("treasure1"),
       CMTE_ST1 = Some("street1"),
       CMTE_ST2 = Some("street2"),
@@ -48,8 +48,8 @@ trait CommitteesVertexJobFixtures {
   val committeeVertex1: CommitteeVertex = {
     new CommitteeVertex(
       uid = 11L,
-      name = Some("comittee1"),
-      committee_names = Set("comittee1"),
+      name = "committee1",
+      committee_names = Set("committee1"),
       treasures_names = Set("treasure1"),
       streets = Set("street1", "street2"),
       cities = Set("city1"),
@@ -67,7 +67,7 @@ trait CommitteesVertexJobFixtures {
   val committeeVertex2: CommitteeVertex = {
     CommitteeVertex(
       uid = 11L,
-      name = None,
+      name = "committee2",
       committee_names = Set(),
       treasures_names = Set(),
       streets = Set(),
@@ -86,8 +86,8 @@ trait CommitteesVertexJobFixtures {
   val committeeVertex3: CommitteeVertex = {
     new CommitteeVertex(
       uid = 11L,
-      name = Some("comittee3"),
-      committee_names = Set("comittee3"),
+      name = "committee3",
+      committee_names = Set("committee3"),
       treasures_names = Set("treasure3"),
       streets = Set("street1", "street3"),
       cities = Set("city3"),
@@ -105,8 +105,8 @@ trait CommitteesVertexJobFixtures {
   val committeeVertex4: CommitteeVertex = {
     new CommitteeVertex(
       uid = 11L,
-      name = Some("comittee3"),
-      committee_names = Set("comittee1", "comittee3"),
+      name = "committee1",
+      committee_names = Set("committee1", "committee3"),
       treasures_names = Set("treasure1", "treasure3"),
       streets = Set("street1", "street2", "street3"),
       cities = Set("city1", "city3"),

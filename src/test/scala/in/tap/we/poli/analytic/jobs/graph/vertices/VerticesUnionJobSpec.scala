@@ -9,7 +9,7 @@ class VerticesUnionJobSpec extends FlatSpec with Matchers with VerticesUnionJobF
     AgnosticVertex.fromCommitteeVertex(committeeVertex1) shouldBe {
       AgnosticVertex(
         uid = 11L,
-        name = Some("comittee1"),
+        name = "committee1",
         streets = Set("street1", "street2"),
         cities = Set("city1"),
         states = Set("state1"),
@@ -20,7 +20,7 @@ class VerticesUnionJobSpec extends FlatSpec with Matchers with VerticesUnionJobF
     AgnosticVertex.fromVendorVertex(vendorVertex1) shouldBe {
       AgnosticVertex(
         uid = 1L,
-        name = Some("Mickey's Consulting"),
+        name = "Mickey's Consulting",
         streets = Set.empty[String],
         cities = Set("Los Angeles"),
         states = Set.empty[String],

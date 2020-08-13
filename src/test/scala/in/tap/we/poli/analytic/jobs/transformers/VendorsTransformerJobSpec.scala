@@ -18,7 +18,7 @@ class VendorsTransformerJobSpec extends FlatSpec with Matchers with VendorsTrans
     }
 
     Vendor.fromOperatingExpenditures(operatingExpenditures2).map(_.edge) shouldBe {
-      Some(edge2)
+      None
     }
   }
 

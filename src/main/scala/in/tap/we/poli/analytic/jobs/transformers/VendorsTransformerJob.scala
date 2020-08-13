@@ -36,7 +36,7 @@ object VendorsTransformerJob {
 
   final case class Vendor(
     uid: Long,
-    name: Option[String],
+    name: String,
     city: Option[String],
     state: Option[String],
     zip_code: Option[String],
@@ -46,30 +46,27 @@ object VendorsTransformerJob {
 
     lazy val hash1: Option[String] = {
       for {
-        name <- name.map(_.toLowerCase)
         city <- city.map(_.toLowerCase)
         state <- state.map(_.toLowerCase)
       } yield {
-        s"${name}_${city}_$state"
+        s"${name.toLowerCase}_${city}_$state"
       }
     }
 
     lazy val hash2: Option[String] = {
       for {
-        name <- cleanedName
         city <- city.map(_.toLowerCase)
         state <- state.map(_.toLowerCase)
       } yield {
-        s"${name}_${city}_$state"
+        s"${cleanedName}_${city}_$state"
       }
     }
 
     lazy val hash3: Option[String] = {
       for {
-        name <- cleanedName
         zip <- zip_code.map(_.toLowerCase.take(5))
       } yield {
-        s"${name}_$zip"
+        s"${cleanedName}_$zip"
       }
     }
 
@@ -81,19 +78,17 @@ object VendorsTransformerJob {
       ).flatten
     }
 
-    private lazy val cleanedName: Option[String] = {
-      name.map { n: String =>
-        n.toLowerCase // to lower case
-          .replaceAll(PUNCTUATION_REGEX, "") // strip punctuation
-          .filterNot { char: Char =>
-            java.lang.Character.isDigit(char) // filter numeric
-          }
-          .split(" ") // tokenize
-          .filterNot { char: String =>
-            STOP_WORDS.contains(char) // filter stop words
-          }
-          .fold("")(_ + _) // join
-      }
+    private lazy val cleanedName: String = {
+      name.toLowerCase // to lower case
+        .replaceAll(PUNCTUATION_REGEX, "") // strip punctuation
+        .filterNot { char: Char =>
+          java.lang.Character.isDigit(char) // filter numeric
+        }
+        .split(" ") // tokenize
+        .filterNot { char: String =>
+          STOP_WORDS.contains(char) // filter stop words
+        }
+        .fold("")(_ + _) // join
     }
 
   }
@@ -103,10 +98,11 @@ object VendorsTransformerJob {
     def fromOperatingExpenditures(operatingExpenditures: OperatingExpenditures): Option[Vendor] = {
       for {
         sub_id <- operatingExpenditures.SUB_ID
+        name <- operatingExpenditures.NAME
       } yield {
         Vendor(
           uid = sub_id,
-          name = operatingExpenditures.NAME,
+          name = name,
           city = operatingExpenditures.CITY,
           state = operatingExpenditures.STATE,
           zip_code = operatingExpenditures.ZIP_CODE,

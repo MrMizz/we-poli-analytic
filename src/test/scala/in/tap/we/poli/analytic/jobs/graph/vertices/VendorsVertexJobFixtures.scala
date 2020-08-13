@@ -10,7 +10,7 @@ trait VendorsVertexJobFixtures {
     new UniqueVendor(
       uid = 1L,
       uids = Seq(1L),
-      name = Some("Mickey's Consulting"),
+      name = "Mickey's Consulting",
       names = Set("Mickey's Consulting"),
       city = Some("Los Angeles"),
       state = None,
@@ -25,7 +25,7 @@ trait VendorsVertexJobFixtures {
     new UniqueVendor(
       uid = 2L,
       uids = Seq(2L, 3L, 4L),
-      name = Some("Domino's"),
+      name = "Domino's",
       names = Set("Domino's"),
       city = Some("Los Angeles"),
       state = Some("CA"),
@@ -40,7 +40,7 @@ trait VendorsVertexJobFixtures {
     new UniqueVendor(
       uid = 5L,
       uids = Seq(5L),
-      name = Some("Raphael Saadiq"),
+      name = "Raphael Saadiq",
       names = Set("Raphael Saadiq"),
       city = Some("Los Angeles"),
       state = Some("CA"),
@@ -54,7 +54,7 @@ trait VendorsVertexJobFixtures {
   val vendorVertex1: VendorVertex = {
     VendorVertex(
       uid = 1L,
-      name = Some("Mickey's Consulting"),
+      name = "Mickey's Consulting",
       city = Some("Los Angeles"),
       zip = None,
       state = None,
@@ -67,7 +67,7 @@ trait VendorsVertexJobFixtures {
   val vendorVertex2: VendorVertex = {
     VendorVertex(
       uid = 2L,
-      name = Some("Domino's"),
+      name = "Domino's",
       city = Some("Los Angeles"),
       zip = None,
       state = Some("CA"),
@@ -80,7 +80,7 @@ trait VendorsVertexJobFixtures {
   val vendorVertex3: VendorVertex = {
     VendorVertex(
       uid = 5L,
-      name = Some("Raphael Saadiq"),
+      name = "Raphael Saadiq",
       city = Some("Los Angeles"),
       zip = None,
       state = Some("CA"),

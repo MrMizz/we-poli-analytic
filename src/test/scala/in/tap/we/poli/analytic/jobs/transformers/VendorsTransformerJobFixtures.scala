@@ -9,7 +9,7 @@ trait VendorsTransformerJobFixtures {
   val vendor1: Vendor = {
     new Vendor(
       uid = 1L,
-      name = Some("Vendor's, Inc. # 1"),
+      name = "Vendor's, Inc. # 1",
       city = Some("City1"),
       state = Some("State1"),
       zip_code = Some("Zip1"),
@@ -21,10 +21,10 @@ trait VendorsTransformerJobFixtures {
   val vendor2: Vendor = {
     new Vendor(
       uid = 2L,
-      name = None,
+      name = "Vendor",
       city = Some("City1"),
-      state = Some("State1"),
-      zip_code = Some("Zip1"),
+      state = None,
+      zip_code = None,
       memo = None,
       edge = edge2
     )
@@ -72,7 +72,7 @@ trait VendorsTransformerJobFixtures {
       RPT_TP = Some("report type 1"),
       FORM_TP_CD = Some("form type 1"),
       SCHED_TP_CD = Some("schedule type 1"),
-      NAME = None,
+      NAME = Some("Vendor1"),
       CITY = None,
       STATE = None,
       ZIP_CODE = None,

@@ -7,11 +7,11 @@ class CommitteesVertexJobSpec extends FlatSpec with Matchers with CommitteesVert
   it should "build vertices from committees" in {
     import CommitteesVertexJob.CommitteeVertex
     CommitteeVertex.fromCommittee(committee1) shouldBe {
-      11L -> committeeVertex1
+      Some(11L -> committeeVertex1)
     }
 
     CommitteeVertex.fromCommittee(committee2) shouldBe {
-      11L -> committeeVertex2
+      None
     }
   }
 

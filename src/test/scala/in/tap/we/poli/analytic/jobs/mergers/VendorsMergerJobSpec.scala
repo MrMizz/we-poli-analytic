@@ -15,7 +15,7 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
       UniqueVendor(
         uid = 1L,
         uids = Seq(1L, 2L),
-        name = Some("Vendor1"),
+        name = "Vendor1",
         names = Set("Vendor1", "Vendor2"),
         city = Some("City1"),
         state = Some("State1"),
@@ -57,7 +57,7 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
         UniqueVendor(
           uid = 1L,
           uids = Seq(3L, 1L),
-          name = Some("Vendor"),
+          name = "Vendor",
           names = Set("Vendor", "Vendor, Inc. # 1"),
           city = Some("City1"),
           state = Some("State1"),
@@ -69,8 +69,8 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
         UniqueVendor(
           uid = 2L,
           uids = Seq(2L),
-          name = None,
-          names = Set(),
+          name = "Vendor Two",
+          names = Set("Vendor Two"),
           city = Some("City1"),
           state = Some("State1"),
           zip_code = Some("Zip1"),

@@ -8,7 +8,7 @@ trait VendorsMergerJobFixtures {
   val vendor1: Vendor = {
     new Vendor(
       uid = 1L,
-      name = Some("Vendor1"),
+      name = "Vendor1",
       city = Some("City1"),
       state = Some("State1"),
       zip_code = Some("Zip1"),
@@ -20,7 +20,7 @@ trait VendorsMergerJobFixtures {
   val vendor2: Vendor = {
     new Vendor(
       uid = 2L,
-      name = Some("Vendor2"),
+      name = "Vendor2",
       city = Some("City1"),
       state = Some("State1"),
       zip_code = Some("Zip1"),

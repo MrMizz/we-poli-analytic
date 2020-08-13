@@ -31,7 +31,7 @@ object VerticesUnionJob {
 
   final case class AgnosticVertex(
     uid: VertexId,
-    name: Option[String],
+    name: String,
     streets: Set[String],
     cities: Set[String],
     states: Set[String],
