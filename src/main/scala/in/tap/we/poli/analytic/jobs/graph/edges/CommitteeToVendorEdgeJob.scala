@@ -47,7 +47,7 @@ object CommitteeToVendorEdgeJob {
   final case class AggregateExpenditureEdge(
     src_id: VertexId,
     dst_id: VertexId,
-    num_edges: BigInt,
+    num_edges: Long,
     edges: Seq[ExpenditureEdge]
   )
 

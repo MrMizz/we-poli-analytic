@@ -11,7 +11,6 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-// TODO: Valid Vertices Union Job, flatMap model name as non-option for Dynamo.
 class VerticesUnionJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
