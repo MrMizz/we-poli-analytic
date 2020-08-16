@@ -3,7 +3,7 @@ variable "api_gateway_stage_name" {
 }
 variable "deployment_id" {
   ### increment to force deployment
-  default = "2"
+  default = "3"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -119,6 +119,55 @@ resource "aws_api_gateway_method" "sub-prefix-method" {
   resource_id = aws_api_gateway_resource.sub-prefix.id
   http_method = "GET"
   authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "sub-prefix-integration" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.sub-prefix.id
+  http_method = aws_api_gateway_method.sub-prefix-method.http_method
+  integration_http_method = "POST"
+  type = "AWS"
+  uri = "arn:aws:apigateway:us-west-2:dynamodb:action/Query"
+  credentials = "arn:aws:iam::504084586672:role/PoliGraphDataAccess"
+
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
+
+  request_templates = {
+    "application/json" = <<EOF
+    {
+      "TableName": "PoliVertexNameAutoComplete",
+      "KeyConditionExpression": "prefix = :key",
+      "ExpressionAttributeValues": {
+        ":key": {
+          "S": "$input.params('prefix')"
+        }
+      }
+    }
+    EOF
+  }
+}
+
+resource "aws_api_gateway_method_response" "sub-prefix-response" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.sub-prefix.id
+  http_method = aws_api_gateway_method.sub-prefix-method.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "sub-prefix-integration-response" {
+  depends_on = [
+    aws_api_gateway_integration.sub-prefix-integration
+  ]
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.sub-prefix.id
+  http_method = aws_api_gateway_method.sub-prefix-method.http_method
+  status_code = aws_api_gateway_method_response.sub-prefix-response.status_code
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
 }
 
 ################################################################################
