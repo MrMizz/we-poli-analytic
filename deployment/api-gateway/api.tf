@@ -3,7 +3,7 @@ variable "api_gateway_stage_name" {
 }
 variable "deployment_id" {
   ### increment to force deployment
-  default = "1"
+  default = "2"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -16,9 +16,19 @@ resource "aws_api_gateway_rest_api" "api" {
   }
 }
 
-resource "aws_api_gateway_resource" "id" {
+## top level endpoint
+resource "aws_api_gateway_resource" "poli" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id = aws_api_gateway_rest_api.api.root_resource_id
+  path_part = "poli"
+}
+
+################################################################################
+## ID GET REQUEST ##############################################################
+################################################################################
+resource "aws_api_gateway_resource" "id" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id = aws_api_gateway_resource.poli.id
   path_part = "id"
 }
 
@@ -89,11 +99,36 @@ resource "aws_api_gateway_integration_response" "sub-id-integration-response" {
   }
 }
 
+################################################################################
+## PREFIX NAME AUTOCOMPLETE GET REQUEST ########################################
+################################################################################
+resource "aws_api_gateway_resource" "prefix" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id = aws_api_gateway_resource.poli.id
+  path_part = "prefix"
+}
+
+resource "aws_api_gateway_resource" "sub-prefix" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id = aws_api_gateway_resource.prefix.id
+  path_part = "{prefix}"
+}
+
+resource "aws_api_gateway_method" "sub-prefix-method" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.sub-prefix.id
+  http_method = "GET"
+  authorization = "NONE"
+}
+
+################################################################################
+## DEPLOYMENT ##################################################################
+################################################################################
 ## Deploy the Gateway Stage
 ## it seems you have to update the variable to actually force a deployment
 resource "aws_api_gateway_deployment" "main" {
   depends_on = [
-    "aws_api_gateway_resource.id"
+    aws_api_gateway_resource.poli
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name = var.api_gateway_stage_name
