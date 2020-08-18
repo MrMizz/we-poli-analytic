@@ -41,16 +41,16 @@ class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, 
           .reduceByKey(_ + _)
       )
       .map {
-        case (vertexId: VertexId, (prefix: String, rank: BigInt)) =>
-          prefix -> Set(vertexId -> rank)
+        case (_, ((vertex: AgnosticVertex, prefix: String), rank: BigInt)) =>
+          prefix -> Set(vertex -> rank)
       }
       .reduceByKey(reduce(BC_MAX_RESPONSE_SIZE.value))
       .map {
-        case (prefix, vertexIdsWithRank: Set[VertexIdWithRank]) =>
+        case (prefix: String, verticesWithRank: Set[(AgnosticVertex, BigInt)]) =>
           VertexNameAutoComplete(
             prefix = prefix,
             prefix_size = prefix.length,
-            uids = vertexIdsWithRank.map(_._1)
+            vertices = verticesWithRank.map(_._1)
           )
       }
       .toDS
@@ -67,12 +67,12 @@ object VertexNameAutoCompleteJob {
    *
    * @param prefix requested
    * @param prefix_size of req.
-   * @param uids containing req. prefix
+   * @param vertices containing req. prefix
    */
   final case class VertexNameAutoComplete(
     prefix: String,
     prefix_size: BigInt,
-    uids: Set[VertexId]
+    vertices: Set[AgnosticVertex]
   )
 
   object VertexNameAutoComplete {
@@ -81,11 +81,11 @@ object VertexNameAutoCompleteJob {
       3 to 50 by 1
     }
 
-    type VertexIdWithPrefix = (VertexId, String)
+    type VertexIdWithDataAndPrefix = (VertexId, (AgnosticVertex, String))
 
-    def fromVertex(vertex: AgnosticVertex): Seq[VertexIdWithPrefix] = {
+    def fromVertex(vertex: AgnosticVertex): Seq[VertexIdWithDataAndPrefix] = {
       buildPrefixes(vertex.name).map { prefix: String =>
-        vertex.uid -> prefix
+        vertex.uid -> (vertex, prefix)
       }
     }
 
@@ -95,9 +95,11 @@ object VertexNameAutoCompleteJob {
       Seq(edge.src_id -> edge.num_edges, edge.dst_id -> edge.num_edges)
     }
 
+    type VertexWithRank = (AgnosticVertex, BigInt)
+
     def reduce(
       MAX_RESPONSE_SIZE: Int
-    )(left: Set[VertexIdWithRank], right: Set[VertexIdWithRank]): Set[VertexIdWithRank] = {
+    )(left: Set[VertexWithRank], right: Set[VertexWithRank]): Set[VertexWithRank] = {
       (left ++ right).take(MAX_RESPONSE_SIZE)
     }
 

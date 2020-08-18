@@ -12,43 +12,43 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
   it should "build prefixes from vertex names" in {
     VertexNameAutoComplete.fromVertex(agnosticVertex1) shouldBe {
       Seq(
-        11L -> "com",
-        11L -> "comm",
-        11L -> "commi",
-        11L -> "commit",
-        11L -> "committ",
-        11L -> "committe",
-        11L -> "committee",
-        11 -> "committee1"
+        11L -> (agnosticVertex1 -> "com"),
+        11L -> (agnosticVertex1 -> "comm"),
+        11L -> (agnosticVertex1 -> "commi"),
+        11L -> (agnosticVertex1 -> "commit"),
+        11L -> (agnosticVertex1 -> "committ"),
+        11L -> (agnosticVertex1 -> "committe"),
+        11L -> (agnosticVertex1 -> "committee"),
+        11L -> (agnosticVertex1 -> "committee1")
       )
     }
 
     VertexNameAutoComplete.fromVertex(agnosticVertex12) shouldBe {
       Seq(
-        1L -> "mic",
-        1L -> "mick",
-        1L -> "micke",
-        1L -> "mickey",
-        1L -> "mickey'",
-        1L -> "mickey's",
-        1L -> "con",
-        1L -> "cons",
-        1L -> "consu",
-        1L -> "consul",
-        1L -> "consult",
-        1L -> "consulti",
-        1L -> "consultin",
-        1L -> "consulting",
-        1L -> "mickey'sc",
-        1L -> "mickey'sco",
-        1L -> "mickey'scon",
-        1L -> "mickey'scons",
-        1L -> "mickey'sconsu",
-        1L -> "mickey'sconsul",
-        1L -> "mickey'sconsult",
-        1L -> "mickey'sconsulti",
-        1L -> "mickey'sconsultin",
-        1L -> "mickey'sconsulting"
+        1L -> (agnosticVertex12 -> "mic"),
+        1L -> (agnosticVertex12 -> "mick"),
+        1L -> (agnosticVertex12 -> "micke"),
+        1L -> (agnosticVertex12 -> "mickey"),
+        1L -> (agnosticVertex12 -> "mickey'"),
+        1L -> (agnosticVertex12 -> "mickey's"),
+        1L -> (agnosticVertex12 -> "con"),
+        1L -> (agnosticVertex12 -> "cons"),
+        1L -> (agnosticVertex12 -> "consu"),
+        1L -> (agnosticVertex12 -> "consul"),
+        1L -> (agnosticVertex12 -> "consult"),
+        1L -> (agnosticVertex12 -> "consulti"),
+        1L -> (agnosticVertex12 -> "consultin"),
+        1L -> (agnosticVertex12 -> "consulting"),
+        1L -> (agnosticVertex12 -> "mickey'sc"),
+        1L -> (agnosticVertex12 -> "mickey'sco"),
+        1L -> (agnosticVertex12 -> "mickey'scon"),
+        1L -> (agnosticVertex12 -> "mickey'scons"),
+        1L -> (agnosticVertex12 -> "mickey'sconsu"),
+        1L -> (agnosticVertex12 -> "mickey'sconsul"),
+        1L -> (agnosticVertex12 -> "mickey'sconsult"),
+        1L -> (agnosticVertex12 -> "mickey'sconsulti"),
+        1L -> (agnosticVertex12 -> "mickey'sconsultin"),
+        1L -> (agnosticVertex12 -> "mickey'sconsulting")
       )
     }
   }
@@ -81,40 +81,43 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
         .as[VertexNameAutoCompleteJob.VertexNameAutoComplete]
         .collect()
         .toSeq
-        .sortBy(_.prefix) shouldBe {
+        .sortBy(_.prefix)
+        .map { autoComplete: VertexNameAutoComplete =>
+          (autoComplete.prefix, autoComplete.prefix_size, autoComplete.vertices.map(_.uid))
+        } shouldBe {
         Seq(
-          VertexNameAutoComplete("com", 3, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("comm", 4, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("commi", 5, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("commit", 6, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("committ", 7, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("committe", 8, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("committee", 9, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("committee1", 10, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          VertexNameAutoComplete("con", 3, Set(1)),
-          VertexNameAutoComplete("cons", 4, Set(1)),
-          VertexNameAutoComplete("consu", 5, Set(1)),
-          VertexNameAutoComplete("consul", 6, Set(1)),
-          VertexNameAutoComplete("consult", 7, Set(1)),
-          VertexNameAutoComplete("consulti", 8, Set(1)),
-          VertexNameAutoComplete("consultin", 9, Set(1)),
-          VertexNameAutoComplete("consulting", 10, Set(1)),
-          VertexNameAutoComplete("mic", 3, Set(1)),
-          VertexNameAutoComplete("mick", 4, Set(1)),
-          VertexNameAutoComplete("micke", 5, Set(1)),
-          VertexNameAutoComplete("mickey", 6, Set(1)),
-          VertexNameAutoComplete("mickey'", 7, Set(1)),
-          VertexNameAutoComplete("mickey's", 8, Set(1)),
-          VertexNameAutoComplete("mickey'sc", 9, Set(1)),
-          VertexNameAutoComplete("mickey'sco", 10, Set(1)),
-          VertexNameAutoComplete("mickey'scon", 11, Set(1)),
-          VertexNameAutoComplete("mickey'scons", 12, Set(1)),
-          VertexNameAutoComplete("mickey'sconsu", 13, Set(1)),
-          VertexNameAutoComplete("mickey'sconsul", 14, Set(1)),
-          VertexNameAutoComplete("mickey'sconsult", 15, Set(1)),
-          VertexNameAutoComplete("mickey'sconsulti", 16, Set(1)),
-          VertexNameAutoComplete("mickey'sconsultin", 17, Set(1)),
-          VertexNameAutoComplete("mickey'sconsulting", 18, Set(1))
+          ("com", 3, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("comm", 4, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("commi", 5, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("commit", 6, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("committ", 7, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("committe", 8, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("committee", 9, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("committee1", 10, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+          ("con", 3, Set(1)),
+          ("cons", 4, Set(1)),
+          ("consu", 5, Set(1)),
+          ("consul", 6, Set(1)),
+          ("consult", 7, Set(1)),
+          ("consulti", 8, Set(1)),
+          ("consultin", 9, Set(1)),
+          ("consulting", 10, Set(1)),
+          ("mic", 3, Set(1)),
+          ("mick", 4, Set(1)),
+          ("micke", 5, Set(1)),
+          ("mickey", 6, Set(1)),
+          ("mickey'", 7, Set(1)),
+          ("mickey's", 8, Set(1)),
+          ("mickey'sc", 9, Set(1)),
+          ("mickey'sco", 10, Set(1)),
+          ("mickey'scon", 11, Set(1)),
+          ("mickey'scons", 12, Set(1)),
+          ("mickey'sconsu", 13, Set(1)),
+          ("mickey'sconsul", 14, Set(1)),
+          ("mickey'sconsult", 15, Set(1)),
+          ("mickey'sconsulti", 16, Set(1)),
+          ("mickey'sconsultin", 17, Set(1)),
+          ("mickey'sconsulting", 18, Set(1))
         )
       }
     }
