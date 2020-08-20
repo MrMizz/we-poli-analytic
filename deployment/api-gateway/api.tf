@@ -3,7 +3,7 @@ variable "api_gateway_stage_name" {
 }
 variable "deployment_id" {
   ### increment to force deployment
-  default = "4"
+  default = "5"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
