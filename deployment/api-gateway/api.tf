@@ -3,7 +3,7 @@ variable "api_gateway_stage_name" {
 }
 variable "deployment_id" {
   ### increment to force deployment
-  default = "5"
+  default = "2"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -153,6 +153,61 @@ resource "aws_api_gateway_integration_response" "vetex-integration-response" {
   }
 }
 
+################################################################################
+## VERTEX DATA CORS ############################################################
+################################################################################
+resource "aws_api_gateway_method" "cors-method" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.vertex.id
+  http_method = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "cors-integration" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.vertex.id
+  http_method = aws_api_gateway_method.cors-method.http_method
+  type = "MOCK"
+  depends_on = [
+    aws_api_gateway_method.cors-method]
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  request_templates = {
+    "application/json" = <<EOF
+    {
+      statusCode: 200
+    }
+    EOF
+  }
+}
+
+resource "aws_api_gateway_method_response" "cors-response" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.vertex.id
+  http_method = aws_api_gateway_method.cors-method.http_method
+  status_code = "200"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+  depends_on = [
+    aws_api_gateway_method.cors-method]
+}
+
+resource "aws_api_gateway_integration_response" "cors-integration-response" {
+  depends_on = [
+    aws_api_gateway_integration.cors-integration
+  ]
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.vertex.id
+  http_method = aws_api_gateway_method.cors-method.http_method
+  status_code = aws_api_gateway_method_response.cors-response.status_code
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+}
 
 ################################################################################
 ## DEPLOYMENT ##################################################################
