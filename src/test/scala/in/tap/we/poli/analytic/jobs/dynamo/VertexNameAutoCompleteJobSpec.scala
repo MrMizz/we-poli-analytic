@@ -54,72 +54,70 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
   }
 
   it should "build top N prefix-bound uid collections" in {
-    val _: Unit = {
-      val resourcePath: String = {
-        "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/dynamo/vertex_name_auto_complete"
-      }
-      val in1Path: String = {
-        s"$resourcePath/in1/"
-      }
-      val in2Path: String = {
-        s"$resourcePath/in2/"
-      }
-      val outPath: String = {
-        s"$resourcePath/out/"
-      }
-      import spark.implicits._
-      agnosticVertices.toDS().write.mode(SaveMode.Overwrite).json(in1Path)
-      aggregateExpenditureEdges.toDS.write.mode(SaveMode.Overwrite).parquet(in2Path)
-      new VertexNameAutoCompleteJob(
-        TwoInArgs(In(in1Path), In(in2Path, Formats.PARQUET)),
-        OneOutArgs(Out(outPath)),
-        MAX_RESPONSE_SIZE = 10
-      ).execute()
-      spark
-        .read
-        .json(outPath)
-        .as[VertexNameAutoCompleteJob.VertexNameAutoComplete]
-        .collect()
-        .toSeq
-        .sortBy(_.prefix)
-        .map { autoComplete: VertexNameAutoComplete =>
-          (autoComplete.prefix, autoComplete.prefix_size, autoComplete.vertices.map(_.uid))
-        } shouldBe {
-        Seq(
-          ("com", 3, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("comm", 4, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("commi", 5, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("commit", 6, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("committ", 7, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("committe", 8, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("committee", 9, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("committee1", 10, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-          ("con", 3, Set(1)),
-          ("cons", 4, Set(1)),
-          ("consu", 5, Set(1)),
-          ("consul", 6, Set(1)),
-          ("consult", 7, Set(1)),
-          ("consulti", 8, Set(1)),
-          ("consultin", 9, Set(1)),
-          ("consulting", 10, Set(1)),
-          ("mic", 3, Set(1)),
-          ("mick", 4, Set(1)),
-          ("micke", 5, Set(1)),
-          ("mickey", 6, Set(1)),
-          ("mickey'", 7, Set(1)),
-          ("mickey's", 8, Set(1)),
-          ("mickey'sc", 9, Set(1)),
-          ("mickey'sco", 10, Set(1)),
-          ("mickey'scon", 11, Set(1)),
-          ("mickey'scons", 12, Set(1)),
-          ("mickey'sconsu", 13, Set(1)),
-          ("mickey'sconsul", 14, Set(1)),
-          ("mickey'sconsult", 15, Set(1)),
-          ("mickey'sconsulti", 16, Set(1)),
-          ("mickey'sconsultin", 17, Set(1)),
-          ("mickey'sconsulting", 18, Set(1))
-        )
-      }
+    val resourcePath: String = {
+      "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/dynamo/vertex_name_auto_complete"
+    }
+    val in1Path: String = {
+      s"$resourcePath/in1/"
+    }
+    val in2Path: String = {
+      s"$resourcePath/in2/"
+    }
+    val outPath: String = {
+      s"$resourcePath/out/"
+    }
+    import spark.implicits._
+    agnosticVertices.toDS().write.mode(SaveMode.Overwrite).json(in1Path)
+    aggregateExpenditureEdges.toDS.write.mode(SaveMode.Overwrite).parquet(in2Path)
+    new VertexNameAutoCompleteJob(
+      TwoInArgs(In(in1Path), In(in2Path, Formats.PARQUET)),
+      OneOutArgs(Out(outPath)),
+      MAX_RESPONSE_SIZE = 10
+    ).execute()
+    spark
+      .read
+      .json(outPath)
+      .as[VertexNameAutoCompleteJob.VertexNameAutoComplete]
+      .collect()
+      .toSeq
+      .sortBy(_.prefix)
+      .map { autoComplete: VertexNameAutoComplete =>
+        (autoComplete.is_committee, autoComplete.prefix, autoComplete.prefix_size, autoComplete.vertices.map(_.uid))
+      } shouldBe {
+      Seq(
+        (1, "com", 3, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (1, "comm", 4, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (1, "commi", 5, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (1, "commit", 6, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (1, "committ", 7, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (1, "committe", 8, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (1, "committee", 9, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (1, "committee1", 10, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
+        (0, "con", 3, Set(1)),
+        (0, "cons", 4, Set(1)),
+        (0, "consu", 5, Set(1)),
+        (0, "consul", 6, Set(1)),
+        (0, "consult", 7, Set(1)),
+        (0, "consulti", 8, Set(1)),
+        (0, "consultin", 9, Set(1)),
+        (0, "consulting", 10, Set(1)),
+        (0, "mic", 3, Set(1)),
+        (0, "mick", 4, Set(1)),
+        (0, "micke", 5, Set(1)),
+        (0, "mickey", 6, Set(1)),
+        (0, "mickey'", 7, Set(1)),
+        (0, "mickey's", 8, Set(1)),
+        (0, "mickey'sc", 9, Set(1)),
+        (0, "mickey'sco", 10, Set(1)),
+        (0, "mickey'scon", 11, Set(1)),
+        (0, "mickey'scons", 12, Set(1)),
+        (0, "mickey'sconsu", 13, Set(1)),
+        (0, "mickey'sconsul", 14, Set(1)),
+        (0, "mickey'sconsult", 15, Set(1)),
+        (0, "mickey'sconsulti", 16, Set(1)),
+        (0, "mickey'sconsultin", 17, Set(1)),
+        (0, "mickey'sconsulting", 18, Set(1))
+      )
     }
   }
 

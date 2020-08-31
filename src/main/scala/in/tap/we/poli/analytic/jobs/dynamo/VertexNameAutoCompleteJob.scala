@@ -42,14 +42,15 @@ class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, 
       )
       .map {
         case (_, ((vertex: AgnosticVertex, prefix: String), rank: BigInt)) =>
-          prefix -> Set(vertex -> rank)
+          (prefix -> vertex.is_committee) -> Set(vertex -> rank)
       }
       .reduceByKey(reduce(BC_MAX_RESPONSE_SIZE.value))
       .map {
-        case (prefix: String, verticesWithRank: Set[(AgnosticVertex, BigInt)]) =>
+        case ((prefix: String, isCommittee: Boolean), verticesWithRank: Set[(AgnosticVertex, BigInt)]) =>
           VertexNameAutoComplete(
             prefix = prefix,
             prefix_size = prefix.length,
+            is_committee = isCommittee.compare(false),
             vertices = verticesWithRank.map(_._1)
           )
       }
@@ -72,6 +73,7 @@ object VertexNameAutoCompleteJob {
   final case class VertexNameAutoComplete(
     prefix: String,
     prefix_size: BigInt,
+    is_committee: BigInt,
     vertices: Set[AgnosticVertex]
   )
 
