@@ -3,7 +3,7 @@ variable "api_gateway_stage_name" {
 }
 variable "deployment_id" {
   ### increment to force deployment
-  default = "2"
+  default = "1"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -61,7 +61,7 @@ resource "aws_api_gateway_integration" "sub-prefix-integration" {
   request_templates = {
     "application/json" = <<EOF
     {
-      "TableName": "PoliVertexNameAutoComplete",
+      "TableName": "PoliVertexNameAutoComplete2",
       "KeyConditionExpression": "prefix = :key",
       "ExpressionAttributeValues": {
         ":key": {
