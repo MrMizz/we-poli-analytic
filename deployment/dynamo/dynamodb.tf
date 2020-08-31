@@ -24,16 +24,10 @@ resource "aws_dynamodb_table" "poli-vertex-name-autocomplete2" {
   read_capacity = 5
   write_capacity = 25000
   hash_key = "prefix"
-  range_key = "is_committee"
 
   attribute {
     name = "prefix"
     type = "S"
-  }
-
-  attribute {
-    name = "is_committee"
-    type = "N"
   }
 
   tags = {
@@ -44,7 +38,7 @@ resource "aws_dynamodb_table" "poli-vertex-name-autocomplete2" {
 
 # TODO: turn back on when ready write again. this will force replace.
 #resource "aws_dynamodb_table" "poli-vertex" {
-#  name = "PoliVertex"
+#  name = "PoliVertex2"
 #  billing_mode = "PAY_PER_REQUEST"
 #  #billing_mode = "PROVISIONED"
 #  #read_capacity = 5
