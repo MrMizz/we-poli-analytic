@@ -92,7 +92,7 @@ object VertexNameAutoCompleteJob {
     type VertexIdWithRank = (VertexId, BigInt)
 
     def fromEdge(edge: AggregateExpenditureEdge): Seq[VertexIdWithRank] = {
-      Seq(edge.src_id -> edge.num_edges, edge.dst_id -> edge.num_edges)
+      Seq(edge.src_id -> edge.analytics.num_edges, edge.dst_id -> edge.analytics.num_edges)
     }
 
     type VertexWithRank = (AgnosticVertex, BigInt)

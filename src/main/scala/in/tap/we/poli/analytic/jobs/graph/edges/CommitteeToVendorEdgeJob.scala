@@ -3,7 +3,9 @@ package in.tap.we.poli.analytic.jobs.graph.edges
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{AggregateExpenditureEdge, ExpenditureEdge}
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{
+  AggregateExpenditureEdge, Analytics, ExpenditureEdge
+}
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.models.OperatingExpenditures
 import org.apache.spark.graphx.VertexId
@@ -33,7 +35,7 @@ class CommitteeToVendorEdgeJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
           AggregateExpenditureEdge(
             src_id = srcId,
             dst_id = dstId,
-            num_edges = edges.size,
+            analytics = Analytics(edges),
             edges = edges
           )
       }
@@ -47,9 +49,44 @@ object CommitteeToVendorEdgeJob {
   final case class AggregateExpenditureEdge(
     src_id: VertexId,
     dst_id: VertexId,
-    num_edges: Long,
+    analytics: Analytics,
     edges: Seq[ExpenditureEdge]
   )
+
+  final case class Analytics(
+    num_edges: BigInt,
+    total_spend: Option[Double],
+    avg_spend: Option[Double],
+    min_spend: Option[Double],
+    max_spend: Option[Double]
+  )
+
+  object Analytics {
+
+    def apply(edges: Seq[ExpenditureEdge]): Analytics = {
+      val transactions: Seq[Double] = {
+        edges.flatMap(_.transaction_amount)
+      }
+      val maybeTotalSpend: Option[Double] = {
+        if (transactions.nonEmpty) {
+          Some(transactions.sum)
+        } else {
+          None
+        }
+      }
+      val numEdges: Int = {
+        edges.size
+      }
+      Analytics(
+        num_edges = numEdges,
+        total_spend = maybeTotalSpend,
+        avg_spend = maybeTotalSpend.map(totalSpend => totalSpend / numEdges),
+        min_spend = maybeTotalSpend.map(_ => transactions.min),
+        max_spend = maybeTotalSpend.map(_ => transactions.max)
+      )
+    }
+
+  }
 
   final case class ExpenditureEdge(
     src_id: VertexId,

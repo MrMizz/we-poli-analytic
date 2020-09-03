@@ -1,6 +1,8 @@
 package in.tap.we.poli.analytic.jobs.dynamo
 
-import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{AggregateExpenditureEdge, ExpenditureEdge}
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{
+  AggregateExpenditureEdge, Analytics, ExpenditureEdge
+}
 import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJob.AgnosticVertex
 import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJobFixtures
 
@@ -67,7 +69,13 @@ trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
     AggregateExpenditureEdge(
       src_id = 11L,
       dst_id = 22L,
-      num_edges = 10,
+      analytics = Analytics(
+        num_edges = 10,
+        total_spend = None,
+        avg_spend = None,
+        min_spend = None,
+        max_spend = None
+      ),
       edges = Seq.empty[ExpenditureEdge]
     )
   }
@@ -105,14 +113,20 @@ trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
   }
 
   val aggregateExpenditureEdge10: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 12L, num_edges = 9)
+    aggregateExpenditureEdge1.copy(dst_id = 12L, analytics = aggregateExpenditureEdge1.analytics.copy(num_edges = 9))
   }
 
   val aggregateExpenditureEdge11: AggregateExpenditureEdge = {
     AggregateExpenditureEdge(
       src_id = 1L,
       dst_id = 2L,
-      num_edges = 1,
+      analytics = Analytics(
+        num_edges = 1,
+        total_spend = None,
+        avg_spend = None,
+        min_spend = None,
+        max_spend = None
+      ),
       edges = Seq(ExpenditureEdge(1L, None, None, None, None, None, None, None, None, None, None, None))
     )
   }
