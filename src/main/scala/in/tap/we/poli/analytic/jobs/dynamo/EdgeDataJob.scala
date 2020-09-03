@@ -34,10 +34,10 @@ object EdgeDataJob {
     src_id: VertexId,
     dst_id: VertexId,
     num_transactions: BigInt,
-    total_spend: Option[Double],
-    avg_spend: Option[Double],
-    min_spend: Option[Double],
-    max_spend: Option[Double]
+    total_spend: Option[Long],
+    avg_spend: Option[Long],
+    min_spend: Option[Long],
+    max_spend: Option[Long]
   )
 
   object EdgeData {
@@ -47,10 +47,10 @@ object EdgeDataJob {
         src_id = aggregateExpenditureEdge.src_id,
         dst_id = aggregateExpenditureEdge.dst_id,
         num_transactions = aggregateExpenditureEdge.analytics.num_edges,
-        total_spend = aggregateExpenditureEdge.analytics.total_spend,
-        avg_spend = aggregateExpenditureEdge.analytics.avg_spend,
-        min_spend = aggregateExpenditureEdge.analytics.min_spend,
-        max_spend = aggregateExpenditureEdge.analytics.max_spend
+        total_spend = aggregateExpenditureEdge.analytics.total_spend.map(_.toLong),
+        avg_spend = aggregateExpenditureEdge.analytics.avg_spend.map(_.toLong),
+        min_spend = aggregateExpenditureEdge.analytics.min_spend.map(_.toLong),
+        max_spend = aggregateExpenditureEdge.analytics.max_spend.map(_.toLong)
       )
     }
 
