@@ -13,7 +13,6 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoVertexNames,\
 --class,in.tap.we.poli.analytic.Main,\
---packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-vertex-name,\
 --in1,s3://big-time-tap-in-spark/poli/graph/vertices/union/2020-08-12-01/,\
@@ -55,5 +54,38 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
 --in1-format,json,\
 --out1,PoliVertex,\
+--out1-format,no-op\
+]
+
+
+#########################################################################
+## Edge Data ############################################################
+#########################################################################
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoEdges,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoEdges,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,dynamo-edge-data,\
+--in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1-format,json,\
+--out1,s3://big-time-tap-in-spark/poli/dynamo/edges/$RUN_DATE/,\
+--out1-format,json\
+]
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoEdgesWriter,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoEdgesWriter,\
+--class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
+$JAR_PATH,\
+--step,dynamo-edge-data-writer,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/edges/$RUN_DATE/,\
+--in1-format,json,\
+--out1,PoliEdge,\
 --out1-format,no-op\
 ]

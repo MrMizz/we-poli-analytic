@@ -5,7 +5,9 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.VendorsConnectorJob
-import in.tap.we.poli.analytic.jobs.dynamo.{VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
+import in.tap.we.poli.analytic.jobs.dynamo.{
+  EdgeDataDDBJob, EdgeDataJob, VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob
+}
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
@@ -43,6 +45,10 @@ object Main extends in.tap.base.spark.main.Main {
         new VertexNameAutoCompleteDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-vertex-data-writer" =>
         new VertexDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-edge-data" =>
+        new EdgeDataJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-edge-data-writer" =>
+        new EdgeDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }
