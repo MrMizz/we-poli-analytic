@@ -89,3 +89,35 @@ $JAR_PATH,\
 --out1,PoliEdge,\
 --out1-format,no-op\
 ]
+
+#########################################################################
+## GRAPH TRAVERSALS #####################################################
+#########################################################################
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversals,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversals,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal,\
+--in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1-format,json,\
+--out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/$RUN_DATE/,\
+--out1-format,json\
+]
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsWriter,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsWriter,\
+--class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-writer,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/$RUN_DATE/,\
+--in1-format,json,\
+--out1,PoliTraversals,\
+--out1-format,no-op\
+]
