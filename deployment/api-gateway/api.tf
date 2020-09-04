@@ -5,7 +5,7 @@ variable "deployment_id_dev" {
 
 variable "deployment_id_prod" {
   ### increment to force deployment
-  default = "1"
+  default = "2"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
