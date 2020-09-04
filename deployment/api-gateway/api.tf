@@ -1,7 +1,9 @@
-variable "api_gateway_stage_name" {
-  default = "v1"
+variable "deployment_id_dev" {
+  ### increment to force deployment
+  default = "1"
 }
-variable "deployment_id" {
+
+variable "deployment_id_prod" {
   ### increment to force deployment
   default = "1"
 }
@@ -101,37 +103,37 @@ resource "aws_api_gateway_integration_response" "sub-prefix-integration-response
 
 
 ################################################################################
-## VERTEX DATA POST REQUEST ####################################################
+## GRAPH DATA POST REQUEST #####################################################
 ################################################################################
-resource "aws_api_gateway_resource" "vertex" {
+resource "aws_api_gateway_resource" "graph" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id = aws_api_gateway_resource.poli.id
-  path_part = "vertex"
+  path_part = "graph"
 }
 
-resource "aws_api_gateway_method" "vertex-method" {
+resource "aws_api_gateway_method" "graph-method" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
+  resource_id = aws_api_gateway_resource.graph.id
   http_method = "POST"
   authorization = "NONE"
 }
 
 # https://github.com/tillkuhn/yummy-aws/blob/master/terraform/terraform-apigw.tf
 # great example for ddb tf
-resource "aws_api_gateway_integration" "vertex-integration" {
+resource "aws_api_gateway_integration" "graph-integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-method.http_method
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graph-method.http_method
   integration_http_method = "POST"
   type = "AWS"
   uri = "arn:aws:apigateway:us-west-2:dynamodb:action/BatchGetItem"
   credentials = "arn:aws:iam::504084586672:role/PoliGraphDataAccess"
 }
 
-resource "aws_api_gateway_method_response" "vertex-response" {
+resource "aws_api_gateway_method_response" "graph-response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-method.http_method
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graph-method.http_method
   status_code = "200"
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
@@ -140,14 +142,14 @@ resource "aws_api_gateway_method_response" "vertex-response" {
 
 ## Mapping reference: https://docs.aws.amazon.com/de_de/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
 ## conditional? https://stackoverflow.com/questions/32511087/aws-api-gateway-how-do-i-make-querystring-parameters-optional-in-mapping-templa
-resource "aws_api_gateway_integration_response" "vetex-integration-response" {
+resource "aws_api_gateway_integration_response" "graph-integration-response" {
   depends_on = [
-    aws_api_gateway_integration.vertex-integration
+    aws_api_gateway_integration.graph-integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-method.http_method
-  status_code = aws_api_gateway_method_response.vertex-response.status_code
+  resource_id = aws_api_gateway_resource.graph.id
+  http_method = aws_api_gateway_method.graph-method.http_method
+  status_code = aws_api_gateway_method_response.graph-response.status_code
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
@@ -158,14 +160,14 @@ resource "aws_api_gateway_integration_response" "vetex-integration-response" {
 ################################################################################
 resource "aws_api_gateway_method" "cors-method" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
+  resource_id = aws_api_gateway_resource.graph.id
   http_method = "OPTIONS"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "cors-integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
+  resource_id = aws_api_gateway_resource.graph.id
   http_method = aws_api_gateway_method.cors-method.http_method
   type = "MOCK"
   depends_on = [
@@ -182,7 +184,7 @@ resource "aws_api_gateway_integration" "cors-integration" {
 
 resource "aws_api_gateway_method_response" "cors-response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
+  resource_id = aws_api_gateway_resource.graph.id
   http_method = aws_api_gateway_method.cors-method.http_method
   status_code = "200"
   response_parameters = {
@@ -199,7 +201,7 @@ resource "aws_api_gateway_integration_response" "cors-integration-response" {
     aws_api_gateway_integration.cors-integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
+  resource_id = aws_api_gateway_resource.graph.id
   http_method = aws_api_gateway_method.cors-method.http_method
   status_code = aws_api_gateway_method_response.cors-response.status_code
   response_parameters = {
@@ -214,13 +216,24 @@ resource "aws_api_gateway_integration_response" "cors-integration-response" {
 ################################################################################
 ## Deploy the Gateway Stage
 ## it seems you have to update the variable to actually force a deployment
-resource "aws_api_gateway_deployment" "main" {
+resource "aws_api_gateway_deployment" "prod" {
   depends_on = [
     aws_api_gateway_resource.poli
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name = var.api_gateway_stage_name
+  stage_name = "prod"
   variables = {
-    "answer" = var.deployment_id
+    "answer" = var.deployment_id_prod
+  }
+}
+
+resource "aws_api_gateway_deployment" "dev" {
+  depends_on = [
+    aws_api_gateway_resource.poli
+  ]
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name = "dev"
+  variables = {
+    "answer" = var.deployment_id_dev
   }
 }
