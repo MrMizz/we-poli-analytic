@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-3N5KKZ6TP705G"
+CLUSTER="j-3BZYK4LQOECGM"
 RUN_DATE="2020-09-02-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
@@ -104,7 +104,7 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --in1-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/$RUN_DATE/,\
---out1-format,json\
+--out1-format,json,\
 --out2,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
 --out2-format,json\
 ]
