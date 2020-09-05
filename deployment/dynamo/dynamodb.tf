@@ -44,10 +44,10 @@ resource "aws_dynamodb_table" "poli-edge" {
 
 resource "aws_dynamodb_table" "poli-traversals-page" {
   name = "PoliTraversalsPage"
-  #billing_mode = "PAY_PER_REQUEST"
-  billing_mode = "PROVISIONED"
-  read_capacity = 5
-  write_capacity = 25000
+  billing_mode = "PAY_PER_REQUEST"
+  #billing_mode = "PROVISIONED"
+  #read_capacity = 5
+  #write_capacity = 25000
   hash_key = "vertex_id"
 
   attribute {
@@ -63,10 +63,10 @@ resource "aws_dynamodb_table" "poli-traversals-page" {
 
 resource "aws_dynamodb_table" "poli-traversals-page-count" {
   name = "PoliTraversalsPageCount"
-  #billing_mode = "PAY_PER_REQUEST"
-  billing_mode = "PROVISIONED"
-  read_capacity = 5
-  write_capacity = 25000
+  billing_mode = "PAY_PER_REQUEST"
+  #billing_mode = "PROVISIONED"
+  #read_capacity = 5
+  #write_capacity = 25000
   hash_key = "vertex_id"
 
   attribute {
