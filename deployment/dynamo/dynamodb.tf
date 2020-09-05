@@ -49,9 +49,15 @@ resource "aws_dynamodb_table" "poli-traversals-page" {
   read_capacity = 5
   write_capacity = 25000
   hash_key = "vertex_id"
+  range_key = "page_num"
 
   attribute {
     name = "vertex_id"
+    type = "N"
+  }
+
+  attribute {
+    name = "page_num"
     type = "N"
   }
 
