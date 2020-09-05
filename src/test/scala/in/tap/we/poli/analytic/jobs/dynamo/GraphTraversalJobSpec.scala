@@ -10,6 +10,17 @@ import org.apache.spark.sql.SaveMode
 class GraphTraversalJobSpec extends BaseSparkJobSpec with VertexNameAutoCompleteJobFixtures {
 
   it should "paginate" in {
+    // one page
+    GraphTraversal.paginate(vertexId = 10L, relatedVertexIdsWithCount = (Seq.fill(99)(2L), 99)) shouldBe {
+      Seq(
+        GraphTraversal(
+          vertex_id = 10L,
+          page_num = 1L,
+          related_vertex_ids = Seq.fill(99)(2L)
+        ) -> (10L, 1L)
+      )
+    }
+    // two pages
     GraphTraversal.paginate(vertexId = 10L, relatedVertexIdsWithCount = (Seq.fill(101)(2L), 101)) shouldBe {
       Seq(
         GraphTraversal(
