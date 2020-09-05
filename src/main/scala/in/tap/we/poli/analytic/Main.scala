@@ -52,7 +52,7 @@ object Main extends in.tap.base.spark.main.Main {
         new EdgeDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal" =>
         new GraphTraversalJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "graph-traversal-writer" =>
+      case "dynamo-graph-traversal-writer" =>
         new GraphTraversalDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
