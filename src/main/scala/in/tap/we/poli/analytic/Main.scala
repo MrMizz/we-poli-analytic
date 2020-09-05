@@ -6,8 +6,8 @@ import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.VendorsConnectorJob
 import in.tap.we.poli.analytic.jobs.dynamo.{
-  EdgeDataDDBJob, EdgeDataJob, GraphTraversalDDBJob, GraphTraversalJob, VertexDataDDBJob, VertexNameAutoCompleteDDBJob,
-  VertexNameAutoCompleteJob
+  EdgeDataDDBJob, EdgeDataJob, GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob,
+  VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob
 }
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
@@ -52,8 +52,10 @@ object Main extends in.tap.base.spark.main.Main {
         new EdgeDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal" =>
         new GraphTraversalJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
-      case "dynamo-graph-traversal-writer" =>
-        new GraphTraversalDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-page-writer" =>
+        new GraphTraversalPageDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-page-count-writer" =>
+        new GraphTraversalPageCountDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }
