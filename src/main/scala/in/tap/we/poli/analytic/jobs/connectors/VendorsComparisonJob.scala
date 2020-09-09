@@ -24,8 +24,17 @@ class VendorsComparisonJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
       .reduceByKey(VendorsComparator.reduce)
       .flatMap {
         case (_, comparators: Seq[(Long, VendorsComparator)]) =>
-          VendorsComparison(comparators.map(_._2))
+          VendorsComparison(comparators.map(_._2)).map { vendorsComparison: VendorsComparison =>
+            Seq(vendorsComparison.left.uid, vendorsComparison.right.uid).sorted match {
+              case seq => (seq.head, seq.tail.head) -> vendorsComparison
+            }
+          }
       }
+      .reduceByKey {
+        case (left: VendorsComparison, _) =>
+          left
+      }
+      .map(_._2)
       .toDS
   }
 
