@@ -4,7 +4,7 @@ import in.tap.base.spark.jobs.composite.CompositeJob
 import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
-import in.tap.we.poli.analytic.jobs.connectors.VendorsConnectorJob
+import in.tap.we.poli.analytic.jobs.connectors.{VendorsComparisonJob, VendorsConnectorJob}
 import in.tap.we.poli.analytic.jobs.dynamo.{
   EdgeDataDDBJob, EdgeDataJob, GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob,
   VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob
@@ -26,6 +26,8 @@ object Main extends in.tap.base.spark.main.Main {
         new VendorsConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-merger" =>
         new VendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "vendors-comparison" =>
+        new VendorsComparisonJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-vertex" =>
         new VendorsVertexJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "committees-vertex" =>

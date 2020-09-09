@@ -3,6 +3,7 @@ package in.tap.we.poli.analytic.jobs.transformers
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
+import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob._
 import in.tap.we.poli.models.OperatingExpenditures
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -25,14 +26,6 @@ class VendorsTransformerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 object VendorsTransformerJob {
 
   import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
-
-  val STOP_WORDS: Set[String] = {
-    Set("ltd", "llc", "inc")
-  }
-
-  val PUNCTUATION_REGEX: String = {
-    """\p{P}"""
-  }
 
   final case class Vendor(
     uid: Long,
@@ -79,16 +72,7 @@ object VendorsTransformerJob {
     }
 
     private lazy val cleanedName: String = {
-      name.toLowerCase // to lower case
-        .replaceAll(PUNCTUATION_REGEX, "") // strip punctuation
-        .filterNot { char: Char =>
-          java.lang.Character.isDigit(char) // filter numeric
-        }
-        .split(" ") // tokenize
-        .filterNot { char: String =>
-          STOP_WORDS.contains(char) // filter stop words
-        }
-        .fold("")(_ + _) // join
+      ConnectorUtils.cleanedName(name)
     }
 
   }
