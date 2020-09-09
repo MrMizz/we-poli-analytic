@@ -21,10 +21,10 @@ class VendorsComparisonJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
     input
       .flatMap(VendorsComparator.apply)
       .rdd
-      .groupByKey()
+      .reduceByKey(VendorsComparator.reduce)
       .flatMap {
-        case (_, comparators: Iterable[VendorsComparator]) =>
-          VendorsComparison(comparators.toSeq)
+        case (_, comparators: Seq[(Long, VendorsComparator)]) =>
+          VendorsComparison(comparators.map(_._2))
       }
       .toDS
   }
@@ -32,6 +32,10 @@ class VendorsComparisonJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 }
 
 object VendorsComparisonJob {
+
+  val MAX_COMPARISON_SIZE: Int = {
+    100
+  }
 
   final case class VendorsComparison(
     left: VendorsComparator,
@@ -72,6 +76,7 @@ object VendorsComparisonJob {
   }
 
   final case class VendorsComparator(
+    uid: Long,
     name: String,
     city: Option[String],
     state: Option[String],
@@ -80,15 +85,32 @@ object VendorsComparisonJob {
 
   object VendorsComparator {
 
-    def apply(uniqueVendor: UniqueVendor): Seq[(String, VendorsComparator)] = {
-      val vendorsComparator: VendorsComparator = VendorsComparator(
-        name = uniqueVendor.name,
-        city = uniqueVendor.city,
-        state = uniqueVendor.state,
-        num_merged = uniqueVendor.num_merged.toLong
-      )
+    def apply(uniqueVendor: UniqueVendor): Seq[(String, Seq[(Long, VendorsComparator)])] = {
+      val vendorsComparator: VendorsComparator = {
+        new VendorsComparator(
+          uid = uniqueVendor.uid,
+          name = uniqueVendor.name,
+          city = uniqueVendor.city,
+          state = uniqueVendor.state,
+          num_merged = uniqueVendor.num_merged.toLong
+        )
+      }
       ConnectorUtils.cleanedNameTokens(uniqueVendor.name).map { token: String =>
-        token -> vendorsComparator
+        token -> Seq(1L -> vendorsComparator)
+      }
+    }
+
+    def reduce(
+      left: Seq[(Long, VendorsComparator)],
+      right: Seq[(Long, VendorsComparator)]
+    ): Seq[(Long, VendorsComparator)] = {
+      val cat: Seq[(Long, VendorsComparator)] = {
+        (left ++ right).sortBy(_._2.num_merged)
+      }
+      if (cat.size > MAX_COMPARISON_SIZE) {
+        cat.takeRight(MAX_COMPARISON_SIZE)
+      } else {
+        cat
       }
     }
 
