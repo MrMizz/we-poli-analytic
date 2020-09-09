@@ -25,7 +25,7 @@ class VendorsComparisonJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
       .flatMap {
         case (_, comparators: Seq[(Long, VendorsComparator)]) =>
           VendorsComparison(comparators.map(_._2)).map { vendorsComparison: VendorsComparison =>
-            Seq(vendorsComparison.left.uid, vendorsComparison.right.uid).sorted match {
+            Seq(vendorsComparison.izquierda.uid, vendorsComparison.derecha.uid).sorted match {
               case seq => (seq.head, seq.tail.head) -> vendorsComparison
             }
           }
@@ -47,8 +47,8 @@ object VendorsComparisonJob {
   }
 
   final case class VendorsComparison(
-    left: VendorsComparator,
-    right: VendorsComparator,
+    izquierda: VendorsComparator,
+    derecha: VendorsComparator,
     num_name_tokens_in_common: Long,
     num_total_merged: Long
   )
@@ -65,8 +65,8 @@ object VendorsComparisonJob {
               case head :: tail :: Nil =>
                 Some(
                   VendorsComparison(
-                    left = head,
-                    right = tail,
+                    izquierda = head,
+                    derecha = tail,
                     num_name_tokens_in_common = numNameTokensInCommon(head, tail),
                     num_total_merged = head.num_merged + tail.num_merged
                   )
