@@ -17,7 +17,6 @@ $JAR_PATH,\
 --step,vendors-comparison,\
 --in1,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
 --in1-format,json,\
---in2,s3://big-time-tap-in-spark/poli/extra/vendors-comparison/$RUN_DATE/,\
---in2-format,json,\
+--out1,s3://big-time-tap-in-spark/poli/extra/vendors-comparison/$RUN_DATE/,\
 --out1-format,json\
 ]
