@@ -4,7 +4,7 @@ import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob._
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -58,7 +58,7 @@ object VendorsMergerJob {
     memos: Set[String],
     edges: Set[ExpenditureEdge],
     num_merged: BigInt
-  )
+  ) extends VendorLike
 
   object UniqueVendor {
 

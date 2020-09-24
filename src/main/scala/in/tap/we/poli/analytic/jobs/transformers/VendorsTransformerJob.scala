@@ -27,6 +27,14 @@ object VendorsTransformerJob {
 
   import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 
+  trait VendorLike {
+    def uid: Long
+    def name: String
+    def city: Option[String]
+    def state: Option[String]
+    def zip_code: Option[String]
+  }
+
   final case class Vendor(
     uid: Long,
     name: String,
@@ -35,7 +43,7 @@ object VendorsTransformerJob {
     zip_code: Option[String],
     memo: Option[String],
     edge: ExpenditureEdge
-  ) {
+  ) extends VendorLike {
 
     lazy val hash1: Option[String] = {
       for {
