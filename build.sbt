@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % versionSpark,
   "org.apache.spark" %% "spark-sql" % versionSpark,
   "org.apache.spark" %% "spark-graphx" % versionSpark,
+  "org.apache.spark" %% "spark-mllib" % versionSpark,
   // dynamo connector
   "com.audienceproject" %% "spark-dynamodb" % "1.0.4",
   // Testing

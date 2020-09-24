@@ -4,9 +4,15 @@ import in.tap.base.spark.jobs.composite.ThreeInOnOutJob
 import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
+  reduceCandidates, Comparator, UniqueVendorComparison, VendorComparison
+}
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId
+import org.apache.spark.ml.feature.LabeledPoint
+import org.apache.spark.ml.linalg.Vectors
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
@@ -18,18 +24,89 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
   val readTypeTagA: universe.TypeTag[Vendor],
   val readTypeTagB: universe.TypeTag[(VertexId, VertexId)],
   val readTypeTagC: universe.TypeTag[UniqueVendor],
-  val writeTypeTagA: universe.TypeTag[(VertexId, VertexId)]
-) extends ThreeInOnOutJob[Vendor, (VertexId, VertexId), UniqueVendor, (VertexId, VertexId)](inArgs, outArgs) {
+  val writeTypeTagA: universe.TypeTag[LabeledPoint]
+) extends ThreeInOnOutJob[Vendor, (VertexId, VertexId), UniqueVendor, LabeledPoint](inArgs, outArgs) {
 
   override def transform(
     input: (Dataset[Vendor], Dataset[(VertexId, VertexId)], Dataset[UniqueVendor])
-  ): Dataset[(VertexId, VertexId)] = {
-    ???
+  ): Dataset[LabeledPoint] = {
+    import spark.implicits._
+    val (vendors: Dataset[Vendor], connector: Dataset[(VertexId, VertexId)], uniqueVendors: Dataset[UniqueVendor]) = {
+      input
+    }
+    val vendorComparisons: RDD[VendorComparison] = {
+      vendors
+        .map { vendor: Vendor =>
+          vendor.uid -> Option(Seq(vendor))
+        }
+        .rdd
+        .join(
+          connector.rdd
+        )
+        .map {
+          case (_, (vendor: Option[Seq[Vendor]], connectedId: VertexId)) =>
+            connectedId -> vendor
+        }
+        .reduceByKey(reduceCandidates)
+        .flatMap {
+          case (_, candidates: Option[Seq[Vendor]]) =>
+            candidates match {
+              case Some(c) => VendorComparison(c)
+              case None    => Nil
+            }
+        }
+    }
+    val uniqueVendorComparisons: RDD[UniqueVendorComparison] = {
+      uniqueVendors
+        .flatMap { uniqueVendor: UniqueVendor =>
+          val comparator: Comparator[UniqueVendor] = Comparator(uniqueVendor)
+          val candidate: Option[Seq[Comparator[UniqueVendor]]] = Option(Seq(comparator))
+          comparator.nameTokens.map { token: String =>
+            token -> candidate
+          }
+        }
+        .rdd
+        .reduceByKey(reduceCandidates)
+        .flatMap {
+          case (_, candidates: Option[Seq[Comparator[UniqueVendor]]]) =>
+            candidates match {
+              case Some(c) => UniqueVendorComparison(c)
+              case None    => Nil
+            }
+        }
+    }
+    vendorComparisons
+      .map { comparison: VendorComparison =>
+        LabeledPoint(label = 1.0, features = Vectors.dense(comparison.features.toArray))
+      }
+      .union(
+        uniqueVendorComparisons.map { comparison: UniqueVendorComparison =>
+          LabeledPoint(label = 0.0, features = Vectors.dense(comparison.features.toArray))
+        }
+      )
+      .toDS
   }
 
 }
 
 object VendorsFuzzyConnectorFeaturesJob {
+
+  val MAX_COMPARISON_SIZE: Int = {
+    100
+  }
+
+  def reduceCandidates[A](left: Option[Seq[A]], right: Option[Seq[A]]): Option[Seq[A]] = {
+    (left, right) match {
+      case (None, _) => None
+      case (_, None) => None
+      case (Some(l), Some(r)) =>
+        if ((l.size + r.size) <= MAX_COMPARISON_SIZE) {
+          Some(l ++ r)
+        } else {
+          None
+        }
+    }
+  }
 
   final case class Features(
     numTokens: Double,
@@ -79,6 +156,27 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   }
 
+  object VendorComparison {
+
+    def apply(seq: Seq[Vendor]): Seq[VendorComparison] = {
+      val numMerged: Int = seq.size
+      seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Vendor] =>
+        combination match {
+          case left :: right :: Nil =>
+            Some(
+              VendorComparison(
+                left_side = Comparator(left),
+                right_side = Comparator(right),
+                numMerged = numMerged
+              )
+            )
+          case _ => None
+        }
+      }
+    }
+
+  }
+
   /**
    * Used to build comparison
    * between two unique vendors that share CG set.
@@ -105,6 +203,19 @@ object VendorsFuzzyConnectorFeaturesJob {
         .intersect(rightSrcIds)
         .size
         .toDouble
+    }
+
+  }
+
+  object UniqueVendorComparison {
+
+    def apply(seq: Seq[Comparator[UniqueVendor]]): Seq[UniqueVendorComparison] = {
+      seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Comparator[UniqueVendor]] =>
+        combination match {
+          case left :: right :: Nil => Some(UniqueVendorComparison(left, right))
+          case _                    => None
+        }
+      }
     }
 
   }
