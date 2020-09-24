@@ -1,9 +1,10 @@
 package in.tap.we.poli.analytic
 
 import in.tap.base.spark.jobs.composite.CompositeJob
-import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
+import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob
 import in.tap.we.poli.analytic.jobs.connectors.{VendorsComparisonJob, VendorsConnectorJob}
 import in.tap.we.poli.analytic.jobs.dynamo.{
   EdgeDataDDBJob, EdgeDataJob, GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob,
@@ -58,6 +59,8 @@ object Main extends in.tap.base.spark.main.Main {
         new GraphTraversalPageDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-page-count-writer" =>
         new GraphTraversalPageCountDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "fuzzy-connector-features" =>
+        new VendorsFuzzyConnectorFeaturesJob(inArgs.asInstanceOf[ThreeInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }
