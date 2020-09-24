@@ -189,6 +189,7 @@ object VendorsFuzzyConnectorFeaturesJob {
     right_side: Comparator[UniqueVendor]
   ) extends Comparison[UniqueVendor] {
 
+    // TODO: test coverage
     override val (numEdges, numEdgesInCommon): (Double, Double) = {
       val leftSrcIds: Set[VertexId] = {
         left_side.vendor.edges.map(_.src_id)
