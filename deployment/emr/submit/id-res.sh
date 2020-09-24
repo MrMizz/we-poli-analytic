@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-132IOHJEUUZ0R"
+CLUSTER="j-3MI9ME4G6BKWN"
 RUN_DATE="2020-09-24-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
@@ -17,7 +17,7 @@ $JAR_PATH,\
 --step,fuzzy-connector-features,\
 --in1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
 --in1-format,json,\
---in2,s3://big-time-tap-in-spark/poli/connector/vendors/$RUN_DATE/,\
+--in2,s3://big-time-tap-in-spark/poli/connector/auto/vendors/$RUN_DATE/,\
 --in2-format,json,\
 --in3,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
 --in3-format,json,\
