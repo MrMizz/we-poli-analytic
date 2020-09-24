@@ -34,7 +34,7 @@ $JAR_PATH,\
 --step,vendors-connector,\
 --in1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
 --in1-format,json,\
---out1,s3://big-time-tap-in-spark/poli/connector/vendors/$RUN_DATE/,\
+--out1,s3://big-time-tap-in-spark/poli/connector/auto/vendors/$RUN_DATE/,\
 --out1-format,json\
 ]
 
@@ -51,7 +51,7 @@ $JAR_PATH,\
 --step,vendors-merger,\
 --in1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
 --in1-format,json,\
---in2,s3://big-time-tap-in-spark/poli/connector/vendors/$RUN_DATE/,\
+--in2,s3://big-time-tap-in-spark/poli/connector/auto/vendors/$RUN_DATE/,\
 --in2-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
 --out1-format,json\

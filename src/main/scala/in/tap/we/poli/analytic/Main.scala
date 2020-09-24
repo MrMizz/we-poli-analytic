@@ -5,11 +5,9 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob
-import in.tap.we.poli.analytic.jobs.connectors.{VendorsComparisonJob, VendorsConnectorJob}
-import in.tap.we.poli.analytic.jobs.dynamo.{
-  EdgeDataDDBJob, EdgeDataJob, GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob,
-  VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob
-}
+import in.tap.we.poli.analytic.jobs.connectors.VendorsComparisonJob
+import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
+import in.tap.we.poli.analytic.jobs.dynamo.{EdgeDataDDBJob, EdgeDataJob, GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob, VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
@@ -24,7 +22,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "vendors-transformer" =>
         new VendorsTransformerJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-connector" =>
-        new VendorsConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+        new VendorsAutoConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-merger" =>
         new VendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-comparison" =>

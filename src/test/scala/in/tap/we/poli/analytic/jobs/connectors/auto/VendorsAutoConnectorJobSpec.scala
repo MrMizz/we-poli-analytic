@@ -1,4 +1,4 @@
-package in.tap.we.poli.analytic.jobs.connectors
+package in.tap.we.poli.analytic.jobs.connectors.auto
 
 import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.OneInArgs
@@ -6,7 +6,7 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import org.apache.spark.graphx.VertexId
 
-class VendorsConnectorJobSpec extends BaseSparkJobSpec with VendorsConnectorJobFixtures {
+class VendorsAutoConnectorJobSpec extends BaseSparkJobSpec with VendorsAutoConnectorJobFixtures {
 
   val resourcePath: String = {
     "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/connectors/vendors/"
@@ -21,12 +21,12 @@ class VendorsConnectorJobSpec extends BaseSparkJobSpec with VendorsConnectorJobF
   }
 
   val _: Unit = {
-    import spark.implicits._
     import org.apache.spark.sql.SaveMode
+    import spark.implicits._
     Seq(vendor1, vendor2, vendor3).toDS.write.mode(SaveMode.Overwrite).json(inPath)
   }
 
-  new VendorsConnectorJob(
+  new VendorsAutoConnectorJob(
     OneInArgs(In(path = inPath, format = Formats.JSON)),
     OneOutArgs(Out(path = outPath, format = Formats.JSON))
   ).execute()

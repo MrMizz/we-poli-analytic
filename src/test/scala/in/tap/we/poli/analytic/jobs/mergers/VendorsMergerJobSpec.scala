@@ -4,7 +4,7 @@ import in.tap.base.spark.io.{In, Out}
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
-import in.tap.we.poli.analytic.jobs.connectors.VendorsConnectorJobFixtures
+import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJobFixtures
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor._
 
@@ -49,7 +49,7 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
       OneOutArgs(Out(path = outPath))
     ).execute()
 
-    object ConnectorMockEdges extends VendorsConnectorJobFixtures
+    object AutoConnectorMockEdges extends VendorsAutoConnectorJobFixtures
 
     import spark.implicits._
     spark.read.json(outPath).as[UniqueVendor].collect.toSeq.sortBy(_.uid) shouldBe {
@@ -64,7 +64,7 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
           zip_code = Some("Zip1"),
           num_merged = 2,
           memos = Set("memo1"),
-          edges = Set(ConnectorMockEdges.edge3, ConnectorMockEdges.edge1)
+          edges = Set(AutoConnectorMockEdges.edge3, AutoConnectorMockEdges.edge1)
         ),
         UniqueVendor(
           uid = 2L,
@@ -76,7 +76,7 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
           zip_code = Some("Zip1"),
           num_merged = 1,
           memos = Set(),
-          edges = Set(ConnectorMockEdges.edge2)
+          edges = Set(AutoConnectorMockEdges.edge2)
         )
       )
     }

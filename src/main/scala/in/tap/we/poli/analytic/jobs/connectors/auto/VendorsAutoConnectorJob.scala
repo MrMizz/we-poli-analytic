@@ -1,4 +1,4 @@
-package in.tap.we.poli.analytic.jobs.connectors
+package in.tap.we.poli.analytic.jobs.connectors.auto
 
 import in.tap.base.spark.graph.ConnectedComponents
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
@@ -11,7 +11,7 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-class VendorsConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+class VendorsAutoConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[Vendor],
@@ -22,16 +22,16 @@ class VendorsConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
     import spark.implicits._
 
     val vertices: RDD[(VertexId, String)] = {
-      input.map(VendorsConnectorJob.fromVendorToVertex).rdd
+      input.map(VendorsAutoConnectorJob.fromVendorToVertex).rdd
     }
 
     val edges: RDD[Edge[Int]] = {
       input
-        .flatMap(VendorsConnectorJob.fromVendorToEdges)
+        .flatMap(VendorsAutoConnectorJob.fromVendorToEdges)
         .groupByKey { case (hash, _) => hash }
         .flatMapGroups {
           case (_, iter: Iterator[(String, VertexId)]) =>
-            VendorsConnectorJob.buildEdges(iter)
+            VendorsAutoConnectorJob.buildEdges(iter)
         }
         .rdd
     }
@@ -41,7 +41,7 @@ class VendorsConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 }
 
-object VendorsConnectorJob {
+object VendorsAutoConnectorJob {
 
   def fromVendorToVertex(vendor: Vendor): (VertexId, String) = {
     vendor.uid -> vendor.name

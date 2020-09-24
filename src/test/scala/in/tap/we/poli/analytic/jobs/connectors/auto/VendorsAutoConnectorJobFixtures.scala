@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.connectors
+package in.tap.we.poli.analytic.jobs.connectors.auto
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 
-trait VendorsConnectorJobFixtures {
+trait VendorsAutoConnectorJobFixtures {
 
   val vendor1: Vendor = {
     new Vendor(
