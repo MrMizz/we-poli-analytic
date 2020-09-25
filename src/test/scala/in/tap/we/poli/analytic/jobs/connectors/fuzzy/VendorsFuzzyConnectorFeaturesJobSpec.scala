@@ -71,6 +71,18 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
         1.0, 1.0, 3.0, 3.0, 1.0, 1.0, 1.0
       )
     }
+    // name token & edges in common
+    UniqueVendorComparison(Comparator(uniqueVendor1), Comparator(uniqueVendor2)).features shouldBe {
+      Features(
+        1.0, 1.0, 3.0, 3.0, 0.0, 0.0, 0.0
+      )
+    }
+    // only name token in common
+    UniqueVendorComparison(Comparator(uniqueVendor1), Comparator(uniqueVendor3)).features shouldBe {
+      Features(
+        1.0, 1.0, 3.0, 0.0, 0.0, 0.0, 0.0
+      )
+    }
   }
 
 }
