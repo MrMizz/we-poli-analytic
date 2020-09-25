@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  reduceCandidates, Comparator, UniqueVendorComparison, VendorComparison
+  reduceCandidates, Comparator, Features, UniqueVendorComparison, VendorComparison
 }
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
@@ -25,12 +25,12 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
   val readTypeTagA: universe.TypeTag[Vendor],
   val readTypeTagB: universe.TypeTag[(VertexId, VertexId)],
   val readTypeTagC: universe.TypeTag[UniqueVendor],
-  val writeTypeTagA: universe.TypeTag[LabeledPoint]
-) extends ThreeInOnOutJob[Vendor, (VertexId, VertexId), UniqueVendor, LabeledPoint](inArgs, outArgs) {
+  val writeTypeTagA: universe.TypeTag[(Long, Features)]
+) extends ThreeInOnOutJob[Vendor, (VertexId, VertexId), UniqueVendor, (Long, Features)](inArgs, outArgs) {
 
   override def transform(
     input: (Dataset[Vendor], Dataset[(VertexId, VertexId)], Dataset[UniqueVendor])
-  ): Dataset[LabeledPoint] = {
+  ): Dataset[(Long, Features)] = {
     import spark.implicits._
     val (vendors: Dataset[Vendor], connector: Dataset[(VertexId, VertexId)], uniqueVendors: Dataset[UniqueVendor]) = {
       input
@@ -78,11 +78,11 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
     }
     vendorComparisons
       .map { comparison: VendorComparison =>
-        LabeledPoint(label = 1.0, features = Vectors.dense(comparison.features.toArray))
+        1L -> comparison.features
       }
       .union(
         uniqueVendorComparisons.map { comparison: UniqueVendorComparison =>
-          LabeledPoint(label = 0.0, features = Vectors.dense(comparison.features.toArray))
+          0L -> comparison.features
         }
       )
       .toDS
