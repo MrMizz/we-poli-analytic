@@ -146,11 +146,11 @@ object VendorsFuzzyConnectorFeaturesJob {
     numMerged: Double
   ) extends Comparison[Vendor] {
 
-    override def numEdges: Double = {
+    override val numEdges: Double = {
       numMerged
     }
 
-    override def numEdgesInCommon: Double = {
+    override val numEdgesInCommon: Double = {
       numMerged
     }
 
@@ -189,7 +189,6 @@ object VendorsFuzzyConnectorFeaturesJob {
     right_side: Comparator[UniqueVendor]
   ) extends Comparison[UniqueVendor] {
 
-    // TODO: test coverage
     override val (numEdges, numEdgesInCommon): (Double, Double) = {
       val leftSrcIds: Set[VertexId] = {
         left_side.vendor.edges.map(_.src_id)
@@ -233,15 +232,15 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   trait Comparison[A <: VendorLike] {
 
-    def left_side: Comparator[A]
+    val left_side: Comparator[A]
 
-    def right_side: Comparator[A]
+    val right_side: Comparator[A]
 
-    def numEdges: Double
+    val numEdges: Double
 
-    def numEdgesInCommon: Double
+    val numEdgesInCommon: Double
 
-    val features: Features = {
+    lazy val features: Features = {
       Features(
         numTokens,
         numTokensInCommon,
