@@ -13,10 +13,10 @@ class VendorsFuzzyConnectorTrainingJob(val inArgs: OneInArgs, val outArgs: OneOu
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[LabeledPoint],
-  val writeTypeTagA: universe.TypeTag[Boolean]
-) extends OneInOneOutJob[LabeledPoint, Boolean](inArgs, outArgs) {
+  val writeTypeTagA: universe.TypeTag[LabeledPoint]
+) extends OneInOneOutJob[LabeledPoint, LabeledPoint](inArgs, outArgs) {
 
-  override def transform(input: Dataset[LabeledPoint]): Dataset[Boolean] = {
+  override def transform(input: Dataset[LabeledPoint]): Dataset[LabeledPoint] = {
     val logReg = {
       new LogisticRegression()
     }
@@ -27,8 +27,7 @@ class VendorsFuzzyConnectorTrainingJob(val inArgs: OneInArgs, val outArgs: OneOu
     model.coefficients.toArray.foreach { coefficient: Double =>
       println(s"Coefficient: $coefficient")
     }
-    import spark.implicits._
-    Seq(true).toDS
+    input
   }
 
 }
