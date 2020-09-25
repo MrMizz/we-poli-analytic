@@ -4,9 +4,14 @@ import in.tap.base.spark.jobs.composite.CompositeJob
 import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{VendorsComparisonJob, VendorsFuzzyConnectorFeaturesJob}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{
+  VendorsComparisonJob, VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorTrainingJob
+}
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
-import in.tap.we.poli.analytic.jobs.dynamo.{EdgeDataDDBJob, EdgeDataJob, GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob, VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
+import in.tap.we.poli.analytic.jobs.dynamo.{
+  EdgeDataDDBJob, EdgeDataJob, GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob,
+  VertexDataDDBJob, VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob
+}
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
@@ -58,6 +63,8 @@ object Main extends in.tap.base.spark.main.Main {
         new GraphTraversalPageCountDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "fuzzy-connector-features" =>
         new VendorsFuzzyConnectorFeaturesJob(inArgs.asInstanceOf[ThreeInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "fuzzy-connector-training" =>
+        new VendorsFuzzyConnectorTrainingJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }

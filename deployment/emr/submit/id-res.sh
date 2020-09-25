@@ -24,3 +24,17 @@ $JAR_PATH,\
 --out1,s3://big-time-tap-in-spark/poli/connector/fuzzy/features/$RUN_DATE/,\
 --out1-format,json\
 ]
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=FuzzyConnectorTraining,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=FuzzyConnectorTraining,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,fuzzy-connector-training,\
+--in1,s3://big-time-tap-in-spark/poli/connector/fuzzy/features/$RUN_DATE/,\
+--in1-format,json,\
+--out1,s3://big-time-tap-in-spark/poli/connector/fuzzy/training/$RUN_DATE/,\
+--out1-format,json\
+]
