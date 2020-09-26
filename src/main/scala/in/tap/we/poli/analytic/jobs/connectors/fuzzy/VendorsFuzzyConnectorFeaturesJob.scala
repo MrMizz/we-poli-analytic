@@ -10,8 +10,6 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeatur
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId
-import org.apache.spark.ml.feature.LabeledPoint
-import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
 

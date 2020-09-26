@@ -1,8 +1,49 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{Features, UniqueVendorComparison}
+import in.tap.base.spark.jobs.composite.OneInOneOutJob
+import in.tap.base.spark.main.InArgs.OneInArgs
+import in.tap.base.spark.main.OutArgs.OneOutArgs
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
+  Comparator, Features, UniqueVendorComparison
+}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.Prediction
+import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
+import org.apache.spark.sql.{Dataset, SparkSession}
 
-class VendorsFuzzyConnectorJob {}
+import scala.reflect.runtime.universe
+
+class VendorsFuzzyConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+  implicit
+  val spark: SparkSession,
+  val readTypeTagA: universe.TypeTag[UniqueVendor],
+  val writeTypeTagA: universe.TypeTag[(UniqueVendorComparison, Double)]
+) extends OneInOneOutJob[UniqueVendor, (UniqueVendorComparison, Double)](inArgs, outArgs) {
+
+  override def transform(input: Dataset[UniqueVendor]): Dataset[(UniqueVendorComparison, Double)] = {
+    import spark.implicits._
+    input
+      .flatMap { uniqueVendor =>
+        val comparator: Comparator[UniqueVendor] = Comparator(uniqueVendor)
+        comparator.nameTokens.map { token: String =>
+          token -> Option(Seq(comparator))
+        }
+      }
+      .rdd
+      .reduceByKey(VendorsFuzzyConnectorFeaturesJob.reduceCandidates)
+      .flatMap {
+        case (_, candidates: Option[Seq[Comparator[UniqueVendor]]]) =>
+          candidates match {
+            case None => Nil
+            case Some(seq) =>
+              UniqueVendorComparison(seq).map { uniqueVendorComparison: UniqueVendorComparison =>
+                uniqueVendorComparison -> Prediction(uniqueVendorComparison)
+              }
+          }
+      }
+      .toDS
+  }
+
+}
 
 object VendorsFuzzyConnectorJob {
 
