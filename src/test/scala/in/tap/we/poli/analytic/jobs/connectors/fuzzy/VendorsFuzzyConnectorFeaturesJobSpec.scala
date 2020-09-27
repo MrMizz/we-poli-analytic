@@ -2,7 +2,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  Comparator, Features, UniqueVendorComparison, VendorComparison
+  Comparator, Features, UniqueVendorComparison, VendorComparison, buildSamplingRatio
 }
 
 class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesJobFixtures {
@@ -83,6 +83,12 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
         1.0, 1.0, 3.0, 0.0, 0.0, 0.0, 0.0
       )
     }
+  }
+
+  it should "sample positive label features in ratio to negative labels" in {
+    buildSamplingRatio(10.0, 5.0) shouldBe 1.0
+    buildSamplingRatio(10.0, 10.0) shouldBe 2.0
+    buildSamplingRatio(10.0, 3.0) shouldBe 0.6
   }
 
 }
