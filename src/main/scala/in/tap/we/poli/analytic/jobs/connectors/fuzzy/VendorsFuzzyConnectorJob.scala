@@ -52,18 +52,18 @@ object VendorsFuzzyConnectorJob {
   ) {
 
     private val INTERCEPT: Double = {
-      -23.2094090439513
+      -20.736954546220066
     }
 
     private val COEFFICIENTS: Features = {
       Features(
-        numTokens = -1.523107019783214,
-        numTokensInCommon = 1.7897551114091281,
-        numEdges = -75.59071441287279,
-        numEdgesInCommon = 86.75005147907491,
-        sameCity = 3.040397173649981,
-        sameZip = 1.5556153159226587,
-        sameState = 2.355427278120487
+        numTokens = -2.109404750520324,
+        numTokensInCommon = 2.432771205142405,
+        numEdges = -66.87824322787333,
+        numEdgesInCommon = 75.82119134659882,
+        sameCity = 3.147819695302422,
+        sameZip = 1.3427466839072364,
+        sameState = 2.3431143454361836
       )
     }
 
