@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  reduceCandidates, Comparator, Features, UniqueVendorComparison, VendorComparison
+  buildSamplingRatio, reduceCandidates, Comparator, Features, UniqueVendorComparison, VendorComparison
 }
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
@@ -16,7 +16,6 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 import scala.reflect.runtime.universe
 
 // TODO: fix typo in parent class
-//  Sampling
 class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
@@ -74,10 +73,20 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
             }
         }
     }
+    val numPositives: Double = {
+      vendorComparisons.count.toDouble
+    }
+    val numNegatives: Double = {
+      uniqueVendorComparisons.count.toDouble
+    }
     vendorComparisons
       .map { comparison: VendorComparison =>
         1L -> comparison.features
       }
+      .sample(
+        withReplacement = false,
+        fraction = buildSamplingRatio(numPositives, numNegatives)
+      )
       .union(
         uniqueVendorComparisons.map { comparison: UniqueVendorComparison =>
           0L -> comparison.features
@@ -89,6 +98,14 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
 }
 
 object VendorsFuzzyConnectorFeaturesJob {
+
+  val POS_TO_NEG_RATIO: Double = {
+    2.0
+  }
+
+  def buildSamplingRatio(numPositives: Double, numNegatives: Double): Double = {
+    (numNegatives * POS_TO_NEG_RATIO) / numPositives
+  }
 
   val MAX_COMPARISON_SIZE: Int = {
     100
