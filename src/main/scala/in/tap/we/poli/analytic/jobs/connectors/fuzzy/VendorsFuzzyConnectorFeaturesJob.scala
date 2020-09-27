@@ -100,7 +100,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
 object VendorsFuzzyConnectorFeaturesJob {
 
   val POS_TO_NEG_RATIO: Double = {
-    2.0
+    1.0
   }
 
   def buildSamplingRatio(numPositives: Double, numNegatives: Double): Double = {
