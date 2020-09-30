@@ -190,7 +190,7 @@ class VendorsFuzzyConnectorJobSpec extends BaseSpec with VendorsFuzzyConnectorJo
         Comparator(uniqueVendor1)
       )
     ) shouldBe {
-      0.9999982377845312
+      0.9999999999118115
     }
     // normalized as identity
     Prediction(
@@ -199,7 +199,7 @@ class VendorsFuzzyConnectorJobSpec extends BaseSpec with VendorsFuzzyConnectorJo
         Comparator(uniqueVendor2)
       )
     ) shouldBe {
-      0.9999982377845312
+      0.9999999999118115
     }
     // nothing in common
     Prediction(
@@ -208,7 +208,7 @@ class VendorsFuzzyConnectorJobSpec extends BaseSpec with VendorsFuzzyConnectorJo
         Comparator(uniqueVendor3)
       )
     ) shouldBe {
-      1.0412067787695615E-95
+      1.4116383908294394E-94
     }
   }
 
