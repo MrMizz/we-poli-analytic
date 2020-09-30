@@ -154,20 +154,20 @@ object VendorsFuzzyConnectorFeaturesJob {
    *
    * @param left_side vendor
    * @param right_side vendor
-   * @param numMerged num merged in connected component
+   * @param numDistinctSrcIds num merged in connected component
    */
   final case class VendorComparison(
     left_side: Comparator[Vendor],
     right_side: Comparator[Vendor],
-    numMerged: Double
+    numDistinctSrcIds: Double
   ) extends Comparison[Vendor] {
 
     override val numEdges: Double = {
-      numMerged
+      numDistinctSrcIds
     }
 
     override val numEdgesInCommon: Double = {
-      numMerged
+      numDistinctSrcIds
     }
 
   }
@@ -175,7 +175,9 @@ object VendorsFuzzyConnectorFeaturesJob {
   object VendorComparison {
 
     def apply(seq: Seq[Vendor]): Seq[VendorComparison] = {
-      val numMerged: Int = seq.size
+      val numDistinctSrcIds: Double = {
+        seq.map(_.edge.src_id).distinct.size.toDouble
+      }
       seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Vendor] =>
         combination match {
           case left :: right :: Nil =>
@@ -183,7 +185,7 @@ object VendorsFuzzyConnectorFeaturesJob {
               VendorComparison(
                 left_side = Comparator(left),
                 right_side = Comparator(right),
-                numMerged = numMerged
+                numDistinctSrcIds = numDistinctSrcIds
               )
             )
           case _ => None
