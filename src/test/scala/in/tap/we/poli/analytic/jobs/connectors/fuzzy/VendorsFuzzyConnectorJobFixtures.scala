@@ -1,8 +1,5 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  Comparator, UniqueVendorComparison
-}
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 
