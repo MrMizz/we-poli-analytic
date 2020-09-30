@@ -16,10 +16,10 @@ class VendorsFuzzyConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[UniqueVendor],
-  val writeTypeTagA: universe.TypeTag[(UniqueVendorComparison, Double)]
-) extends OneInOneOutJob[UniqueVendor, (UniqueVendorComparison, Double)](inArgs, outArgs) {
+  val writeTypeTagA: universe.TypeTag[(Double, Features, UniqueVendorComparison)]
+) extends OneInOneOutJob[UniqueVendor, (Double, Features, UniqueVendorComparison)](inArgs, outArgs) {
 
-  override def transform(input: Dataset[UniqueVendor]): Dataset[(UniqueVendorComparison, Double)] = {
+  override def transform(input: Dataset[UniqueVendor]): Dataset[(Double, Features, UniqueVendorComparison)] = {
     import spark.implicits._
     input
       .flatMap { uniqueVendor =>
@@ -36,7 +36,7 @@ class VendorsFuzzyConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
             case None => Nil
             case Some(seq) =>
               UniqueVendorComparison(seq).map { uniqueVendorComparison: UniqueVendorComparison =>
-                uniqueVendorComparison -> Prediction(uniqueVendorComparison)
+                (Prediction(uniqueVendorComparison), uniqueVendorComparison.features, uniqueVendorComparison)
               }
           }
       }
