@@ -59,7 +59,6 @@ object VendorsFuzzyConnectorJob {
       Features(
         numTokens = -3.582353931988716,
         numTokensInCommon = 3.9472231658028534,
-        numEdges = -69.12672651523857,
         numEdgesInCommon = 77.9834809981517,
         sameCity = 3.002297935251703,
         sameZip = 2.29705188515646,

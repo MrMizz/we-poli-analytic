@@ -127,7 +127,6 @@ object VendorsFuzzyConnectorFeaturesJob {
   final case class Features(
     numTokens: Double,
     numTokensInCommon: Double,
-    numEdges: Double,
     numEdgesInCommon: Double,
     sameCity: Double,
     sameZip: Double,
@@ -138,7 +137,6 @@ object VendorsFuzzyConnectorFeaturesJob {
       Array(
         numTokens,
         numTokensInCommon,
-        numEdges,
         numEdgesInCommon,
         sameCity,
         sameZip,
@@ -161,10 +159,6 @@ object VendorsFuzzyConnectorFeaturesJob {
     right_side: Comparator[Vendor],
     numDistinctSrcIds: Double
   ) extends Comparison[Vendor] {
-
-    override val numEdges: Double = {
-      numDistinctSrcIds
-    }
 
     override val numEdgesInCommon: Double = {
       numDistinctSrcIds
@@ -207,17 +201,14 @@ object VendorsFuzzyConnectorFeaturesJob {
     right_side: Comparator[UniqueVendor]
   ) extends Comparison[UniqueVendor] {
 
-    override val (numEdges, numEdgesInCommon): (Double, Double) = {
+    override val numEdgesInCommon: Double = {
       val leftSrcIds: Set[VertexId] = {
         left_side.vendor.edges.map(_.src_id)
       }
       val rightSrcIds: Set[VertexId] = {
         right_side.vendor.edges.map(_.src_id)
       }
-      Seq(
-        leftSrcIds.size,
-        rightSrcIds.size
-      ).max.toDouble -> leftSrcIds
+      leftSrcIds
         .intersect(rightSrcIds)
         .size
         .toDouble
@@ -254,15 +245,12 @@ object VendorsFuzzyConnectorFeaturesJob {
 
     val right_side: Comparator[A]
 
-    val numEdges: Double
-
     val numEdgesInCommon: Double
 
     lazy val features: Features = {
       Features(
         numTokens,
         numTokensInCommon,
-        numEdges,
         numEdgesInCommon,
         toDouble(sameCity),
         toDouble(sameZip),
