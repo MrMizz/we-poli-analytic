@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 
-trait VendorsFuzzyConnectorJobFixtures {
+trait VendorsFuzzyPredictorJobFixtures {
 
   lazy val uniqueVendor1: UniqueVendor = {
     UniqueVendor(

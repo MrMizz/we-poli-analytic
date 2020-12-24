@@ -4,9 +4,9 @@ import in.tap.we.poli.analytic.jobs.BaseSpec
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
   Comparator, Features, UniqueVendorComparison
 }
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.Prediction
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyPredictorJob.Prediction
 
-class VendorsFuzzyConnectorJobSpec extends BaseSpec with VendorsFuzzyConnectorJobFixtures {
+class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJobFixtures {
 
   it should "produce monotonically increasing predictions" in {
     val prediction1: Double = {

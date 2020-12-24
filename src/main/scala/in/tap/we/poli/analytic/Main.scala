@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{
-  VendorsComparisonJob, VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorJob, VendorsFuzzyConnectorTrainingJob
+  VendorsComparisonJob, VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyPredictorJob, VendorsFuzzyConnectorTrainingJob
 }
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
 import in.tap.we.poli.analytic.jobs.dynamo.{
@@ -66,7 +66,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "fuzzy-connector-training" =>
         new VendorsFuzzyConnectorTrainingJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "fuzzy-connector" =>
-        new VendorsFuzzyConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+        new VendorsFuzzyPredictorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }
