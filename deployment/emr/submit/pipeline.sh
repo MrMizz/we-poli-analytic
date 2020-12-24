@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-3MI9ME4G6BKWN"
-RUN_DATE="2020-09-24-01"
+CLUSTER="j-1HDY58M00W483"
+RUN_DATE="2020-12-23-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
 ###################################################
@@ -118,22 +118,4 @@ $JAR_PATH,\
 --in2-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
 --out1-format,json\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=Neptune,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=Neptune,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,neptune,\
---in1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
---in1-format,json,\
---in2,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in2-format,json,\
---out1,s3://big-time-tap-in-spark/poli/graph/neptune/vertices/$RUN_DATE/,\
---out1-format,no-op,\
---out2,s3://big-time-tap-in-spark/poli/graph/neptune/edges/$RUN_DATE/,\
---out2-format,no-op\
 ]

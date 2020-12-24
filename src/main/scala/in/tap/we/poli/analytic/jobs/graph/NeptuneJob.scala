@@ -17,6 +17,7 @@ import scala.reflect.runtime.universe
  * The Property data will live in AWS DynamoDB, which we'll be fetched
  * with secondary queries. Why? Neptune doesn't support struct types.
  */
+@deprecated("We Don't Use Neptune anymore. We use DDB.")
 class NeptuneJob(val inArgs: TwoInArgs, val outArgs: TwoOutArgs)(
   implicit
   val spark: SparkSession,
