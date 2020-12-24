@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-2SQQZ4M9C6PK3"
+CLUSTER="j-3OXVD229RQ4U7"
 RUN_DATE="2020-09-24-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
@@ -46,9 +46,9 @@ Args=[\
 --conf,spark.app.name=FuzzyConnector,\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
---step,fuzzy-connector,\
+--step,fuzzy-predictor,\
 --in1,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
 --in1-format,json,\
---out1,s3://big-time-tap-in-spark/poli/connector/fuzzy/vendors/2020-09-25-01/,\
+--out1,s3://big-time-tap-in-spark/poli/connector/fuzzy/vendors/2020-09-29-02/,\
 --out1-format,json\
 ]
