@@ -65,7 +65,7 @@ object Main extends in.tap.base.spark.main.Main {
         new VendorsFuzzyConnectorFeaturesJob(inArgs.asInstanceOf[ThreeInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "fuzzy-connector-training" =>
         new VendorsFuzzyConnectorTrainingJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "fuzzy-connector" =>
+      case "fuzzy-predictor" =>
         new VendorsFuzzyPredictorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
