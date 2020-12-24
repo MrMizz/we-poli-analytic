@@ -4,9 +4,7 @@ import in.tap.base.spark.jobs.composite.ThreeInOnOutJob
 import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, reduceCandidates, Comparator, Features, UniqueVendorComparison, VendorComparison
-}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob._
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId
@@ -103,24 +101,23 @@ object VendorsFuzzyConnectorFeaturesJob {
     1.0
   }
 
-  def buildSamplingRatio(numPositives: Double, numNegatives: Double): Double = {
-    (numNegatives * POS_TO_NEG_RATIO) / numPositives
-  }
-
   val MAX_COMPARISON_SIZE: Int = {
     100
   }
 
+  def buildSamplingRatio(numPositives: Double, numNegatives: Double): Double = {
+    (numNegatives * POS_TO_NEG_RATIO) / numPositives
+  }
+
   def reduceCandidates[A](left: Option[Seq[A]], right: Option[Seq[A]]): Option[Seq[A]] = {
     (left, right) match {
-      case (None, _) => None
-      case (_, None) => None
       case (Some(l), Some(r)) =>
         if ((l.size + r.size) <= MAX_COMPARISON_SIZE) {
           Some(l ++ r)
         } else {
           None
         }
+      case _ => None
     }
   }
 
