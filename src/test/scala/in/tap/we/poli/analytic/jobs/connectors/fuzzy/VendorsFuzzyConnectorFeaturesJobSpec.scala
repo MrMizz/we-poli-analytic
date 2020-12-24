@@ -2,7 +2,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  Comparator, Features, UniqueVendorComparison, VendorComparison, buildSamplingRatio
+  buildSamplingRatio, Comparator, Features, UniqueVendorComparison, VendorComparison
 }
 
 class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesJobFixtures {
