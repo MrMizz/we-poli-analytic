@@ -20,11 +20,9 @@ class VendorsAutoConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
   override def transform(input: Dataset[Vendor]): Dataset[(VertexId, VertexId)] = {
     import spark.implicits._
-
     val vertices: RDD[(VertexId, String)] = {
       input.map(VendorsAutoConnectorJob.fromVendorToVertex).rdd
     }
-
     val edges: RDD[Edge[Int]] = {
       input
         .flatMap(VendorsAutoConnectorJob.fromVendorToEdges)
@@ -35,8 +33,10 @@ class VendorsAutoConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
         }
         .rdd
     }
-
-    ConnectedComponents(vertices, edges).toDS
+    ConnectedComponents(
+      vertices,
+      edges
+    ).toDS
   }
 
 }
