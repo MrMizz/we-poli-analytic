@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.transformers
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
+import in.tap.we.poli.analytic.jobs.connectors
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob._
 import in.tap.we.poli.models.OperatingExpenditures
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -80,7 +80,7 @@ object VendorsTransformerJob {
     }
 
     private lazy val cleanedName: String = {
-      ConnectorUtils.cleanedName(name)
+      connectors.cleanedName(name)
     }
 
   }

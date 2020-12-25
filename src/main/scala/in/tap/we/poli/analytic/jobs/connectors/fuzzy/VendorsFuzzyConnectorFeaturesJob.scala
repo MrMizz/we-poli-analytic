@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 import in.tap.base.spark.jobs.composite.ThreeInOnOutJob
 import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
+import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob._
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
@@ -231,7 +231,7 @@ object VendorsFuzzyConnectorFeaturesJob {
   ) {
 
     val nameTokens: Set[String] = {
-      ConnectorUtils.cleanedNameTokens(vendor.name).toSet
+      cleanedNameTokens(vendor.name).toSet
     }
 
   }

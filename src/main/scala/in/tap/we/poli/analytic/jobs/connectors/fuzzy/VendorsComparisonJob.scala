@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.ConnectorUtils
+import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsComparisonJob.{VendorsComparator, VendorsComparison}
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -79,7 +79,6 @@ object VendorsComparisonJob {
     }
 
     private def numNameTokensInCommon(left: VendorsComparator, right: VendorsComparator): Long = {
-      import ConnectorUtils.cleanedNameTokens
       cleanedNameTokens(left.name).toSet.intersect(cleanedNameTokens(right.name).toSet).size
     }
 
@@ -105,7 +104,7 @@ object VendorsComparisonJob {
           num_merged = uniqueVendor.num_merged.toLong
         )
       }
-      ConnectorUtils.cleanedNameTokens(uniqueVendor.name).map { token: String =>
+      cleanedNameTokens(uniqueVendor.name).map { token: String =>
         token -> Seq(1L -> vendorsComparator)
       }
     }

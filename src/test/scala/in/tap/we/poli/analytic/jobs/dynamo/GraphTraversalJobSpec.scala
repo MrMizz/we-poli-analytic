@@ -39,7 +39,7 @@ class GraphTraversalJobSpec extends BaseSparkJobSpec with VertexNameAutoComplete
 
   it should "build graph traversal look ups from edges" in {
     val resourcePath: String = {
-      "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/dynamo/graph_traversal"
+      getClass.getResource("../../../../../../../dynamo/graph_traversal/").toString
     }
     val inPath: String = {
       s"$resourcePath/in/"
