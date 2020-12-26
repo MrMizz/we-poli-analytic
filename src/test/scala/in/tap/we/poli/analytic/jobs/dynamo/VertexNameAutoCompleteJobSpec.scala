@@ -55,7 +55,7 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
 
   it should "build top N prefix-bound uid collections" in {
     val resourcePath: String = {
-      "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/dynamo/vertex_name_auto_complete"
+      getClass.getResource("../../../../../../../dynamo/vertex_name_auto_complete/").toString
     }
     val in1Path: String = {
       s"$resourcePath/in1/"

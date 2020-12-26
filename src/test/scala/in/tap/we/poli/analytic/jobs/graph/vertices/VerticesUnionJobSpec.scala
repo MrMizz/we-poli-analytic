@@ -1,8 +1,8 @@
 package in.tap.we.poli.analytic.jobs.graph.vertices
 
-import org.scalatest.{FlatSpec, Matchers}
+import in.tap.we.poli.analytic.jobs.BaseSpec
 
-class VerticesUnionJobSpec extends FlatSpec with Matchers with VerticesUnionJobFixtures {
+class VerticesUnionJobSpec extends BaseSpec with VerticesUnionJobFixtures {
 
   it should "make vertices agnostic" in {
     import VerticesUnionJob.AgnosticVertex

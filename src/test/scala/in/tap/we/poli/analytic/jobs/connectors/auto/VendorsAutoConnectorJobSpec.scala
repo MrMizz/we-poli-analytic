@@ -9,7 +9,7 @@ import org.apache.spark.graphx.VertexId
 class VendorsAutoConnectorJobSpec extends BaseSparkJobSpec with VendorsAutoConnectorJobFixtures {
 
   val resourcePath: String = {
-    "/Users/alex/Documents/GitHub/Alex/tap-in/we-poli/we-poli-analytic/src/test/resources/connectors/vendors/"
+    getClass.getResource("../../../../../../../../connectors/vendors/").toString
   }
 
   val inPath: String = {

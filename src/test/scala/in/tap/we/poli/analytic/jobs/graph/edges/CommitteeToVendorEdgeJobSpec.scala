@@ -1,8 +1,8 @@
 package in.tap.we.poli.analytic.jobs.graph.edges
 
-import org.scalatest.{FlatSpec, Matchers}
+import in.tap.we.poli.analytic.jobs.BaseSpec
 
-class CommitteeToVendorEdgeJobSpec extends FlatSpec with Matchers with CommitteeToVendorEdgeJobFixtures {
+class CommitteeToVendorEdgeJobSpec extends BaseSpec with CommitteeToVendorEdgeJobFixtures {
 
   it should "build graphx edges from unique vendors" in {
     import CommitteeToVendorEdgeJob.ExpenditureEdge

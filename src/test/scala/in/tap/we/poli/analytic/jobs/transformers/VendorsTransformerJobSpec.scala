@@ -1,8 +1,8 @@
 package in.tap.we.poli.analytic.jobs.transformers
 
-import org.scalatest.{FlatSpec, Matchers}
+import in.tap.we.poli.analytic.jobs.BaseSpec
 
-class VendorsTransformerJobSpec extends FlatSpec with Matchers with VendorsTransformerJobFixtures {
+class VendorsTransformerJobSpec extends BaseSpec with VendorsTransformerJobFixtures {
 
   it should "build unique hashes" in {
     // valid name, city, state, zip
