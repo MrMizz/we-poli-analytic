@@ -4,6 +4,7 @@ import in.tap.base.spark.graph.ConnectedComponents
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
+import in.tap.we.poli.analytic.jobs.connectors.buildEdges
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 import org.apache.spark.graphx.{Edge, VertexId}
 import org.apache.spark.rdd.RDD
@@ -29,7 +30,7 @@ class VendorsAutoConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
         .groupByKey { case (hash, _) => hash }
         .flatMapGroups {
           case (_, iter: Iterator[(String, VertexId)]) =>
-            VendorsAutoConnectorJob.buildEdges(iter)
+            buildEdges(iter.toList.map(_._2))
         }
         .rdd
     }
@@ -50,14 +51,6 @@ object VendorsAutoConnectorJob {
   def fromVendorToEdges(vendor: Vendor): Seq[(String, VertexId)] = {
     vendor.hashes.map { hash: String =>
       hash -> vendor.uid
-    }
-  }
-
-  def buildEdges(grouped: Iterator[(String, VertexId)]): Iterator[Edge[Int]] = {
-    val head: VertexId = grouped.next()._2
-    grouped.map {
-      case (_, uid: VertexId) =>
-        Edge(srcId = head, dstId = uid, attr = 1)
     }
   }
 
