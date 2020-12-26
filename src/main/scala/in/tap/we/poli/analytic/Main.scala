@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{
-  VendorsComparisonJob, VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyPredictorJob, VendorsFuzzyConnectorTrainingJob
+  VendorsComparisonJob, VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob
 }
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
 import in.tap.we.poli.analytic.jobs.dynamo.{
