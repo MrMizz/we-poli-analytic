@@ -8,6 +8,10 @@ publishMavenStyle := true
 
 scalaVersion := "2.11.12"
 
+// disable parallel tests
+parallelExecution in Test := false
+fork in ThisBuild in Test:= false
+
 val versionSpark: String = "2.4.0"
 
 libraryDependencies ++= Seq(
