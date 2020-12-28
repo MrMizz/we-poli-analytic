@@ -4,32 +4,64 @@ import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 import org.apache.spark.graphx.VertexId
+import org.apache.spark.sql.Dataset
 
 class VendorsAutoConnectorJobSpec extends BaseSparkJobSpec with VendorsAutoConnectorJobFixtures {
 
   val resourcePath: String = {
-    getClass.getResource("../../../../../../../../connectors/vendors/").toString
+    getClass.getResource("../../../../../../../../").toString
+  }
+
+  val connectorResourcePath: String = {
+    s"$resourcePath/connectors/vendors/auto/"
+  }
+
+  val mergerPath: String = {
+    s"$resourcePath/mergers/vendors/"
   }
 
   val inPath: String = {
-    s"$resourcePath/in"
+    s"$connectorResourcePath/in"
   }
 
   val outPath: String = {
-    s"$resourcePath/out"
+    s"$connectorResourcePath/out"
   }
 
   val _: Unit = {
     import org.apache.spark.sql.SaveMode
     import spark.implicits._
-    Seq(vendor1, vendor2, vendor3).toDS.write.mode(SaveMode.Overwrite).json(inPath)
+    // build input resource
+    val vendors: Dataset[Vendor] = Seq(
+      vendor1,
+      vendor2,
+      vendor3
+    ).toDS
+    // write input resource to connector dir
+    vendors
+      .write
+      .mode(SaveMode.Overwrite)
+      .json(inPath)
+    // write input resource to merger dir
+    vendors
+      .write
+      .mode(SaveMode.Overwrite)
+      .json(s"$mergerPath/in1/")
+    // run job & write to output resource
+    new VendorsAutoConnectorJob(
+      OneInArgs(In(path = inPath, format = Formats.JSON)),
+      OneOutArgs(Out(path = outPath, format = Formats.JSON))
+    ).execute()
+    // write output resource to merger dir
+    spark
+      .read
+      .json(outPath)
+      .write
+      .mode(SaveMode.Overwrite)
+      .json(s"$mergerPath/in2/")
   }
-
-  new VendorsAutoConnectorJob(
-    OneInArgs(In(path = inPath, format = Formats.JSON)),
-    OneOutArgs(Out(path = outPath, format = Formats.JSON))
-  ).execute()
 
   it should "connect vendors" in {
     import spark.implicits._

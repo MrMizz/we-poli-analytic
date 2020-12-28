@@ -2,6 +2,5 @@
 project/target
 target
 data
-src/test/resources
 *.terraform
 *.tfstate*
