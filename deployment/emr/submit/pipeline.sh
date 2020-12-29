@@ -57,6 +57,13 @@ $JAR_PATH,\
 --out1-format,json\
 ]
 
+## TODO
+## 1) Validation Tranformer
+## 2) Validation Connector
+## 3) Connector Unify
+## 4) Unique Vendor Flatten
+## 5) Merger, again
+
 ###################################################
 ### GRAPH
 ###################################################
