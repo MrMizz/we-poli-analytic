@@ -94,11 +94,11 @@ object VendorsTransformerJob {
       } yield {
         Vendor(
           uid = sub_id,
-          name = name,
-          city = operatingExpenditures.CITY,
-          state = operatingExpenditures.STATE,
+          name = name.toLowerCase,
+          city = operatingExpenditures.CITY.map(_.toLowerCase),
+          state = operatingExpenditures.STATE.map(_.toLowerCase),
           zip_code = operatingExpenditures.ZIP_CODE,
-          memo = operatingExpenditures.PURPOSE,
+          memo = operatingExpenditures.PURPOSE.map(_.toLowerCase),
           edge = ExpenditureEdge.fromOperatingExpenditures(operatingExpenditures)
         )
       }

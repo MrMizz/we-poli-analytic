@@ -71,7 +71,7 @@ object VendorsMergerJob {
         city = vendor.city,
         state = vendor.state,
         zip_code = vendor.zip_code,
-        memos = Set(vendor.memo).flatten.map(_.toLowerCase),
+        memos = Set(vendor.memo).flatten,
         edges = Set(vendor.edge),
         num_merged = 1
       )
