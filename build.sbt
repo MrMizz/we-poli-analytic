@@ -27,6 +27,8 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-mllib" % versionSpark,
   // dynamo connector
   "com.audienceproject" %% "spark-dynamodb" % "1.0.4",
+  // fuzzy string comparisons
+  "com.github.halfmatthalfcat" %% "stringmetric-core" % "0.28.0",
   // Testing
   "org.scalatest" %% "scalatest" % "3.1.1" % Test
 )
