@@ -56,7 +56,7 @@ object VendorsFuzzyConnectorJob {
         .flatMap { uniqueVendor: UniqueVendor =>
           val comparator: Comparator[UniqueVendor] = Comparator(uniqueVendor)
           val candidate: Option[Seq[Comparator[UniqueVendor]]] = Option(Seq(comparator))
-          comparator.nameTokens.map { token: String =>
+          comparator.cgTokens.map { token: String =>
             token -> candidate
           }
         }

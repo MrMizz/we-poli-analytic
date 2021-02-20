@@ -3,9 +3,8 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  Comparator, Features, UniqueVendorComparison
-}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{Features, UniqueVendorComparison}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyPredictorJob.Prediction
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -21,26 +20,9 @@ class VendorsFuzzyPredictorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
   override def transform(input: Dataset[UniqueVendor]): Dataset[(Double, Features, UniqueVendorComparison)] = {
     import spark.implicits._
-    input
-      .flatMap { uniqueVendor =>
-        val comparator: Comparator[UniqueVendor] = Comparator(uniqueVendor)
-        comparator.nameTokens.map { token: String =>
-          token -> Option(Seq(comparator))
-        }
-      }
-      .rdd
-      .reduceByKey(VendorsFuzzyConnectorFeaturesJob.reduceCandidates)
-      .flatMap {
-        case (_, candidates: Option[Seq[Comparator[UniqueVendor]]]) =>
-          candidates match {
-            case None => Nil
-            case Some(seq) =>
-              UniqueVendorComparison(seq).map { uniqueVendorComparison: UniqueVendorComparison =>
-                (Prediction(uniqueVendorComparison), uniqueVendorComparison.features, uniqueVendorComparison)
-              }
-          }
-      }
-      .toDS
+    CandidateGenerator(input).map { uniqueVendorComparison =>
+      (Prediction(uniqueVendorComparison), uniqueVendorComparison.features, uniqueVendorComparison)
+    }.toDS
   }
 
 }
