@@ -5,6 +5,7 @@ import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob._
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId
@@ -53,23 +54,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
         }
     }
     val uniqueVendorComparisons: RDD[UniqueVendorComparison] = {
-      uniqueVendors
-        .flatMap { uniqueVendor: UniqueVendor =>
-          val comparator: Comparator[UniqueVendor] = Comparator(uniqueVendor)
-          val candidate: Option[Seq[Comparator[UniqueVendor]]] = Option(Seq(comparator))
-          comparator.nameTokens.map { token: String =>
-            token -> candidate
-          }
-        }
-        .rdd
-        .reduceByKey(reduceCandidates)
-        .flatMap {
-          case (_, candidates: Option[Seq[Comparator[UniqueVendor]]]) =>
-            candidates match {
-              case Some(c) => UniqueVendorComparison(c)
-              case None    => Nil
-            }
-        }
+      CandidateGenerator(uniqueVendors)
     }
     val numPositives: Double = {
       vendorComparisons.count.toDouble
