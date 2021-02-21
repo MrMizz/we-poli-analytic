@@ -3,8 +3,9 @@ package in.tap.we.poli.analytic.jobs.mergers
 import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob._
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -45,16 +46,13 @@ class VendorsMergerJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
 
 object VendorsMergerJob {
 
-  import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
-
   final case class UniqueVendor(
     uid: Long,
     uids: Seq[Long],
     name: String,
     names: Set[String],
-    city: Option[String],
-    state: Option[String],
-    zip_code: Option[String],
+    address: Address,
+    addresses: Set[Address],
     memos: Set[String],
     edges: Set[ExpenditureEdge],
     num_merged: BigInt
@@ -68,9 +66,8 @@ object VendorsMergerJob {
         uids = Seq(vendor.uid),
         name = vendor.name,
         names = Set(vendor.name),
-        city = vendor.city,
-        state = vendor.state,
-        zip_code = vendor.zip_code,
+        address = vendor.address,
+        addresses = Set(vendor.address),
         memos = Set(vendor.memo).flatten,
         edges = Set(vendor.edge),
         num_merged = 1
@@ -78,14 +75,19 @@ object VendorsMergerJob {
     }
 
     def reduce(left: UniqueVendor, right: UniqueVendor): UniqueVendor = {
+      val names: Set[String] = {
+        left.names ++ right.names
+      }
+      val addresses: Set[Address] = {
+        left.addresses ++ right.addresses
+      }
       UniqueVendor(
         uid = Seq(left.uid, right.uid).min,
         uids = left.uids ++ right.uids,
-        name = left.name,
-        names = left.names ++ right.names,
-        city = left.city,
-        state = left.state,
-        zip_code = left.zip_code,
+        name = getMostCommon(names.toSeq).getOrElse(left.name),
+        names = names,
+        address = getMostCommon(addresses.toSeq).getOrElse(left.address),
+        addresses = addresses,
         memos = left.memos ++ right.memos,
         edges = left.edges ++ right.edges,
         num_merged = left.num_merged + right.num_merged

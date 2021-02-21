@@ -2,6 +2,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 
 trait VendorsFuzzyPredictorJobFixtures {
 
@@ -11,9 +12,14 @@ trait VendorsFuzzyPredictorJobFixtures {
       uids = Nil,
       name = "Vendor1",
       names = Set.empty,
-      city = Some("Los Angeles"),
-      state = Some("CA"),
-      zip_code = Some("90026"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA"),
+          zip_code = Some("90026")
+        ),
+      addresses = Set.empty[Address],
       memos = Set.empty,
       edges = edgesInCommon,
       num_merged = 3L
@@ -26,9 +32,14 @@ trait VendorsFuzzyPredictorJobFixtures {
       uids = Nil,
       name = "Vendor2",
       names = Set.empty,
-      city = Some("los angeles"),
-      state = Some("ca"),
-      zip_code = Some("90026"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("los angeles"),
+          state = Some("ca"),
+          zip_code = Some("90026")
+        ),
+      addresses = Set.empty[Address],
       memos = Set.empty,
       edges = edgesInCommon,
       num_merged = 3L
@@ -41,9 +52,13 @@ trait VendorsFuzzyPredictorJobFixtures {
       uids = Nil,
       name = "Vendor3",
       names = Set.empty,
-      city = Some("Santa Barbara"),
-      state = Some("CA"),
-      zip_code = None,
+      address = Address
+        .empty
+        .copy(
+          city = Some("Santa Barbara"),
+          state = Some("CA")
+        ),
+      addresses = Set.empty[Address],
       memos = Set.empty,
       edges = Set(emptyEdge),
       num_merged = 1L

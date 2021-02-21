@@ -220,7 +220,7 @@ object VendorsFuzzyConnectorFeaturesJob {
     }
 
     val cgTokens: Set[String] = {
-      nameTokens ++ Set(vendor.city, vendor.zip_code).flatten
+      nameTokens ++ Set(vendor.address.city, vendor.address.zip_code).flatten
     }
 
   }
@@ -253,15 +253,15 @@ object VendorsFuzzyConnectorFeaturesJob {
     }
 
     private lazy val sameCity: Option[Boolean] = {
-      same((u: VendorLike) => u.city)
+      same((u: VendorLike) => u.address.city)
     }
 
     private lazy val sameZip: Option[Boolean] = {
-      same((u: VendorLike) => u.zip_code)
+      same((u: VendorLike) => u.address.zip_code)
     }
 
     private lazy val sameState: Option[Boolean] = {
-      same((u: VendorLike) => u.state)
+      same((u: VendorLike) => u.address.state)
     }
 
     private def toDouble(maybeBool: Option[Boolean]): Double = {

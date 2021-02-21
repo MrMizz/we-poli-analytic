@@ -3,6 +3,7 @@ package in.tap.we.poli.analytic.jobs.connectors.unify
 import in.tap.we.poli.analytic.jobs.connectors.Connection
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 
 trait UniqueVendorConnectorFlattenJobFixtures {
 
@@ -12,9 +13,14 @@ trait UniqueVendorConnectorFlattenJobFixtures {
       uids = Seq(1L, 2L),
       name = "vendor1",
       names = Set("vendor1"),
-      city = Some("Los Angeles"),
-      state = Some("CA"),
-      zip_code = Some("90041"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA"),
+          zip_code = Some("90041")
+        ),
+      addresses = Set.empty[Address],
       memos = Set("memo"),
       edges = Set(
         ExpenditureEdge(

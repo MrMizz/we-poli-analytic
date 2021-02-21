@@ -5,6 +5,7 @@ import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.graph.vertices.VendorsVertexJob.VendorVertex
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -28,9 +29,9 @@ object VendorsVertexJob {
   final case class VendorVertex(
     uid: VertexId,
     name: String,
-    city: Option[String],
-    zip: Option[String],
-    state: Option[String],
+    names: Set[String],
+    address: Address,
+    addresses: Set[Address],
     has_been_affiliated: Option[Boolean],
     has_been_staff: Option[Boolean],
     has_been_consultant: Option[Boolean]
@@ -63,9 +64,9 @@ object VendorsVertexJob {
       VendorVertex(
         uid = uniqueVendor.uid,
         name = uniqueVendor.name,
-        city = uniqueVendor.city,
-        zip = uniqueVendor.zip_code,
-        state = uniqueVendor.state,
+        names = uniqueVendor.names,
+        address = uniqueVendor.address,
+        addresses = uniqueVendor.addresses,
         has_been_affiliated = hasBeenAffiliated,
         has_been_staff = hasBeenStaff,
         has_been_consultant = hasBeenConsultant

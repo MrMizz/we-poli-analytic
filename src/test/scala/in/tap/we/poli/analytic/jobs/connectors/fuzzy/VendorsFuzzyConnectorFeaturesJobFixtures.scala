@@ -2,7 +2,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}
 
 trait VendorsFuzzyConnectorFeaturesJobFixtures {
 
@@ -10,9 +10,13 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
     emptyVendor.copy(
       uid = 1L,
       name = "Vendor1",
-      city = Some("Los Angeles"),
-      state = Some("CA"),
-      zip_code = Some("90026"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA"),
+          zip_code = Some("90026")
+        ),
       memo = None,
       edge = emptyEdge.copy(src_id = -111L)
     )
@@ -24,9 +28,14 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
       uids = Nil,
       name = "Vendor1",
       names = Set.empty,
-      city = Some("Los Angeles"),
-      state = Some("CA"),
-      zip_code = Some("90026"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA"),
+          zip_code = Some("90026")
+        ),
+      addresses = Set.empty[Address],
       memos = Set.empty,
       edges = edgesInCommon,
       num_merged = 0
@@ -68,9 +77,7 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
     Vendor(
       uid = -1L,
       name = "",
-      city = None,
-      state = None,
-      zip_code = None,
+      address = Address.empty,
       memo = None,
       edge = emptyEdge.copy(src_id = -111L)
     )
@@ -82,9 +89,8 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
       uids = Nil,
       name = "",
       names = Set.empty,
-      city = None,
-      state = None,
-      zip_code = None,
+      address = Address.empty,
+      addresses = Set.empty[Address],
       memos = Set.empty,
       edges = Set.empty,
       num_merged = 0

@@ -1,6 +1,7 @@
 package in.tap.we.poli.analytic.jobs.graph.vertices
 
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 import in.tap.we.poli.models.Committee
 
 trait CommitteesVertexJobFixtures {
@@ -46,15 +47,22 @@ trait CommitteesVertexJobFixtures {
   }
 
   val committeeVertex1: CommitteeVertex = {
-    new CommitteeVertex(
+    val address = {
+      Address(
+        street = Option("street1"),
+        alternate_street = Option("street2"),
+        city = Option("city1"),
+        state = Option("state1"),
+        zip_code = Option("zip1")
+      )
+    }
+    CommitteeVertex(
       uid = 11L,
       name = "committee1",
       committee_names = Set("committee1"),
       treasures_names = Set("treasure1"),
-      streets = Set("street1", "street2"),
-      cities = Set("city1"),
-      states = Set("state1"),
-      zip_codes = Set("zip1"),
+      address = address,
+      addresses = Set(address),
       committee_designations = Set("designation1"),
       committee_types = Set("type1"),
       committee_party_affiliations = Set("affiliation1"),
@@ -70,10 +78,8 @@ trait CommitteesVertexJobFixtures {
       name = "committee2",
       committee_names = Set(),
       treasures_names = Set(),
-      streets = Set(),
-      cities = Set(),
-      states = Set(),
-      zip_codes = Set(),
+      address = Address.empty,
+      addresses = Set.empty[Address],
       committee_designations = Set(),
       committee_types = Set(),
       committee_party_affiliations = Set(),
@@ -84,15 +90,22 @@ trait CommitteesVertexJobFixtures {
   }
 
   val committeeVertex3: CommitteeVertex = {
-    new CommitteeVertex(
+    val address = {
+      Address(
+        street = Option("street1"),
+        alternate_street = Option("street3"),
+        city = Option("city3"),
+        state = None,
+        zip_code = Option("zip1")
+      )
+    }
+    CommitteeVertex(
       uid = 11L,
       name = "committee3",
       committee_names = Set("committee3"),
       treasures_names = Set("treasure3"),
-      streets = Set("street1", "street3"),
-      cities = Set("city3"),
-      states = Set(),
-      zip_codes = Set("zip1"),
+      address = address,
+      addresses = Set(address),
       committee_designations = Set("designation1"),
       committee_types = Set("type1"),
       committee_party_affiliations = Set("affiliation1"),
@@ -103,15 +116,31 @@ trait CommitteesVertexJobFixtures {
   }
 
   val committeeVertex4: CommitteeVertex = {
-    new CommitteeVertex(
+    val address1 = {
+      Address(
+        street = Option("street1"),
+        alternate_street = Option("street2"),
+        city = Option("city1"),
+        state = Option("state1"),
+        zip_code = Option("zip1")
+      )
+    }
+    val address2 = {
+      Address(
+        street = Option("street1"),
+        alternate_street = Option("street3"),
+        city = Option("city3"),
+        state = None,
+        zip_code = Option("zip1")
+      )
+    }
+    CommitteeVertex(
       uid = 11L,
       name = "committee1",
       committee_names = Set("committee1", "committee3"),
       treasures_names = Set("treasure1", "treasure3"),
-      streets = Set("street1", "street2", "street3"),
-      cities = Set("city1", "city3"),
-      states = Set("state1"),
-      zip_codes = Set("zip1"),
+      address = address1,
+      addresses = Set(address1, address2),
       committee_designations = Set("designation1"),
       committee_types = Set("type1"),
       committee_party_affiliations = Set("affiliation1"),

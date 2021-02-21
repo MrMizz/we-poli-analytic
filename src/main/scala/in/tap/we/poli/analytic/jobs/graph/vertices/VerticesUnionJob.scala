@@ -6,6 +6,7 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
 import in.tap.we.poli.analytic.jobs.graph.vertices.VendorsVertexJob.VendorVertex
 import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJob.AgnosticVertex
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -31,9 +32,9 @@ object VerticesUnionJob {
   final case class AgnosticVertex(
     uid: VertexId,
     name: String,
-    streets: Set[String],
-    cities: Set[String],
-    states: Set[String],
+    names: Set[String],
+    address: Address,
+    addresses: Set[Address],
     is_committee: Boolean
   )
 
@@ -43,9 +44,9 @@ object VerticesUnionJob {
       AgnosticVertex(
         uid = committeeVertex.uid,
         name = committeeVertex.name,
-        streets = committeeVertex.streets,
-        cities = committeeVertex.cities,
-        states = committeeVertex.states,
+        names = committeeVertex.committee_names.filterNot(_.equals(committeeVertex.name)),
+        address = committeeVertex.address,
+        addresses = committeeVertex.addresses.filterNot(_.equals(committeeVertex.address)),
         is_committee = true
       )
     }
@@ -54,9 +55,9 @@ object VerticesUnionJob {
       AgnosticVertex(
         uid = vendorVertex.uid,
         name = vendorVertex.name,
-        streets = Set.empty[String],
-        cities = vendorVertex.city.toSet,
-        states = vendorVertex.state.toSet,
+        names = vendorVertex.names.filterNot(_.equals(vendorVertex.name)),
+        address = vendorVertex.address,
+        addresses = vendorVertex.addresses.filterNot(_.equals(vendorVertex.address)),
         is_committee = false
       )
     }

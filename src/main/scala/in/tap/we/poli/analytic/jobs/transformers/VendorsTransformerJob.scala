@@ -4,6 +4,7 @@ import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob._
 import in.tap.we.poli.models.OperatingExpenditures
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -25,30 +26,46 @@ class VendorsTransformerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 object VendorsTransformerJob {
 
-  import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
+  final case class Address(
+    street: Option[String],
+    alternate_street: Option[String],
+    city: Option[String],
+    zip_code: Option[String],
+    state: Option[String]
+  )
+
+  object Address {
+
+    val empty: Address = {
+      Address(
+        None,
+        None,
+        None,
+        None,
+        None
+      )
+    }
+
+  }
 
   trait VendorLike {
-    def uid: Long
-    def name: String
-    def city: Option[String]
-    def state: Option[String]
-    def zip_code: Option[String]
+    val uid: Long
+    val name: String
+    val address: Address
   }
 
   final case class Vendor(
     uid: Long,
     name: String,
-    city: Option[String],
-    state: Option[String],
-    zip_code: Option[String],
+    address: Address,
     memo: Option[String],
     edge: ExpenditureEdge
   ) extends VendorLike {
 
     lazy val hash1: Option[String] = {
       for {
-        city <- city.map(_.toLowerCase)
-        state <- state.map(_.toLowerCase)
+        city <- address.city.map(_.toLowerCase)
+        state <- address.state.map(_.toLowerCase)
       } yield {
         s"${name.toLowerCase}_${city}_$state"
       }
@@ -56,8 +73,8 @@ object VendorsTransformerJob {
 
     lazy val hash2: Option[String] = {
       for {
-        city <- city.map(_.toLowerCase)
-        state <- state.map(_.toLowerCase)
+        city <- address.city.map(_.toLowerCase)
+        state <- address.state.map(_.toLowerCase)
       } yield {
         s"${cleanedName}_${city}_$state"
       }
@@ -65,7 +82,7 @@ object VendorsTransformerJob {
 
     lazy val hash3: Option[String] = {
       for {
-        zip <- zip_code.map(_.toLowerCase.take(5))
+        zip <- address.zip_code.map(_.toLowerCase.take(5))
       } yield {
         s"${cleanedName}_$zip"
       }
@@ -95,9 +112,13 @@ object VendorsTransformerJob {
         Vendor(
           uid = sub_id,
           name = name.toLowerCase,
-          city = operatingExpenditures.CITY.map(_.toLowerCase),
-          state = operatingExpenditures.STATE.map(_.toLowerCase),
-          zip_code = operatingExpenditures.ZIP_CODE,
+          address = Address(
+            street = None,
+            alternate_street = None,
+            city = operatingExpenditures.CITY.map(_.toLowerCase),
+            state = operatingExpenditures.STATE.map(_.toLowerCase),
+            zip_code = operatingExpenditures.ZIP_CODE.map(_.take(5))
+          ),
           memo = operatingExpenditures.PURPOSE.map(_.toLowerCase),
           edge = ExpenditureEdge.fromOperatingExpenditures(operatingExpenditures)
         )

@@ -1,7 +1,7 @@
 package in.tap.we.poli.analytic.jobs.connectors.auto
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}
 
 trait VendorsAutoConnectorJobFixtures {
 
@@ -9,9 +9,13 @@ trait VendorsAutoConnectorJobFixtures {
     new Vendor(
       uid = 1L,
       name = "Vendor, Inc. # 1",
-      city = Some("City1"),
-      state = Some("State1"),
-      zip_code = Some("Zip1"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("City1"),
+          state = Some("State1"),
+          zip_code = Some("Zip1")
+        ),
       memo = Some("memo1"),
       edge = edge1
     )
@@ -21,9 +25,13 @@ trait VendorsAutoConnectorJobFixtures {
     new Vendor(
       uid = 2L,
       name = "Vendor Two",
-      city = Some("City1"),
-      state = Some("State1"),
-      zip_code = Some("Zip1"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("City1"),
+          state = Some("State1"),
+          zip_code = Some("Zip1")
+        ),
       memo = None,
       edge = edge2
     )
@@ -33,9 +41,13 @@ trait VendorsAutoConnectorJobFixtures {
     new Vendor(
       uid = 3L,
       name = "Vendor",
-      city = Some("City1"),
-      state = Some("State1"),
-      zip_code = Some("Zip1"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("City1"),
+          state = Some("State1"),
+          zip_code = Some("Zip1")
+        ),
       memo = None,
       edge = edge3
     )

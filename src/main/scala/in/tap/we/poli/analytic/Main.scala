@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{
-  VendorsComparisonJob, VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob
+  VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob
 }
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
 import in.tap.we.poli.analytic.jobs.dynamo.{
@@ -29,8 +29,6 @@ object Main extends in.tap.base.spark.main.Main {
         new VendorsAutoConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-merger" =>
         new VendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "vendors-comparison" =>
-        new VendorsComparisonJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-vertex" =>
         new VendorsVertexJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "committees-vertex" =>
