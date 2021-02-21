@@ -20,9 +20,9 @@ class VendorsMergerJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
 
   override def transform(input: (Dataset[Vendor], Dataset[(VertexId, VertexId)])): Dataset[UniqueVendor] = {
     import spark.implicits._
-
-    val (vendors: Dataset[Vendor], connector: Dataset[(VertexId, VertexId)]) = input
-
+    val (vendors: Dataset[Vendor], connector: Dataset[(VertexId, VertexId)]) = {
+      input
+    }
     vendors
       .map { vendor: Vendor =>
         vendor.uid -> UniqueVendor.fromVendor(vendor)
