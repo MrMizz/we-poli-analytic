@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-1HDY58M00W483"
-RUN_DATE="2020-12-23-01"
+CLUSTER="j-1M15V7WK58F0Q"
+RUN_DATE="2020-02-20-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
 ###################################################
