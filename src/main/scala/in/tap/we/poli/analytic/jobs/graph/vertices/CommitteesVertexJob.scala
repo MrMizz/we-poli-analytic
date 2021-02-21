@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
-import in.tap.we.poli.analytic.jobs.mergers.utils.MergerUtils
+import in.tap.we.poli.analytic.jobs.mergers
 import in.tap.we.poli.models.Committee
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.RDD
@@ -145,7 +145,7 @@ object CommitteesVertexJob {
       }
       CommitteeVertex(
         uid = left.uid,
-        name = MergerUtils.getMostCommon[String](names.toSeq).getOrElse(names.head),
+        name = mergers.getMostCommon[String](names.toSeq).getOrElse(names.head),
         committee_names = names,
         treasures_names = left.treasures_names ++ right.treasures_names,
         streets = left.streets ++ right.streets,

@@ -1,6 +1,6 @@
-package in.tap.we.poli.analytic.jobs.mergers.utils
+package in.tap.we.poli.analytic.jobs
 
-object MergerUtils {
+package object mergers {
 
   def getMostCommon[A](seq: Seq[A]): Option[A] = {
     seq match {
