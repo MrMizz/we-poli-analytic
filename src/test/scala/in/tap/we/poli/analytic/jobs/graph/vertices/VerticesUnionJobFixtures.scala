@@ -1,6 +1,7 @@
 package in.tap.we.poli.analytic.jobs.graph.vertices
 
 import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJob.AgnosticVertex
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 
 trait VerticesUnionJobFixtures extends CommitteesVertexJobFixtures with VendorsVertexJobFixtures {
 
@@ -8,9 +9,15 @@ trait VerticesUnionJobFixtures extends CommitteesVertexJobFixtures with VendorsV
     AgnosticVertex(
       uid = 11L,
       name = "committee1",
-      streets = Set("street1", "street2"),
-      cities = Set("city1"),
-      states = Set("state1"),
+      alternate_names = Set.empty[String],
+      address = Address(
+        street = Option("street1"),
+        alternate_street = Option("street2"),
+        city = Option("city1"),
+        state = Option("state1"),
+        zip_code = Some("zip1")
+      ),
+      alternate_addresses = Set.empty[Address],
       is_committee = true
     )
   }
@@ -19,9 +26,13 @@ trait VerticesUnionJobFixtures extends CommitteesVertexJobFixtures with VendorsV
     AgnosticVertex(
       uid = 1L,
       name = "Mickey's Consulting",
-      streets = Set.empty[String],
-      cities = Set("Los Angeles"),
-      states = Set.empty[String],
+      alternate_names = Set.empty[String],
+      address = Address
+        .empty
+        .copy(
+          city = Some("Los Angeles")
+        ),
+      alternate_addresses = Set.empty[Address],
       is_committee = false
     )
   }

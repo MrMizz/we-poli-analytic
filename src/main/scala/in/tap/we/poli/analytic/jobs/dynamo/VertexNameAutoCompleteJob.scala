@@ -12,6 +12,10 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
+/**
+ * TODO: Use [[AgnosticVertex.alternate_names]] as well.
+ * TODO: Write only Ids, have front end fetch from vertex table for data.
+ */
 class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, val MAX_RESPONSE_SIZE: Int)(
   implicit
   val spark: SparkSession,

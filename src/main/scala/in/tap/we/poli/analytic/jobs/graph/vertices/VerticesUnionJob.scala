@@ -32,9 +32,9 @@ object VerticesUnionJob {
   final case class AgnosticVertex(
     uid: VertexId,
     name: String,
-    names: Set[String],
+    alternate_names: Set[String],
     address: Address,
-    addresses: Set[Address],
+    alternate_addresses: Set[Address],
     is_committee: Boolean
   )
 
@@ -44,9 +44,9 @@ object VerticesUnionJob {
       AgnosticVertex(
         uid = committeeVertex.uid,
         name = committeeVertex.name,
-        names = committeeVertex.committee_names.filterNot(_.equals(committeeVertex.name)),
+        alternate_names = committeeVertex.committee_names.filterNot(_.equals(committeeVertex.name)),
         address = committeeVertex.address,
-        addresses = committeeVertex.addresses.filterNot(_.equals(committeeVertex.address)),
+        alternate_addresses = committeeVertex.addresses.filterNot(_.equals(committeeVertex.address)),
         is_committee = true
       )
     }
@@ -55,9 +55,9 @@ object VerticesUnionJob {
       AgnosticVertex(
         uid = vendorVertex.uid,
         name = vendorVertex.name,
-        names = vendorVertex.names.filterNot(_.equals(vendorVertex.name)),
+        alternate_names = vendorVertex.names.filterNot(_.equals(vendorVertex.name)),
         address = vendorVertex.address,
-        addresses = vendorVertex.addresses.filterNot(_.equals(vendorVertex.address)),
+        alternate_addresses = vendorVertex.addresses.filterNot(_.equals(vendorVertex.address)),
         is_committee = false
       )
     }

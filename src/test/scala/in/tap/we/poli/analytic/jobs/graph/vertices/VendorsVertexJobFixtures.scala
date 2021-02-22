@@ -3,18 +3,26 @@ package in.tap.we.poli.analytic.jobs.graph.vertices
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.VendorsVertexJob.VendorVertex
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 
 trait VendorsVertexJobFixtures {
 
   val uniqueVendor1: UniqueVendor = {
+    val address = {
+      Address
+        .empty
+        .copy(
+          city = Some("Los Angeles")
+        )
+    }
+
     new UniqueVendor(
       uid = 1L,
       uids = Seq(1L),
       name = "Mickey's Consulting",
       names = Set("Mickey's Consulting"),
-      city = Some("Los Angeles"),
-      state = None,
-      zip_code = None,
+      address = address,
+      addresses = Set(address),
       memos = Set("payroll", "campaign consulting"),
       num_merged = 1,
       edges = Set(edge1)
@@ -22,14 +30,21 @@ trait VendorsVertexJobFixtures {
   }
 
   val uniqueVendor2: UniqueVendor = {
+    val address = {
+      Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA")
+        )
+    }
     new UniqueVendor(
       uid = 2L,
       uids = Seq(2L, 3L, 4L),
       name = "Domino's",
       names = Set("Domino's"),
-      city = Some("Los Angeles"),
-      state = Some("CA"),
-      zip_code = None,
+      address = address,
+      addresses = Set(address),
       memos = Set("food", "dinner"),
       num_merged = 3,
       edges = Set(edge2, edge3, edge4)
@@ -37,14 +52,21 @@ trait VendorsVertexJobFixtures {
   }
 
   val uniqueVendor3: UniqueVendor = {
+    val address = {
+      Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA")
+        )
+    }
     new UniqueVendor(
       uid = 5L,
       uids = Seq(5L),
       name = "Raphael Saadiq",
       names = Set("Raphael Saadiq"),
-      city = Some("Los Angeles"),
-      state = Some("CA"),
-      zip_code = None,
+      address = address,
+      addresses = Set(address),
       memos = Set("media consulting"),
       num_merged = 1,
       edges = Set(edge5)
@@ -52,12 +74,22 @@ trait VendorsVertexJobFixtures {
   }
 
   val vendorVertex1: VendorVertex = {
+    val name = {
+      "Mickey's Consulting"
+    }
+    val address = {
+      Address
+        .empty
+        .copy(
+          city = Some("Los Angeles")
+        )
+    }
     VendorVertex(
       uid = 1L,
-      name = "Mickey's Consulting",
-      city = Some("Los Angeles"),
-      zip = None,
-      state = None,
+      name = name,
+      names = Set(name),
+      address = address,
+      addresses = Set(address),
       has_been_affiliated = Some(true),
       has_been_consultant = Some(true),
       has_been_staff = Some(true)
@@ -65,12 +97,23 @@ trait VendorsVertexJobFixtures {
   }
 
   val vendorVertex2: VendorVertex = {
+    val name = {
+      "Domino's"
+    }
+    val address = {
+      Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA")
+        )
+    }
     VendorVertex(
       uid = 2L,
-      name = "Domino's",
-      city = Some("Los Angeles"),
-      zip = None,
-      state = Some("CA"),
+      name = name,
+      names = Set(name),
+      address = address,
+      addresses = Set(address),
       has_been_affiliated = None,
       has_been_consultant = None,
       has_been_staff = None
@@ -78,12 +121,23 @@ trait VendorsVertexJobFixtures {
   }
 
   val vendorVertex3: VendorVertex = {
+    val name = {
+      "Raphael Saadiq"
+    }
+    val address = {
+      Address
+        .empty
+        .copy(
+          city = Some("Los Angeles"),
+          state = Some("CA")
+        )
+    }
     VendorVertex(
       uid = 5L,
-      name = "Raphael Saadiq",
-      city = Some("Los Angeles"),
-      zip = None,
-      state = Some("CA"),
+      name = name,
+      names = Set(name),
+      address = address,
+      addresses = Set(address),
       has_been_affiliated = Some(true),
       has_been_consultant = Some(true),
       has_been_staff = None

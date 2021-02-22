@@ -67,16 +67,16 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
       s"$resourcePath/out/"
     }
     import spark.implicits._
-    agnosticVertices.toDS().write.mode(SaveMode.Overwrite).json(in1Path)
+    agnosticVertices.toDS().write.mode(SaveMode.Overwrite).parquet(in1Path)
     aggregateExpenditureEdges.toDS.write.mode(SaveMode.Overwrite).parquet(in2Path)
     new VertexNameAutoCompleteJob(
-      TwoInArgs(In(in1Path), In(in2Path, Formats.PARQUET)),
-      OneOutArgs(Out(outPath)),
+      TwoInArgs(In(in1Path, Formats.PARQUET), In(in2Path, Formats.PARQUET)),
+      OneOutArgs(Out(outPath, Formats.PARQUET)),
       MAX_RESPONSE_SIZE = 10
     ).execute()
     spark
       .read
-      .json(outPath)
+      .parquet(outPath)
       .as[VertexNameAutoCompleteJob.VertexNameAutoComplete]
       .collect()
       .toSeq

@@ -7,6 +7,7 @@ import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJobFixtures
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor._
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 
 class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixtures {
 
@@ -43,9 +44,8 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
           uids = Seq(3L, 1L),
           name = "Vendor",
           names = Set("Vendor", "Vendor, Inc. # 1"),
-          city = Some("City1"),
-          state = Some("State1"),
-          zip_code = Some("Zip1"),
+          address = address1,
+          addresses = Set(address1),
           num_merged = 2,
           memos = Set("memo1"),
           edges = Set(AutoConnectorMockEdges.edge3, AutoConnectorMockEdges.edge1)
@@ -55,9 +55,8 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
           uids = Seq(2L),
           name = "Vendor Two",
           names = Set("Vendor Two"),
-          city = Some("City1"),
-          state = Some("State1"),
-          zip_code = Some("Zip1"),
+          address = address2,
+          addresses = Set(address2),
           num_merged = 1,
           memos = Set(),
           edges = Set(AutoConnectorMockEdges.edge2)
@@ -73,9 +72,8 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
         uids = Seq(1L, 2L),
         name = "Vendor1",
         names = Set("Vendor1", "Vendor2"),
-        city = Some("City1"),
-        state = Some("State1"),
-        zip_code = Some("Zip1"),
+        address = address1,
+        addresses = Set(address1, address2),
         num_merged = 2,
         memos = Set("memo1"),
         edges = Set(edge1, edge2)
