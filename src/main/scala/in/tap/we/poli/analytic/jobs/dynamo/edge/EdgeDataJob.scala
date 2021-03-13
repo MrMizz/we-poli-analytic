@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.edge
 
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.EdgeDataJob.EdgeData
+import in.tap.we.poli.analytic.jobs.dynamo.edge.EdgeDataJob.EdgeData
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}

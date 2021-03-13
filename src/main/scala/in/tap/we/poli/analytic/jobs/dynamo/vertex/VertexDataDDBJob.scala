@@ -1,4 +1,4 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.vertex
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs

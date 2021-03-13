@@ -1,4 +1,4 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.autocomplete
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{
   AggregateExpenditureEdge, Analytics, ExpenditureEdge

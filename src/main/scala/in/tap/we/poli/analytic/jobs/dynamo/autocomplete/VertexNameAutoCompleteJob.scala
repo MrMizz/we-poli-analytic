@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.autocomplete
 
 import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.VertexNameAutoCompleteJob.VertexNameAutoComplete
+import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJob.VertexNameAutoComplete
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJob.AgnosticVertex
 import org.apache.spark.broadcast.Broadcast
@@ -33,8 +33,8 @@ class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, 
     val (vertices: Dataset[AgnosticVertex], edges: Dataset[AggregateExpenditureEdge]) = {
       input
     }
-    import spark.implicits._
     import VertexNameAutoCompleteJob.VertexNameAutoComplete._
+    import spark.implicits._
     vertices
       .flatMap(fromVertex)
       .rdd

@@ -1,10 +1,10 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.traversal
 
 import in.tap.base.spark.jobs.composite.OneInTwoOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.TwoOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.GraphTraversalJob.GraphTraversal.RelatedVertexIdsWithCount
-import in.tap.we.poli.analytic.jobs.dynamo.GraphTraversalJob.{GraphTraversal, GraphTraversalPageCount}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal.RelatedVertexIdsWithCount
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.{GraphTraversal, GraphTraversalPageCount}
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.RDD
@@ -57,6 +57,17 @@ object GraphTraversalJob {
   }
 
   /**
+   * Traversal Page Count Lookup.
+   *
+   * @param vertex_id  either a src_id or dst_id
+   * @param page_count total number of pages
+   */
+  final case class GraphTraversalPageCount(
+    vertex_id: VertexId,
+    page_count: Long
+  )
+
+  /**
    * DynamoDB Graph Traversal.
    * We need a Primary Key, which we call [[vertex_id]].
    * We're enforcing Pagination for traversals, to avoid writing arrays
@@ -71,17 +82,6 @@ object GraphTraversalJob {
     vertex_id: VertexId,
     page_num: Long,
     related_vertex_ids: Seq[VertexId]
-  )
-
-  /**
-   * Traversal Page Count Lookup.
-   *
-   * @param vertex_id  either a src_id or dst_id
-   * @param page_count total number of pages
-   */
-  final case class GraphTraversalPageCount(
-    vertex_id: VertexId,
-    page_count: Long
   )
 
   object GraphTraversal {
@@ -128,7 +128,6 @@ object GraphTraversalJob {
           related_vertex_ids = page
         ) -> (vertexId -> 1L)
       }
-
     }
 
   }

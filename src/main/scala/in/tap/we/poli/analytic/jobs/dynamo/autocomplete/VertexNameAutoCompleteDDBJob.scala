@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.autocomplete
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.base.spark.populator.DynamoPopulator
-import in.tap.we.poli.analytic.jobs.dynamo.VertexNameAutoCompleteJob.VertexNameAutoComplete
+import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJob.VertexNameAutoComplete
 import org.apache.spark.sql.SparkSession
 
 class VertexNameAutoCompleteDDBJob(override val inArgs: OneInArgs, override val outArgs: OneOutArgs)(
