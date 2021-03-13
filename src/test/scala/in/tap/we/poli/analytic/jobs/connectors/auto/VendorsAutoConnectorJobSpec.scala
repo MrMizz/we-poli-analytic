@@ -7,7 +7,9 @@ import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.Dataset
+import org.scalatest.DoNotDiscover
 
+@DoNotDiscover
 class VendorsAutoConnectorJobSpec extends BaseSparkJobSpec with VendorsAutoConnectorJobFixtures {
 
   val resourcePath: String = {

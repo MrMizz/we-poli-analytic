@@ -7,7 +7,9 @@ import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJobFixtures
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor._
+import org.scalatest.DoNotDiscover
 
+@DoNotDiscover
 class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixtures {
 
   val resourcePath: String = {
