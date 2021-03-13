@@ -43,15 +43,15 @@ class VendorsAutoConnectorJobSpec extends BaseSparkJobSpec with VendorsAutoConne
     vendors
       .write
       .mode(SaveMode.Overwrite)
-      .json(inPath)
+      .parquet(inPath)
     // write input resource to merger dir
     vendors
       .write
       .mode(SaveMode.Overwrite)
-      .json(s"$mergerPath/in1/")
+      .parquet(s"$mergerPath/in1/")
     // run job & write to output resource
     new VendorsAutoConnectorJob(
-      OneInArgs(In(path = inPath, format = Formats.JSON)),
+      OneInArgs(In(path = inPath, format = Formats.PARQUET)),
       OneOutArgs(Out(path = outPath, format = Formats.JSON))
     ).execute()
     // write output resource to merger dir

@@ -139,7 +139,7 @@ trait CommitteesVertexJobFixtures {
       name = "committee1",
       committee_names = Set("committee1", "committee3"),
       treasures_names = Set("treasure1", "treasure3"),
-      address = address1,
+      address = address2,
       addresses = Set(address1, address2),
       committee_designations = Set("designation1"),
       committee_types = Set("type1"),

@@ -1,13 +1,12 @@
 package in.tap.we.poli.analytic.jobs.mergers
 
-import in.tap.base.spark.io.{In, Out}
+import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJobFixtures
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor._
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 
 class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixtures {
 
@@ -29,20 +28,20 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
 
   val _: Unit = {
     new VendorsMergerJob(
-      TwoInArgs(In(path = in1Path), In(path = in2Path)),
-      OneOutArgs(Out(path = outPath))
+      TwoInArgs(In(path = in1Path, Formats.PARQUET), In(path = in2Path)),
+      OneOutArgs(Out(path = outPath, Formats.PARQUET))
     ).execute()
   }
 
   it should "merge vendors from connector" in {
     object AutoConnectorMockEdges extends VendorsAutoConnectorJobFixtures
     import spark.implicits._
-    spark.read.json(outPath).as[UniqueVendor].collect.toSeq.sortBy(_.uid) shouldBe {
+    spark.read.parquet(outPath).as[UniqueVendor].collect.toSeq.sortBy(_.uid) shouldBe {
       Seq(
         UniqueVendor(
           uid = 1L,
           uids = Seq(3L, 1L),
-          name = "Vendor",
+          name = "Vendor, Inc. # 1",
           names = Set("Vendor", "Vendor, Inc. # 1"),
           address = address1,
           addresses = Set(address1),
@@ -70,7 +69,7 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
       UniqueVendor(
         uid = 1L,
         uids = Seq(1L, 2L),
-        name = "Vendor1",
+        name = "Vendor2",
         names = Set("Vendor1", "Vendor2"),
         address = address1,
         addresses = Set(address1, address2),
