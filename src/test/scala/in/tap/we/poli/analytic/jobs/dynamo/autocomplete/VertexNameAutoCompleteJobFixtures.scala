@@ -69,51 +69,45 @@ trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
     AggregateExpenditureEdge(
       src_id = 11L,
       dst_id = 22L,
-      analytics = Analytics(
-        num_edges = 10,
-        total_spend = None,
-        avg_spend = None,
-        min_spend = None,
-        max_spend = None
-      ),
+      analytics = analytics(10),
       edges = Seq.empty[ExpenditureEdge]
     )
   }
 
   val aggregateExpenditureEdge2: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 33)
+    aggregateExpenditureEdge1.copy(dst_id = 33, analytics = analytics(11))
   }
 
   val aggregateExpenditureEdge3: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 44L)
+    aggregateExpenditureEdge1.copy(dst_id = 44L, analytics = analytics(12))
   }
 
   val aggregateExpenditureEdge4: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 55L)
+    aggregateExpenditureEdge1.copy(dst_id = 55L, analytics = analytics(13))
   }
 
   val aggregateExpenditureEdge5: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 66L)
+    aggregateExpenditureEdge1.copy(dst_id = 66L, analytics = analytics(1))
   }
 
   val aggregateExpenditureEdge6: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 77L)
+    aggregateExpenditureEdge1.copy(dst_id = 77L, analytics = analytics(2))
   }
 
   val aggregateExpenditureEdge7: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 88L)
+    aggregateExpenditureEdge1.copy(dst_id = 88L, analytics = analytics(3))
   }
 
   val aggregateExpenditureEdge8: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 99L)
+    aggregateExpenditureEdge1.copy(dst_id = 99L, analytics = analytics(22))
   }
 
   val aggregateExpenditureEdge9: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 110L)
+    aggregateExpenditureEdge1.copy(dst_id = 110L, analytics = analytics(23))
   }
 
   val aggregateExpenditureEdge10: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 12L, analytics = aggregateExpenditureEdge1.analytics.copy(num_edges = 9))
+    aggregateExpenditureEdge1.copy(dst_id = 12L, analytics = analytics(99))
   }
 
   val aggregateExpenditureEdge11: AggregateExpenditureEdge = {
@@ -121,7 +115,7 @@ trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
       src_id = 1L,
       dst_id = 2L,
       analytics = Analytics(
-        num_edges = 1,
+        num_edges = 101,
         total_spend = None,
         avg_spend = None,
         min_spend = None,
@@ -144,6 +138,16 @@ trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
       aggregateExpenditureEdge9,
       aggregateExpenditureEdge10,
       aggregateExpenditureEdge11
+    )
+  }
+
+  private def analytics(numEdges: Long): Analytics = {
+    Analytics(
+      num_edges = numEdges,
+      total_spend = None,
+      avg_spend = None,
+      min_spend = None,
+      max_spend = None
     )
   }
 

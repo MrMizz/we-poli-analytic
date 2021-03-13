@@ -80,7 +80,7 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
       .as[VertexNameAutoCompleteJob.VertexNameAutoComplete]
       .collect()
       .toSeq
-      .sortBy(_.prefix)
+      .sortBy(_.prefix) // TODO: should not sort
       .map { autoComplete: VertexNameAutoComplete =>
         (autoComplete.prefix, autoComplete.prefix_size, autoComplete.vertices.map(_.uid))
       } shouldBe {

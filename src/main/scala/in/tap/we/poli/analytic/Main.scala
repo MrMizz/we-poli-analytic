@@ -4,11 +4,15 @@ import in.tap.base.spark.jobs.composite.CompositeJob
 import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{
+  VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob
+}
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.dynamo.edge.{EdgeDataDDBJob, EdgeDataJob}
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.{GraphTraversalJob, GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.{
+  GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job
+}
 import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
@@ -51,8 +55,8 @@ object Main extends in.tap.base.spark.main.Main {
         new EdgeDataJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-edge-data-writer" =>
         new EdgeDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "dynamo-graph-traversal" =>
-        new GraphTraversalJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
+      case "dynamo-graph-traversal-sb1" =>
+        new GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
       case "dynamo-graph-traversal-page-writer" =>
         new GraphTraversalPageDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-page-count-writer" =>
