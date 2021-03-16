@@ -12,6 +12,7 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
+// TODO: split job
 abstract class GraphTraversalJob(
   val inArgs: OneInArgs,
   val outArgs: TwoOutArgs,
