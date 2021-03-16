@@ -20,7 +20,7 @@ trait VendorsVertexJobFixtures {
       uid = 1L,
       uids = Seq(1L),
       name = "Mickey's Consulting",
-      names = Set("Mickey's Consulting"),
+      names = Set("Mickey's Consulting", "McDonald's"),
       address = address,
       addresses = Set(address),
       memos = Set("payroll", "campaign consulting"),
@@ -87,7 +87,7 @@ trait VendorsVertexJobFixtures {
     VendorVertex(
       uid = 1L,
       name = name,
-      names = Set(name),
+      names = Set(name, "McDonald's"),
       address = address,
       addresses = Set(address),
       has_been_affiliated = Some(true),
