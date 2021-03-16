@@ -11,7 +11,7 @@ import org.apache.spark.sql.SaveMode
 class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAutoCompleteJobFixtures {
 
   it should "build prefixes from vertex names" in {
-    VertexNameAutoComplete.fromVertex(agnosticVertex1) shouldBe {
+    VertexNameAutoComplete.fromVertex(agnosticVertex1).sortBy(_._2._2) shouldBe {
       Seq(
         11L -> (agnosticVertex1 -> "com"),
         11L -> (agnosticVertex1 -> "comm"),
@@ -24,14 +24,8 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
       )
     }
 
-    VertexNameAutoComplete.fromVertex(agnosticVertex12) shouldBe {
+    VertexNameAutoComplete.fromVertex(agnosticVertex12).sortBy(_._2._2) shouldBe {
       Seq(
-        1L -> (agnosticVertex12 -> "mic"),
-        1L -> (agnosticVertex12 -> "mick"),
-        1L -> (agnosticVertex12 -> "micke"),
-        1L -> (agnosticVertex12 -> "mickey"),
-        1L -> (agnosticVertex12 -> "mickey'"),
-        1L -> (agnosticVertex12 -> "mickey's"),
         1L -> (agnosticVertex12 -> "con"),
         1L -> (agnosticVertex12 -> "cons"),
         1L -> (agnosticVertex12 -> "consu"),
@@ -40,6 +34,20 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
         1L -> (agnosticVertex12 -> "consulti"),
         1L -> (agnosticVertex12 -> "consultin"),
         1L -> (agnosticVertex12 -> "consulting"),
+        1L -> (agnosticVertex12 -> "mcd"),
+        1L -> (agnosticVertex12 -> "mcdo"),
+        1L -> (agnosticVertex12 -> "mcdon"),
+        1L -> (agnosticVertex12 -> "mcdona"),
+        1L -> (agnosticVertex12 -> "mcdonal"),
+        1L -> (agnosticVertex12 -> "mcdonald"),
+        1L -> (agnosticVertex12 -> "mcdonald'"),
+        1L -> (agnosticVertex12 -> "mcdonald's"),
+        1L -> (agnosticVertex12 -> "mic"),
+        1L -> (agnosticVertex12 -> "mick"),
+        1L -> (agnosticVertex12 -> "micke"),
+        1L -> (agnosticVertex12 -> "mickey"),
+        1L -> (agnosticVertex12 -> "mickey'"),
+        1L -> (agnosticVertex12 -> "mickey's"),
         1L -> (agnosticVertex12 -> "mickey'sc"),
         1L -> (agnosticVertex12 -> "mickey'sco"),
         1L -> (agnosticVertex12 -> "mickey'scon"),

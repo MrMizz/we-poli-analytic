@@ -12,9 +12,6 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-/**
- * TODO: Use [[AgnosticVertex.alternate_names]] as well.
- */
 class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, val MAX_RESPONSE_SIZE: Int)(
   implicit
   val spark: SparkSession,
@@ -90,7 +87,7 @@ object VertexNameAutoCompleteJob {
     type VertexIdWithDataAndPrefix = (VertexId, (AgnosticVertex, String))
 
     def fromVertex(vertex: AgnosticVertex): Seq[VertexIdWithDataAndPrefix] = {
-      buildPrefixes(vertex.name).map { prefix: String =>
+      buildPrefixes(vertex).map { prefix: String =>
         vertex.uid -> (vertex, prefix)
       }
     }
@@ -107,7 +104,7 @@ object VertexNameAutoCompleteJob {
       grouped.toSeq.sortBy(_._2).reverse.take(MAX_RESPONSE_SIZE)
     }
 
-    def buildPrefixes(name: String): Seq[String] = {
+    private def buildPrefixes(name: String): Seq[String] = {
       def func(token: String): Seq[String] = {
         val tokenSize: Int = token.length
         PREFIX_RANGE.filter(_ <= tokenSize).map { n: Int =>
@@ -116,6 +113,10 @@ object VertexNameAutoCompleteJob {
       }
       val lowerName: String = name.toLowerCase
       (lowerName.split(" ") :+ lowerName.replace(" ", "")).flatMap(func).distinct
+    }
+
+    private def buildPrefixes(vertex: AgnosticVertex): Seq[String] = {
+      (buildPrefixes(vertex.name) ++ vertex.alternate_names.flatMap(buildPrefixes).toSeq).distinct
     }
 
   }

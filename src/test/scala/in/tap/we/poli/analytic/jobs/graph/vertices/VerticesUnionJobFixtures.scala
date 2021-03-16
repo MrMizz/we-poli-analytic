@@ -26,7 +26,7 @@ trait VerticesUnionJobFixtures extends CommitteesVertexJobFixtures with VendorsV
     AgnosticVertex(
       uid = 1L,
       name = "Mickey's Consulting",
-      alternate_names = Set.empty[String],
+      alternate_names = Set("McDonald's"),
       address = Address
         .empty
         .copy(
