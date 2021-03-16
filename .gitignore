@@ -3,4 +3,3 @@ project/target
 target
 data
 *.terraform
-*.tfstate*
