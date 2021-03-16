@@ -22,7 +22,7 @@ $JAR_PATH,\
 ]
 
 ###################################################
-### CONNECTORS
+### CONNECTORS (Auto)
 ###################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=VendorsConnector,\
@@ -34,12 +34,12 @@ $JAR_PATH,\
 --step,vendors-connector,\
 --in1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
 --in1-format,json,\
---out1,s3://big-time-tap-in-spark/poli/connector/auto/vendors/$RUN_DATE/,\
+--out1,s3://big-time-tap-in-spark/poli/connector/vendors/auto/$RUN_DATE/,\
 --out1-format,json\
 ]
 
 ###################################################
-### MERGERS
+### MERGERS (Auto)
 ###################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=VendorsMerger,\
@@ -51,18 +51,47 @@ $JAR_PATH,\
 --step,vendors-merger,\
 --in1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
 --in1-format,json,\
---in2,s3://big-time-tap-in-spark/poli/connector/auto/vendors/$RUN_DATE/,\
+--in2,s3://big-time-tap-in-spark/poli/connector/vendors/auto/$RUN_DATE/,\
 --in2-format,json,\
---out1,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
+--out1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
 --out1-format,json\
 ]
 
-## TODO
-## 1) Validation Tranformer
-## 2) Validation Connector
-## 3) Connector Unify
-## 4) Unique Vendor Flatten
-## 5) Merger, again
+###################################################
+### CONNECTORS (Fuzzy)
+###################################################
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=UniqueVendorsConnector,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=UniqueVendorsConnector,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,unique-vendors-connector,\
+--in1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
+--in1-format,json,\
+--out1,s3://big-time-tap-in-spark/poli/connector/vendors/fuzzy/$RUN_DATE/,\
+--out1-format,json\
+]
+
+###################################################
+### MERGERS (Fuzzy)
+###################################################
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=UniqueVendorsMerger,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=UniqueVendorsMerger,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,unique-vendors-merger,\
+--in1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
+--in1-format,json,\
+--in2,s3://big-time-tap-in-spark/poli/connector/vendors/fuzzy/$RUN_DATE/,\
+--in2-format,json,\
+--out1,s3://big-time-tap-in-spark/poli/merged/vendors/fuzzy/$RUN_DATE/,\
+--out1-format,json\
+]
 
 ###################################################
 ### GRAPH
@@ -75,7 +104,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,committee-to-vendor-edge,\
---in1,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/merged/vendors/fuzzy/$RUN_DATE/,\
 --in1-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --out1-format,json\
@@ -105,7 +134,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,vendors-vertex,\
---in1,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/merged/vendors/fuzzy/$RUN_DATE/,\
 --in1-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/graph/vertices/vendors/$RUN_DATE/,\
 --out1-format,json\

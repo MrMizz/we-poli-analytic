@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{
-  VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob
+  VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob
 }
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
@@ -18,7 +18,7 @@ import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
-import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob
+import in.tap.we.poli.analytic.jobs.mergers.{UniqueVendorsMergerJob, VendorsMergerJob}
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob
 import org.apache.spark.sql.SparkSession
 
@@ -32,6 +32,10 @@ object Main extends in.tap.base.spark.main.Main {
         new VendorsAutoConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-merger" =>
         new VendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "unique-vendors-connector" =>
+        new VendorsFuzzyConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "unique-vendors-merger" =>
+        new UniqueVendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-vertex" =>
         new VendorsVertexJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "committees-vertex" =>
