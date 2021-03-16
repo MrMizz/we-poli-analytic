@@ -11,7 +11,8 @@ import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.dynamo.edge.{EdgeDataDDBJob, EdgeDataJob}
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.{
-  GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job
+  GraphTraversalPageCountDDBJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job, GraphTraversalSB2Job,
+  GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job
 }
 import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
@@ -57,6 +58,14 @@ object Main extends in.tap.base.spark.main.Main {
         new EdgeDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-sb1" =>
         new GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
+      case "dynamo-graph-traversal-sb2" =>
+        new GraphTraversalSB2Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
+      case "dynamo-graph-traversal-sb3" =>
+        new GraphTraversalSB3Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
+      case "dynamo-graph-traversal-sb4" =>
+        new GraphTraversalSB4Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
+      case "dynamo-graph-traversal-sb5" =>
+        new GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[TwoOutArgs])
       case "dynamo-graph-traversal-page-writer" =>
         new GraphTraversalPageDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-page-count-writer" =>
