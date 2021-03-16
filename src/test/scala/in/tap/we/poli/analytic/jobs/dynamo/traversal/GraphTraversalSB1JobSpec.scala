@@ -59,12 +59,7 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
         (
           11L,
           1L,
-          Seq(12L, 110L, 99L, 55L, 44L, 33L, 22L, 88L, 77L, 66L)
-        ),
-        (
-          12L,
-          1L,
-          Seq(11L)
+          Seq(121L, 110L, 99L, 55L, 44L, 33L, 22L, 88L, 77L, 66L)
         ),
         (
           22L,
@@ -108,6 +103,11 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
         ),
         (
           110L,
+          1L,
+          Seq(11L)
+        ),
+        (
+          121L,
           1L,
           Seq(11L)
         )

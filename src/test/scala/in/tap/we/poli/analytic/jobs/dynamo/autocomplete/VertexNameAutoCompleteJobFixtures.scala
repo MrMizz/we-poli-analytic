@@ -9,43 +9,43 @@ import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJobFixtures
 trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
 
   val agnosticVertex2: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 22L)
+    agnosticVertex1.copy(uid = 22L, is_committee = false)
   }
 
   val agnosticVertex3: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 33L)
+    agnosticVertex2.copy(uid = 33L)
   }
 
   val agnosticVertex4: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 44L)
+    agnosticVertex2.copy(uid = 44L)
   }
 
   val agnosticVertex5: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 55L)
+    agnosticVertex2.copy(uid = 55L)
   }
 
   val agnosticVertex6: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 66L)
+    agnosticVertex2.copy(uid = 66L)
   }
 
   val agnosticVertex7: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 77L)
+    agnosticVertex2.copy(uid = 77L)
   }
 
   val agnosticVertex8: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 88L)
+    agnosticVertex2.copy(uid = 88L)
   }
 
   val agnosticVertex9: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 99L)
+    agnosticVertex2.copy(uid = 99L)
   }
 
   val agnosticVertex10: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 110L)
+    agnosticVertex2.copy(uid = 110L)
   }
 
   val agnosticVertex11: AgnosticVertex = {
-    agnosticVertex1.copy(uid = 121L)
+    agnosticVertex2.copy(uid = 121L)
   }
 
   val agnosticVertices: Seq[AgnosticVertex] = {
@@ -107,7 +107,7 @@ trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
   }
 
   val aggregateExpenditureEdge10: AggregateExpenditureEdge = {
-    aggregateExpenditureEdge1.copy(dst_id = 12L, analytics = analytics(99))
+    aggregateExpenditureEdge1.copy(dst_id = 121L, analytics = analytics(99))
   }
 
   val aggregateExpenditureEdge11: AggregateExpenditureEdge = {

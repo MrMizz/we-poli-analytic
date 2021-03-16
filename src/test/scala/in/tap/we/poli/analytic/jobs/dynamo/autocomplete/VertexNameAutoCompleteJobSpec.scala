@@ -5,6 +5,7 @@ import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJob.VertexNameAutoComplete
+import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.SaveMode
 
 class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAutoCompleteJobFixtures {
@@ -80,43 +81,58 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
       .as[VertexNameAutoCompleteJob.VertexNameAutoComplete]
       .collect()
       .toSeq
-      .sortBy(_.prefix) // TODO: should not sort
+      .sortBy(_.prefix)
       .map { autoComplete: VertexNameAutoComplete =>
-        (autoComplete.prefix, autoComplete.prefix_size, autoComplete.vertices.map(_.uid))
+        val pretty: (String, BigInt, Seq[VertexId]) = {
+          (autoComplete.prefix, autoComplete.prefix_size, autoComplete.vertexIds)
+        }
+        val prettyPrint = {
+          "(" ++ "\"" ++ pretty._1 ++ "\"" ++ ", " ++ pretty._2.toString ++ ", " ++ pretty._3.toString ++ ")"
+        }
+        println(prettyPrint)
+        pretty
       } shouldBe {
       Seq(
-        ("com_true", 3, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("comm_true", 4, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("commi_true", 5, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("commit_true", 6, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("committ_true", 7, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("committe_true", 8, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("committee1_true", 10, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("committee_true", 9, Set(88, 110, 33, 77, 22, 44, 66, 11, 99, 55)),
-        ("con_false", 3, Set(1)),
-        ("cons_false", 4, Set(1)),
-        ("consu_false", 5, Set(1)),
-        ("consul_false", 6, Set(1)),
-        ("consult_false", 7, Set(1)),
-        ("consulti_false", 8, Set(1)),
-        ("consultin_false", 9, Set(1)),
-        ("consulting_false", 10, Set(1)),
-        ("mic_false", 3, Set(1)),
-        ("mick_false", 4, Set(1)),
-        ("micke_false", 5, Set(1)),
-        ("mickey'_false", 7, Set(1)),
-        ("mickey's_false", 8, Set(1)),
-        ("mickey'sc_false", 9, Set(1)),
-        ("mickey'sco_false", 10, Set(1)),
-        ("mickey'scon_false", 11, Set(1)),
-        ("mickey'scons_false", 12, Set(1)),
-        ("mickey'sconsu_false", 13, Set(1)),
-        ("mickey'sconsul_false", 14, Set(1)),
-        ("mickey'sconsult_false", 15, Set(1)),
-        ("mickey'sconsulti_false", 16, Set(1)),
-        ("mickey'sconsultin_false", 17, Set(1)),
-        ("mickey'sconsulting_false", 18, Set(1)),
-        ("mickey_false", 6, Set(1))
+        ("com_false", 3, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("com_true", 3, List(11)),
+        ("comm_false", 4, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("comm_true", 4, List(11)),
+        ("commi_false", 5, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("commi_true", 5, List(11)),
+        ("commit_false", 6, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("commit_true", 6, List(11)),
+        ("committ_false", 7, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("committ_true", 7, List(11)),
+        ("committe_false", 8, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("committe_true", 8, List(11)),
+        ("committee1_false", 10, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("committee1_true", 10, List(11)),
+        ("committee_false", 9, List(121, 110, 99, 55, 44, 33, 22, 88, 77, 66)),
+        ("committee_true", 9, List(11)),
+        ("con_false", 3, List(1)),
+        ("cons_false", 4, List(1)),
+        ("consu_false", 5, List(1)),
+        ("consul_false", 6, List(1)),
+        ("consult_false", 7, List(1)),
+        ("consulti_false", 8, List(1)),
+        ("consultin_false", 9, List(1)),
+        ("consulting_false", 10, List(1)),
+        ("mic_false", 3, List(1)),
+        ("mick_false", 4, List(1)),
+        ("micke_false", 5, List(1)),
+        ("mickey'_false", 7, List(1)),
+        ("mickey's_false", 8, List(1)),
+        ("mickey'sc_false", 9, List(1)),
+        ("mickey'sco_false", 10, List(1)),
+        ("mickey'scon_false", 11, List(1)),
+        ("mickey'scons_false", 12, List(1)),
+        ("mickey'sconsu_false", 13, List(1)),
+        ("mickey'sconsul_false", 14, List(1)),
+        ("mickey'sconsult_false", 15, List(1)),
+        ("mickey'sconsulti_false", 16, List(1)),
+        ("mickey'sconsultin_false", 17, List(1)),
+        ("mickey'sconsulting_false", 18, List(1)),
+        ("mickey_false", 6, List(1))
       )
     }
   }

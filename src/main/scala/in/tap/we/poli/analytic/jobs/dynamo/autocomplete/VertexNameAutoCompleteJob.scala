@@ -14,8 +14,6 @@ import scala.reflect.runtime.universe
 
 /**
  * TODO: Use [[AgnosticVertex.alternate_names]] as well.
- * TODO: Write only Ids, have front end fetch from vertex table for data.
- * TODO: SORT
  */
 class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, val MAX_RESPONSE_SIZE: Int)(
   implicit
@@ -49,13 +47,16 @@ class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, 
         case (_, ((vertex: AgnosticVertex, prefix: String), rank: BigInt)) =>
           (prefix -> vertex.is_committee) -> Set(vertex -> rank)
       }
-      .reduceByKey(reduce(BC_MAX_RESPONSE_SIZE.value))
+      .reduceByKey(_ ++ _)
       .map {
         case ((prefix: String, isCommittee: Boolean), verticesWithRank: Set[(AgnosticVertex, BigInt)]) =>
+          val top = {
+            takeTop(BC_MAX_RESPONSE_SIZE.value)(verticesWithRank)
+          }
           VertexNameAutoComplete(
             prefix = s"${prefix}_$isCommittee",
             prefix_size = prefix.length,
-            vertices = verticesWithRank.map(_._1)
+            vertexIds = top.map(_._1.uid)
           )
       }
       .toDS
@@ -72,12 +73,12 @@ object VertexNameAutoCompleteJob {
    *
    * @param prefix requested
    * @param prefix_size of req.
-   * @param vertices containing req. prefix
+   * @param vertexIds containing req. prefix
    */
   final case class VertexNameAutoComplete(
     prefix: String,
     prefix_size: BigInt,
-    vertices: Set[AgnosticVertex]
+    vertexIds: Seq[VertexId]
   )
 
   object VertexNameAutoComplete {
@@ -102,10 +103,8 @@ object VertexNameAutoCompleteJob {
 
     type VertexWithRank = (AgnosticVertex, BigInt)
 
-    def reduce(
-      MAX_RESPONSE_SIZE: Int
-    )(left: Set[VertexWithRank], right: Set[VertexWithRank]): Set[VertexWithRank] = {
-      (left ++ right).take(MAX_RESPONSE_SIZE)
+    def takeTop(MAX_RESPONSE_SIZE: Int)(grouped: Set[VertexWithRank]): Seq[VertexWithRank] = {
+      grouped.toSeq.sortBy(_._2).reverse.take(MAX_RESPONSE_SIZE)
     }
 
     def buildPrefixes(name: String): Seq[String] = {
