@@ -156,7 +156,7 @@ resource "aws_api_gateway_integration_response" "graph-integration-response" {
 }
 
 ################################################################################
-## VERTEX DATA CORS ############################################################
+## CORS (Mock Method) ##########################################################
 ################################################################################
 resource "aws_api_gateway_method" "cors-method" {
   rest_api_id = aws_api_gateway_rest_api.api.id
