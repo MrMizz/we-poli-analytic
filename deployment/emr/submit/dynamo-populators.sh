@@ -102,9 +102,7 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb1/$RUN_DATE/,\
---out1-format,parquet,\
---out2,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
---out2-format,parquet\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -118,9 +116,7 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb2/$RUN_DATE/,\
---out1-format,parquet,\
---out2,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
---out2-format,parquet\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -134,9 +130,7 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb3/$RUN_DATE/,\
---out1-format,parquet,\
---out2,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
---out2-format,parquet\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -150,9 +144,7 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb4/$RUN_DATE/,\
---out1-format,parquet,\
---out2,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
---out2-format,parquet\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -166,9 +158,7 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb5/$RUN_DATE/,\
---out1-format,parquet,\
---out2,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
---out2-format,parquet\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -239,6 +229,20 @@ $JAR_PATH,\
 --in1-format,parquet,\
 --out1,PoliTraversalsPageSB5"${INCR}",\
 --out1-format,no-op\
+]
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsPageCount,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsPage,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-page-count,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb1/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
