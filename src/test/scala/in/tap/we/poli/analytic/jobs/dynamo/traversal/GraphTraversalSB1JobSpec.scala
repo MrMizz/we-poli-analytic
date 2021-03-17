@@ -2,26 +2,28 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal
 
 import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.OneInArgs
-import in.tap.base.spark.main.OutArgs.TwoOutArgs
+import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJobFixtures
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal
-import org.apache.spark.sql.SaveMode
+import org.apache.spark.sql.{Dataset, SaveMode}
+import org.scalatest.DoNotDiscover
 
+@DoNotDiscover
 class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompleteJobFixtures {
 
   it should "build graph traversal look ups from edges" in {
     val resourcePath: String = {
-      getClass.getResource("../../../../../../../../dynamo/graph_traversal/").toString
+      getClass.getResource("../../../../../../../../dynamo/").toString
     }
     val inPath: String = {
-      s"$resourcePath/in/"
+      s"$resourcePath/graph_traversal/in/"
     }
-    val outPath1: String = {
-      s"$resourcePath/out1/"
+    val outPath: String = {
+      s"$resourcePath/graph_traversal/out/"
     }
-    val outPath2: String = {
-      s"$resourcePath/out2/"
+    val pageCountInPath: String = {
+      s"$resourcePath/graph_traversal_page_count/in/"
     }
     import spark.implicits._
     val _: Unit = {
@@ -32,13 +34,22 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
         .parquet(inPath)
       new GraphTraversalSB1Job(
         OneInArgs(In(inPath, Formats.PARQUET)),
-        TwoOutArgs(Out(outPath1, Formats.PARQUET), Out(outPath2, Formats.PARQUET))
+        OneOutArgs(Out(outPath, Formats.PARQUET))
       ).execute()
     }
-    spark
-      .read
-      .parquet(outPath1)
-      .as[GraphTraversal]
+    val graphTraversals: Dataset[GraphTraversal] = {
+      val ds: Dataset[GraphTraversal] = spark
+        .read
+        .parquet(outPath)
+        .as[GraphTraversal]
+      val _: Unit = {
+        ds.write
+          .mode(SaveMode.Overwrite)
+          .parquet(pageCountInPath)
+      }
+      ds
+    }
+    graphTraversals
       .collect()
       .toSeq
       .sortBy(_.vertex_id)

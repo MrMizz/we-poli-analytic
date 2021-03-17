@@ -13,7 +13,7 @@ class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
           vertex_id = 10L,
           page_num = 1L,
           related_vertex_ids = Seq.fill(99)(22L)
-        ) -> (10L, 1L)
+        )
       )
     }
     // two pages
@@ -23,12 +23,12 @@ class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
           vertex_id = 10L,
           page_num = 1L,
           related_vertex_ids = Seq.fill(100)(22L)
-        ) -> (10L, 1L),
+        ),
         GraphTraversal(
           vertex_id = 10L,
           page_num = 2L,
           related_vertex_ids = Seq(22L)
-        ) -> (10L, 1L)
+        )
       )
     }
   }

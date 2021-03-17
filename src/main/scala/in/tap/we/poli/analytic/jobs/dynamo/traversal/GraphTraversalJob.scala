@@ -1,59 +1,42 @@
 package in.tap.we.poli.analytic.jobs.dynamo.traversal
 
-import in.tap.base.spark.jobs.composite.OneInTwoOutJob
+import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
-import in.tap.base.spark.main.OutArgs.TwoOutArgs
+import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal.TraversalWithCount
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.{GraphTraversal, GraphTraversalPageCount}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{AggregateExpenditureEdge, Analytics}
 import org.apache.spark.graphx.VertexId
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-// TODO: split job
 abstract class GraphTraversalJob(
   val inArgs: OneInArgs,
-  val outArgs: TwoOutArgs,
+  val outArgs: OneOutArgs,
   val sortedBy: TraversalWithCount => TraversalWithCount
 )(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[AggregateExpenditureEdge],
-  val writeTypeTagA: universe.TypeTag[GraphTraversal],
-  val writeTypeTagB: universe.TypeTag[GraphTraversalPageCount]
-) extends OneInTwoOutJob[AggregateExpenditureEdge, GraphTraversal, GraphTraversalPageCount](inArgs, outArgs) {
+  val writeTypeTagA: universe.TypeTag[GraphTraversal]
+) extends OneInOneOutJob[AggregateExpenditureEdge, GraphTraversal](inArgs, outArgs) {
 
-  override def transform(
-    input: Dataset[AggregateExpenditureEdge]
-  ): (Dataset[GraphTraversal], Dataset[GraphTraversalPageCount]) = {
+  override def transform(input: Dataset[AggregateExpenditureEdge]): Dataset[GraphTraversal] = {
     import spark.implicits._
     val sortedByBroadcast = {
       spark.sparkContext.broadcast(sortedBy)
     }
-    val tuple: RDD[(GraphTraversal, (VertexId, VertexId))] = {
-      input
-        .flatMap(GraphTraversal.apply)
-        .rdd
-        .reduceByKey(GraphTraversal.reduce)
-        .flatMap {
-          case (vertexId: VertexId, traversalWithCount: TraversalWithCount) =>
-            val sorted = {
-              sortedByBroadcast.value(traversalWithCount)
-            }
-            GraphTraversal.paginate(vertexId, sorted)
-        }
-    }.cache()
-    tuple.map(_._1).toDS -> tuple
-      .map(_._2)
-      .reduceByKey(_ + _)
-      .map {
-        case (vertexId: VertexId, pageCount: Long) =>
-          GraphTraversalPageCount(
-            vertex_id = vertexId,
-            page_count = pageCount
-          )
+    input
+      .flatMap(GraphTraversal.apply)
+      .rdd
+      .reduceByKey(GraphTraversal.reduce)
+      .flatMap {
+        case (vertexId: VertexId, traversalWithCount: TraversalWithCount) =>
+          val sorted = {
+            sortedByBroadcast.value(traversalWithCount)
+          }
+          GraphTraversal.paginate(vertexId, sorted)
       }
       .toDS
   }
@@ -66,17 +49,6 @@ object GraphTraversalJob {
   val PAGE_SIZE: Int = {
     100
   }
-
-  /**
-   * Traversal Page Count Lookup.
-   *
-   * @param vertex_id  either a src_id or dst_id
-   * @param page_count total number of pages
-   */
-  final case class GraphTraversalPageCount(
-    vertex_id: VertexId,
-    page_count: Long
-  )
 
   /**
    * DynamoDB Graph Traversal.
@@ -121,7 +93,7 @@ object GraphTraversalJob {
     def paginate(
       vertexId: VertexId,
       sortedTraversalWithCount: TraversalWithCount
-    ): Seq[(GraphTraversal, (VertexId, Long))] = {
+    ): Seq[GraphTraversal] = {
       val numPages: VertexId = {
         sortedTraversalWithCount._2 % PAGE_SIZE match {
           case 0 => sortedTraversalWithCount._2 / PAGE_SIZE
@@ -139,7 +111,7 @@ object GraphTraversalJob {
           vertex_id = vertexId,
           page_num = pageNum.toLong,
           related_vertex_ids = page
-        ) -> (vertexId -> 1L)
+        )
       }
     }
 
