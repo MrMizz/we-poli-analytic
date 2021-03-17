@@ -9,22 +9,6 @@ INCR="Prod" ## increment when deploying to tf-workspace -> Prod2
 ## Vertex Name Autocomplete #############################################
 #########################################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoVertexNames,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoVertexNames,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-vertex-name,\
---in1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
---in1-format,parquet,\
---in2,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in2-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/vertex-name-autocomplete/$RUN_DATE/,\
---out1-format,parquet\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=DynamoVertexNamesWriter,\
 Args=[\
 --deploy-mode,cluster,\
@@ -61,20 +45,6 @@ $JAR_PATH,\
 ## Edge Data ############################################################
 #########################################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoEdges,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoEdges,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-edge-data,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/edges/$RUN_DATE/,\
---out1-format,parquet\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=DynamoEdgesWriter,\
 Args=[\
 --deploy-mode,cluster,\
@@ -88,79 +58,10 @@ $JAR_PATH,\
 --out1-format,no-op\
 ]
 
+
 #########################################################################
 ## GRAPH TRAVERSALS #####################################################
 #########################################################################
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsSB1,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsSB1,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-graph-traversal-sb1,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb1/$RUN_DATE/,\
---out1-format,parquet\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsSB2,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsSB2,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-graph-traversal-sb2,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb2/$RUN_DATE/,\
---out1-format,parquet\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsSB3,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsSB3,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-graph-traversal-sb3,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb3/$RUN_DATE/,\
---out1-format,parquet\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsSB4,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsSB4,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-graph-traversal-sb4,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb4/$RUN_DATE/,\
---out1-format,parquet\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsSB5,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsSB5,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-graph-traversal-sb5,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb5/$RUN_DATE/,\
---out1-format,parquet\
-]
-
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=DynamoGraphTraversalsPageWriterSB1,\
 Args=[\
@@ -229,20 +130,6 @@ $JAR_PATH,\
 --in1-format,parquet,\
 --out1,PoliTraversalsPageSB5"${INCR}",\
 --out1-format,no-op\
-]
-
-aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsPageCount,\
-Args=[\
---deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsPage,\
---class,in.tap.we.poli.analytic.Main,\
-$JAR_PATH,\
---step,dynamo-graph-traversal-page-count,\
---in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb1/$RUN_DATE/,\
---in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
---out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
