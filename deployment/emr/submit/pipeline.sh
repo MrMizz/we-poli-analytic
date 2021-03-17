@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-1M15V7WK58F0Q"
-RUN_DATE="2020-02-20-01"
+CLUSTER="j-10OMQY3Z4YP9G"
+RUN_DATE="2020-03-16-01"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
 ###################################################
@@ -18,7 +18,7 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/parsed/operating-expenditures/,\
 --in1-format,json,\
 --out1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 ###################################################
@@ -33,9 +33,9 @@ Args=[\
 $JAR_PATH,\
 --step,vendors-connector,\
 --in1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
---in1-format,json,\
+--in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/connector/vendors/auto/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 ###################################################
@@ -50,11 +50,11 @@ Args=[\
 $JAR_PATH,\
 --step,vendors-merger,\
 --in1,s3://big-time-tap-in-spark/poli/transformed/vendors/$RUN_DATE/,\
---in1-format,json,\
+--in1-format,parquet,\
 --in2,s3://big-time-tap-in-spark/poli/connector/vendors/auto/$RUN_DATE/,\
---in2-format,json,\
+--in2-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 ###################################################
@@ -69,9 +69,9 @@ Args=[\
 $JAR_PATH,\
 --step,unique-vendors-connector,\
 --in1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
---in1-format,json,\
+--in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/connector/vendors/fuzzy/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 ###################################################
@@ -86,11 +86,11 @@ Args=[\
 $JAR_PATH,\
 --step,unique-vendors-merger,\
 --in1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
---in1-format,json,\
+--in1-format,parquet,\
 --in2,s3://big-time-tap-in-spark/poli/connector/vendors/fuzzy/$RUN_DATE/,\
---in2-format,json,\
+--in2-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/merged/vendors/fuzzy/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 ###################################################
@@ -105,9 +105,9 @@ Args=[\
 $JAR_PATH,\
 --step,committee-to-vendor-edge,\
 --in1,s3://big-time-tap-in-spark/poli/merged/vendors/fuzzy/$RUN_DATE/,\
---in1-format,json,\
+--in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -121,9 +121,9 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/parsed/committees/,\
 --in1-format,json,\
 --in2,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
---in2-format,json,\
+--in2-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/graph/vertices/committees/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -135,9 +135,9 @@ Args=[\
 $JAR_PATH,\
 --step,vendors-vertex,\
 --in1,s3://big-time-tap-in-spark/poli/merged/vendors/fuzzy/$RUN_DATE/,\
---in1-format,json,\
+--in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/graph/vertices/vendors/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -149,9 +149,9 @@ Args=[\
 $JAR_PATH,\
 --step,vertices-union,\
 --in1,s3://big-time-tap-in-spark/poli/graph/vertices/committees/$RUN_DATE/,\
---in1-format,json,\
+--in1-format,parquet,\
 --in2,s3://big-time-tap-in-spark/poli/graph/vertices/vendors/$RUN_DATE/,\
---in2-format,json,\
+--in2-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
---out1-format,json\
+--out1-format,parquet\
 ]
