@@ -1,0 +1,17 @@
+[
+  {
+    "Classification": "spark",
+    "Properties": {
+      "maximizeResourceAllocation": "false"
+    },
+    "Configurations": []
+  },
+  {
+    "Classification": "spark-defaults",
+    "Properties": {
+      "spark.local.dir": "/tmp",
+      "spark.dynamicAllocation.enabled": "true"
+    },
+    "Configurations": []
+  }
+]
