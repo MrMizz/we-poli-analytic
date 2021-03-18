@@ -31,6 +31,26 @@ class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
         )
       )
     }
+    // more than two pages
+    GraphTraversal.paginate(vertexId = 1L, traversalsWithCount3) shouldBe {
+      Seq(
+        GraphTraversal(
+          vertex_id = 1L,
+          page_num = 1L,
+          related_vertex_ids = (0 to 99 by 1).map(_.toLong)
+        ),
+        GraphTraversal(
+          vertex_id = 1L,
+          page_num = 2L,
+          related_vertex_ids = (100 to 199 by 1).map(_.toLong)
+        ),
+        GraphTraversal(
+          vertex_id = 1L,
+          page_num = 3L,
+          related_vertex_ids = (200 to 299 by 1).map(_.toLong)
+        )
+      )
+    }
   }
 
 }

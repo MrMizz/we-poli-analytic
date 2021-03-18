@@ -19,4 +19,16 @@ trait GraphTraversalJobFixtures {
     (Seq.fill(101)(22L -> analytics), 101)
   }
 
+  val traversalsWithCount3: TraversalWithCount = {
+    val analytics = {
+      Analytics(num_edges = 1000, None, None, None, None)
+    }
+    val seq: Seq[(Long, Analytics)] = {
+      (0 to 299 by 1).map { i =>
+        i.toLong -> analytics
+      }
+    }
+    (seq, 300L)
+  }
+
 }

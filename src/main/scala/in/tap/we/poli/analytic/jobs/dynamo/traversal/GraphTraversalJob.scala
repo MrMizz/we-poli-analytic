@@ -100,12 +100,14 @@ object GraphTraversalJob {
           case _ => (sortedTraversalWithCount._2 / PAGE_SIZE) + 1
         }
       }
-      val vertexIdsIterator: Iterator[VertexId] = {
-        sortedTraversalWithCount._1.map(_._1).toIterator
+      val vertexIds: Seq[VertexId] = {
+        sortedTraversalWithCount._1.map(_._1)
       }
       (1 to numPages.toInt by 1).map { pageNum: Int =>
         val page: Seq[VertexId] = {
-          vertexIdsIterator.take(PAGE_SIZE).toSeq
+          val from = (pageNum - 1) * PAGE_SIZE
+          val until = pageNum * PAGE_SIZE
+          vertexIds.slice(from, until)
         }
         GraphTraversal(
           vertex_id = vertexId,
