@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.edge
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.base.spark.populator.DynamoPopulator
-import in.tap.we.poli.analytic.jobs.dynamo.EdgeDataJob.EdgeData
+import in.tap.we.poli.analytic.jobs.dynamo.edge.EdgeDataJob.EdgeData
 import org.apache.spark.sql.SparkSession
 
 class EdgeDataDDBJob(override val inArgs: OneInArgs, override val outArgs: OneOutArgs)(

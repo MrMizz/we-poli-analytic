@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.dynamo
+package in.tap.we.poli.analytic.jobs.dynamo.autocomplete
 
 import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.VertexNameAutoCompleteJob.VertexNameAutoComplete
+import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJob.VertexNameAutoComplete
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.VerticesUnionJob.AgnosticVertex
 import org.apache.spark.broadcast.Broadcast
@@ -29,8 +29,8 @@ class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, 
     val (vertices: Dataset[AgnosticVertex], edges: Dataset[AggregateExpenditureEdge]) = {
       input
     }
-    import spark.implicits._
     import VertexNameAutoCompleteJob.VertexNameAutoComplete._
+    import spark.implicits._
     vertices
       .flatMap(fromVertex)
       .rdd
@@ -44,13 +44,16 @@ class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, 
         case (_, ((vertex: AgnosticVertex, prefix: String), rank: BigInt)) =>
           (prefix -> vertex.is_committee) -> Set(vertex -> rank)
       }
-      .reduceByKey(reduce(BC_MAX_RESPONSE_SIZE.value))
+      .reduceByKey(_ ++ _)
       .map {
         case ((prefix: String, isCommittee: Boolean), verticesWithRank: Set[(AgnosticVertex, BigInt)]) =>
+          val top = {
+            takeTop(BC_MAX_RESPONSE_SIZE.value)(verticesWithRank)
+          }
           VertexNameAutoComplete(
             prefix = s"${prefix}_$isCommittee",
             prefix_size = prefix.length,
-            vertices = verticesWithRank.map(_._1)
+            vertexIds = top.map(_._1.uid)
           )
       }
       .toDS
@@ -67,12 +70,12 @@ object VertexNameAutoCompleteJob {
    *
    * @param prefix requested
    * @param prefix_size of req.
-   * @param vertices containing req. prefix
+   * @param vertexIds containing req. prefix
    */
   final case class VertexNameAutoComplete(
     prefix: String,
     prefix_size: BigInt,
-    vertices: Set[AgnosticVertex]
+    vertexIds: Seq[VertexId]
   )
 
   object VertexNameAutoComplete {
@@ -84,7 +87,7 @@ object VertexNameAutoCompleteJob {
     type VertexIdWithDataAndPrefix = (VertexId, (AgnosticVertex, String))
 
     def fromVertex(vertex: AgnosticVertex): Seq[VertexIdWithDataAndPrefix] = {
-      buildPrefixes(vertex.name).map { prefix: String =>
+      buildPrefixes(vertex).map { prefix: String =>
         vertex.uid -> (vertex, prefix)
       }
     }
@@ -97,13 +100,11 @@ object VertexNameAutoCompleteJob {
 
     type VertexWithRank = (AgnosticVertex, BigInt)
 
-    def reduce(
-      MAX_RESPONSE_SIZE: Int
-    )(left: Set[VertexWithRank], right: Set[VertexWithRank]): Set[VertexWithRank] = {
-      (left ++ right).take(MAX_RESPONSE_SIZE)
+    def takeTop(MAX_RESPONSE_SIZE: Int)(grouped: Set[VertexWithRank]): Seq[VertexWithRank] = {
+      grouped.toSeq.sortBy(_._2).reverse.take(MAX_RESPONSE_SIZE)
     }
 
-    def buildPrefixes(name: String): Seq[String] = {
+    private def buildPrefixes(name: String): Seq[String] = {
       def func(token: String): Seq[String] = {
         val tokenSize: Int = token.length
         PREFIX_RANGE.filter(_ <= tokenSize).map { n: Int =>
@@ -112,6 +113,10 @@ object VertexNameAutoCompleteJob {
       }
       val lowerName: String = name.toLowerCase
       (lowerName.split(" ") :+ lowerName.replace(" ", "")).flatMap(func).distinct
+    }
+
+    private def buildPrefixes(vertex: AgnosticVertex): Seq[String] = {
+      (buildPrefixes(vertex.name) ++ vertex.alternate_names.flatMap(buildPrefixes).toSeq).distinct
     }
 
   }

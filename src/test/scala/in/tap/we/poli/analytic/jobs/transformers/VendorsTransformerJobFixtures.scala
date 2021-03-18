@@ -1,7 +1,7 @@
 package in.tap.we.poli.analytic.jobs.transformers
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}
 import in.tap.we.poli.models.OperatingExpenditures
 
 trait VendorsTransformerJobFixtures {
@@ -10,9 +10,13 @@ trait VendorsTransformerJobFixtures {
     new Vendor(
       uid = 1L,
       name = "Vendor's, Inc. # 1",
-      city = Some("City1"),
-      state = Some("State1"),
-      zip_code = Some("Zip1"),
+      address = Address
+        .empty
+        .copy(
+          city = Some("City1"),
+          state = Some("State1"),
+          zip_code = Some("Zip1")
+        ),
       memo = None,
       edge = edge1
     )
@@ -22,9 +26,11 @@ trait VendorsTransformerJobFixtures {
     new Vendor(
       uid = 2L,
       name = "Vendor",
-      city = Some("City1"),
-      state = None,
-      zip_code = None,
+      address = Address
+        .empty
+        .copy(
+          city = Some("City1")
+        ),
       memo = None,
       edge = edge2
     )

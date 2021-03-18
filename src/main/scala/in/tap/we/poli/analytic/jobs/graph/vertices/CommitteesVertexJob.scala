@@ -5,7 +5,8 @@ import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.AggregateExpenditureEdge
 import in.tap.we.poli.analytic.jobs.graph.vertices.CommitteesVertexJob.CommitteeVertex
-import in.tap.we.poli.analytic.jobs.mergers.utils.MergerUtils
+import in.tap.we.poli.analytic.jobs.mergers
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 import in.tap.we.poli.models.Committee
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.RDD
@@ -77,10 +78,8 @@ object CommitteesVertexJob {
       name = "DUMMY VERTEX",
       committee_names = Set.empty[String],
       treasures_names = Set.empty[String],
-      streets = Set.empty[String],
-      cities = Set.empty[String],
-      states = Set.empty[String],
-      zip_codes = Set.empty[String],
+      address = Address.empty,
+      addresses = Set.empty[Address],
       committee_designations = Set.empty[String],
       committee_types = Set.empty[String],
       committee_party_affiliations = Set.empty[String],
@@ -95,10 +94,8 @@ object CommitteesVertexJob {
     name: String,
     committee_names: Set[String],
     treasures_names: Set[String],
-    streets: Set[String],
-    cities: Set[String],
-    states: Set[String],
-    zip_codes: Set[String],
+    address: Address,
+    addresses: Set[Address],
     committee_designations: Set[String],
     committee_types: Set[String],
     committee_party_affiliations: Set[String],
@@ -120,21 +117,28 @@ object CommitteesVertexJob {
       for {
         name <- committee.CMTE_NM
       } yield {
+        val address: Address = {
+          Address(
+            street = committee.CMTE_ST1.map(_.toLowerCase),
+            alternate_street = committee.CMTE_ST2.map(_.toLowerCase),
+            city = committee.CMTE_CITY.map(_.toLowerCase),
+            zip_code = committee.CMTE_ZIP.map(_.take(5)),
+            state = committee.CMTE_ST.map(_.toLowerCase)
+          )
+        }
         vertexId -> CommitteeVertex(
           uid = vertexId,
-          name = name,
-          committee_names = committee.CMTE_NM.toSet,
-          treasures_names = committee.TRES_NM.toSet,
-          streets = committee.CMTE_ST1.toSet ++ committee.CMTE_ST2,
-          cities = committee.CMTE_CITY.toSet,
-          states = committee.CMTE_ST.toSet,
-          zip_codes = committee.CMTE_ZIP.toSet,
-          committee_designations = committee.CMTE_DSGN.toSet,
-          committee_types = committee.CMTE_TP.toSet,
-          committee_party_affiliations = committee.CMTE_PTY_AFFILIATION.toSet,
-          interest_group_categories = committee.ORG_TP.toSet,
-          connected_organization_names = committee.CONNECTED_ORG_NM.toSet,
-          candidate_ids = committee.CAND_ID.toSet
+          name = name.toLowerCase,
+          committee_names = committee.CMTE_NM.map(_.toLowerCase).toSet,
+          treasures_names = committee.TRES_NM.map(_.toLowerCase).toSet,
+          address = address,
+          addresses = Set(address),
+          committee_designations = committee.CMTE_DSGN.map(_.toLowerCase).toSet,
+          committee_types = committee.CMTE_TP.map(_.toLowerCase).toSet,
+          committee_party_affiliations = committee.CMTE_PTY_AFFILIATION.map(_.toLowerCase).toSet,
+          interest_group_categories = committee.ORG_TP.map(_.toLowerCase).toSet,
+          connected_organization_names = committee.CONNECTED_ORG_NM.map(_.toLowerCase).toSet,
+          candidate_ids = committee.CAND_ID.map(_.toLowerCase).toSet
         )
       }
     }
@@ -143,15 +147,16 @@ object CommitteesVertexJob {
       val names: Set[String] = {
         left.committee_names ++ right.committee_names
       }
+      val addresses = {
+        left.addresses ++ right.addresses
+      }
       CommitteeVertex(
         uid = left.uid,
-        name = MergerUtils.getMostCommon[String](names.toSeq).getOrElse(names.head),
+        name = mergers.getMostCommon[String](names.toSeq).getOrElse(left.name),
         committee_names = names,
         treasures_names = left.treasures_names ++ right.treasures_names,
-        streets = left.streets ++ right.streets,
-        cities = left.cities ++ right.cities,
-        states = left.states ++ right.states,
-        zip_codes = left.zip_codes ++ right.zip_codes,
+        address = mergers.getMostCommon[Address](addresses.toSeq).getOrElse(left.address),
+        addresses = addresses,
         committee_designations = left.committee_designations ++ right.committee_designations,
         committee_types = left.committee_types ++ right.committee_types,
         committee_party_affiliations = left.committee_party_affiliations ++ right.committee_party_affiliations,

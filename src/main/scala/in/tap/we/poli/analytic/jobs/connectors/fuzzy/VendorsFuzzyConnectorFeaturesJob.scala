@@ -3,8 +3,9 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 import in.tap.base.spark.jobs.composite.ThreeInOnOutJob
 import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
+import in.tap.we.poli.analytic.jobs.connectors.{cleanedName, cleanedNameTokens}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob._
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId
@@ -53,23 +54,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
         }
     }
     val uniqueVendorComparisons: RDD[UniqueVendorComparison] = {
-      uniqueVendors
-        .flatMap { uniqueVendor: UniqueVendor =>
-          val comparator: Comparator[UniqueVendor] = Comparator(uniqueVendor)
-          val candidate: Option[Seq[Comparator[UniqueVendor]]] = Option(Seq(comparator))
-          comparator.nameTokens.map { token: String =>
-            token -> candidate
-          }
-        }
-        .rdd
-        .reduceByKey(reduceCandidates)
-        .flatMap {
-          case (_, candidates: Option[Seq[Comparator[UniqueVendor]]]) =>
-            candidates match {
-              case Some(c) => UniqueVendorComparison(c)
-              case None    => Nil
-            }
-        }
+      CandidateGenerator(uniqueVendors)
     }
     val numPositives: Double = {
       vendorComparisons.count.toDouble
@@ -234,6 +219,10 @@ object VendorsFuzzyConnectorFeaturesJob {
       cleanedNameTokens(vendor.name).toSet
     }
 
+    val cgTokens: Set[String] = {
+      nameTokens ++ Set(vendor.address.city, vendor.address.zip_code).flatten
+    }
+
   }
 
   trait Comparison[A <: VendorLike] {
@@ -264,15 +253,15 @@ object VendorsFuzzyConnectorFeaturesJob {
     }
 
     private lazy val sameCity: Option[Boolean] = {
-      same((u: VendorLike) => u.city)
+      same((u: VendorLike) => u.address.city)
     }
 
     private lazy val sameZip: Option[Boolean] = {
-      same((u: VendorLike) => u.zip_code)
+      same((u: VendorLike) => u.address.zip_code)
     }
 
     private lazy val sameState: Option[Boolean] = {
-      same((u: VendorLike) => u.state)
+      same((u: VendorLike) => u.address.state)
     }
 
     private def toDouble(maybeBool: Option[Boolean]): Double = {

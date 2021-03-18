@@ -1,6 +1,6 @@
 package in.tap.we.poli.analytic.jobs.connectors.unify
 
-import in.tap.base.spark.io.{In, Out}
+import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
@@ -28,10 +28,10 @@ class UniqueVendorConnectorFlattenJobSpec extends BaseSparkJobSpec with UniqueVe
 
   val _: Unit = {
     import spark.implicits._
-    uniqueVendors.toDS.write.mode(SaveMode.Overwrite).json(in1Path)
+    uniqueVendors.toDS.write.mode(SaveMode.Overwrite).parquet(in1Path)
     connector.toDS.write.mode(SaveMode.Overwrite).json(in2Path)
     new UniqueVendorConnectorFlattenJob(
-      TwoInArgs(In(in1Path), In(in2Path)),
+      TwoInArgs(In(in1Path, Formats.PARQUET), In(in2Path)),
       OneOutArgs(Out(outPath))
     ).execute()
   }

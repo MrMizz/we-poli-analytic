@@ -1,7 +1,7 @@
 package in.tap.we.poli.analytic.jobs.mergers
 
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}
 
 trait VendorsMergerJobFixtures {
 
@@ -9,24 +9,40 @@ trait VendorsMergerJobFixtures {
     new Vendor(
       uid = 1L,
       name = "Vendor1",
-      city = Some("City1"),
-      state = Some("State1"),
-      zip_code = Some("Zip1"),
+      address = address1,
       memo = Some("memo1"),
       edge = edge1
     )
+  }
+
+  lazy val address1: Address = {
+    Address
+      .empty
+      .copy(
+        city = Some("City1"),
+        state = Some("State1"),
+        zip_code = Some("Zip1")
+      )
   }
 
   val vendor2: Vendor = {
     new Vendor(
       uid = 2L,
       name = "Vendor2",
-      city = Some("City1"),
-      state = Some("State1"),
-      zip_code = Some("Zip1"),
+      address = address2,
       memo = None,
       edge = edge2
     )
+  }
+
+  lazy val address2: Address = {
+    Address
+      .empty
+      .copy(
+        city = Some("City1"),
+        state = Some("State1"),
+        zip_code = Some("Zip1")
+      )
   }
 
   lazy val edge1: ExpenditureEdge = {
