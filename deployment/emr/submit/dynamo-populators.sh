@@ -14,6 +14,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoVertexNamesWriter,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-vertex-name-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/vertex-name-autocomplete/$RUN_DATE/,\
@@ -32,6 +33,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoVertices,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-vertex-data-writer,\
 --in1,s3://big-time-tap-in-spark/poli/graph/vertices/union/$RUN_DATE/,\
@@ -50,6 +52,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoEdgesWriter,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-edge-data-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/edges/$RUN_DATE/,\
@@ -68,6 +71,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoGraphTraversalsPageWriterSB1,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-page-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb1/$RUN_DATE/,\
@@ -82,6 +86,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoGraphTraversalsPageWriterSB2,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-page-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb2/$RUN_DATE/,\
@@ -96,6 +101,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoGraphTraversalsPageWriterSB3,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-page-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb3/$RUN_DATE/,\
@@ -110,6 +116,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoGraphTraversalsPageWriterSB4,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-page-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb4/$RUN_DATE/,\
@@ -124,6 +131,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoGraphTraversalsPageWriterSB5,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-page-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/sb5/$RUN_DATE/,\
@@ -138,6 +146,7 @@ Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoGraphTraversalsPageWriter,\
 --class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-page-count-writer,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
