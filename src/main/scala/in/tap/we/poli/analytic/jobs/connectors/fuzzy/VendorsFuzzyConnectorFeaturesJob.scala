@@ -106,6 +106,8 @@ object VendorsFuzzyConnectorFeaturesJob {
     }
   }
 
+  // TODO: scale numEdgesInCommon
+  // TODO: 0, 1, more than 1 -> categorical
   final case class Features(
     numTokens: Double,
     numTokensInCommon: Double,
@@ -248,6 +250,7 @@ object VendorsFuzzyConnectorFeaturesJob {
       Seq(left_side.nameTokens.size, right_side.nameTokens.size).max.toDouble
     }
 
+    // TODO: Validate for city/state
     private lazy val numTokensInCommon: Double = {
       left_side.nameTokens.intersect(right_side.nameTokens).size.toDouble
     }

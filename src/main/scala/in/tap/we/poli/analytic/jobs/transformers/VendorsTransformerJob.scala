@@ -26,6 +26,7 @@ class VendorsTransformerJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
 
 object VendorsTransformerJob {
 
+  // TODO: state -> string lookup
   final case class Address(
     street: Option[String],
     alternate_street: Option[String],
