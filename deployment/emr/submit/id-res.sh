@@ -47,7 +47,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,fuzzy-predictor,\
---in1,s3://big-time-tap-in-spark/poli/merged/vendors/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/id-res/prediction/$RUN_DATE/,\
 --out1-format,parquet\
