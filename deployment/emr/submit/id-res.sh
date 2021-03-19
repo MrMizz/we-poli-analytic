@@ -33,7 +33,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,fuzzy-connector-training,\
---in1,s3://big-time-tap-in-spark/poli/connector/fuzzy/features/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/id-res/features/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/id-res/training/$RUN_DATE/,\
 --out1-format,parquet\
