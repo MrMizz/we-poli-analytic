@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 import in.tap.base.spark.jobs.composite.ThreeInOnOutJob
 import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.{cleanedName, cleanedNameTokens}
+import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob._
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
@@ -130,6 +130,22 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   }
 
+  object Features {
+
+    /**
+     * Intended for use with [[Features.numEdgesInCommon]].
+     * Raw -> Categorical Feature.
+     */
+    def scale(raw: Double): Double = {
+      raw match {
+        case 0 => 0
+        case 1 => 1
+        case _ => 2
+      }
+    }
+
+  }
+
   /**
    * Used to build comparison
    * between two vendors that have been auto connected.
@@ -145,7 +161,7 @@ object VendorsFuzzyConnectorFeaturesJob {
   ) extends Comparison[Vendor] {
 
     override val numEdgesInCommon: Double = {
-      numDistinctSrcIds
+      Features.scale(numDistinctSrcIds)
     }
 
   }
@@ -192,10 +208,13 @@ object VendorsFuzzyConnectorFeaturesJob {
       val rightSrcIds: Set[VertexId] = {
         right_side.vendor.edges.map(_.src_id)
       }
-      leftSrcIds
-        .intersect(rightSrcIds)
-        .size
-        .toDouble
+      val intersection = {
+        leftSrcIds
+          .intersect(rightSrcIds)
+          .size
+          .toDouble
+      }
+      Features.scale(intersection)
     }
 
   }
