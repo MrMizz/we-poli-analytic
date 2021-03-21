@@ -240,8 +240,18 @@ object VendorsFuzzyConnectorFeaturesJob {
       cleanedNameTokens(vendor.name).toSet
     }
 
+    val addressTokens: Set[String] = {
+      Set(vendor.address.city, vendor.address.zip_code).flatten
+    }
+
+    val srcIdTokens: Set[String] = {
+      vendor.edges.map(_.src_id.toString)
+    }
+
     val cgTokens: Set[String] = {
-      nameTokens ++ Set(vendor.address.city, vendor.address.zip_code).flatten
+      nameTokens ++
+        addressTokens ++
+        srcIdTokens
     }
 
   }
