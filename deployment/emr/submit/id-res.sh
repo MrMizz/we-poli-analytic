@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-3TS50JZG5KXUD"
-RUN_DATE="2020-03-16-01"
+CLUSTER="j-JPA3S9LPWHS5"
+RUN_DATE="2020-03-18-01"
+RUN_DATE2="2020-03-18-03"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 
 ###################################################
@@ -21,7 +22,7 @@ $JAR_PATH,\
 --in2-format,parquet,\
 --in3,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
 --in3-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/id-res/features/$RUN_DATE/,\
+--out1,s3://big-time-tap-in-spark/poli/id-res/features/$RUN_DATE2/,\
 --out1-format,parquet\
 ]
 
@@ -33,9 +34,9 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,fuzzy-connector-training,\
---in1,s3://big-time-tap-in-spark/poli/id-res/features/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/id-res/features/$RUN_DATE2/,\
 --in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/id-res/training/$RUN_DATE/,\
+--out1,s3://big-time-tap-in-spark/poli/id-res/training/$RUN_DATE2/,\
 --out1-format,parquet\
 ]
 
@@ -49,6 +50,6 @@ $JAR_PATH,\
 --step,fuzzy-predictor,\
 --in1,s3://big-time-tap-in-spark/poli/merged/vendors/auto/$RUN_DATE/,\
 --in1-format,parquet,\
---out1,s3://big-time-tap-in-spark/poli/id-res/prediction/$RUN_DATE/,\
+--out1,s3://big-time-tap-in-spark/poli/id-res/prediction/$RUN_DATE2/,\
 --out1-format,parquet\
 ]
