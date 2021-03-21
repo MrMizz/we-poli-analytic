@@ -170,7 +170,7 @@ object VendorsFuzzyConnectorFeaturesJob {
 
     def apply(seq: Seq[Vendor]): Seq[VendorComparison] = {
       val numDistinctSrcIds: Double = {
-        seq.map(_.edge.src_id).distinct.size.toDouble
+        seq.flatMap(_.edges.map(_.src_id)).distinct.size.toDouble
       }
       seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Vendor] =>
         combination match {

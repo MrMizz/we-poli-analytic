@@ -69,7 +69,7 @@ object VendorsMergerJob {
         address = vendor.address,
         addresses = Set(vendor.address),
         memos = Set(vendor.memo).flatten,
-        edges = Set(vendor.edge),
+        edges = vendor.edges,
         num_merged = 1
       )
     }

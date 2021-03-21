@@ -18,7 +18,7 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
           zip_code = Some("90026")
         ),
       memo = None,
-      edge = emptyEdge.copy(src_id = -111L)
+      edges = Set(emptyEdge.copy(src_id = -111L))
     )
   }
 
@@ -46,7 +46,7 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
     emptyVendor.copy(
       uid = 2L,
       name = "Vendor2",
-      edge = emptyEdge.copy(src_id = 22L)
+      edges = Set(emptyEdge.copy(src_id = 22L))
     )
   }
 
@@ -69,7 +69,7 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
     emptyVendor.copy(
       uid = 3L,
       name = "Vendor3",
-      edge = emptyEdge.copy(src_id = 33L)
+      edges = Set(emptyEdge.copy(src_id = 33L))
     )
   }
 
@@ -79,7 +79,7 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
       name = "",
       address = Address.empty,
       memo = None,
-      edge = emptyEdge.copy(src_id = -111L)
+      edges = Set(emptyEdge.copy(src_id = -111L))
     )
   }
 

@@ -53,6 +53,7 @@ object VendorsTransformerJob {
     val uid: Long
     val name: String
     val address: Address
+    val edges: Set[ExpenditureEdge]
   }
 
   final case class Vendor(
@@ -60,7 +61,7 @@ object VendorsTransformerJob {
     name: String,
     address: Address,
     memo: Option[String],
-    edge: ExpenditureEdge
+    edges: Set[ExpenditureEdge]
   ) extends VendorLike {
 
     lazy val hash1: Option[String] = {
@@ -121,7 +122,7 @@ object VendorsTransformerJob {
             zip_code = operatingExpenditures.ZIP_CODE.map(_.take(5))
           ),
           memo = operatingExpenditures.PURPOSE.map(_.toLowerCase),
-          edge = ExpenditureEdge.fromOperatingExpenditures(operatingExpenditures)
+          edges = Set(ExpenditureEdge.fromOperatingExpenditures(operatingExpenditures))
         )
       }
     }

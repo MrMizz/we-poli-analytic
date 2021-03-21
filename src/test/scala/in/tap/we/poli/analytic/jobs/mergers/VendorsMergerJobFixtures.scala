@@ -11,7 +11,7 @@ trait VendorsMergerJobFixtures {
       name = "Vendor1",
       address = address1,
       memo = Some("memo1"),
-      edge = edge1
+      edges = Set(edge1)
     )
   }
 
@@ -31,7 +31,7 @@ trait VendorsMergerJobFixtures {
       name = "Vendor2",
       address = address2,
       memo = None,
-      edge = edge2
+      edges = Set(edge2)
     )
   }
 

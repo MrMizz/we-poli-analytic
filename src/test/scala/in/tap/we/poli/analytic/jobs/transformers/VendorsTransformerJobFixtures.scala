@@ -18,7 +18,7 @@ trait VendorsTransformerJobFixtures {
           zip_code = Some("Zip1")
         ),
       memo = None,
-      edge = edge1
+      edges = Set(edge1)
     )
   }
 
@@ -32,7 +32,7 @@ trait VendorsTransformerJobFixtures {
           city = Some("City1")
         ),
       memo = None,
-      edge = edge2
+      edges = Set(edge2)
     )
   }
 

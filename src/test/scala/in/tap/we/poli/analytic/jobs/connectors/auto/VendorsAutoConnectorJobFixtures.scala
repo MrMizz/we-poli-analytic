@@ -17,7 +17,7 @@ trait VendorsAutoConnectorJobFixtures {
           zip_code = Some("Zip1")
         ),
       memo = Some("memo1"),
-      edge = edge1
+      edges = Set(edge1)
     )
   }
 
@@ -33,7 +33,7 @@ trait VendorsAutoConnectorJobFixtures {
           zip_code = Some("Zip1")
         ),
       memo = None,
-      edge = edge2
+      edges = Set(edge2)
     )
   }
 
@@ -49,7 +49,7 @@ trait VendorsAutoConnectorJobFixtures {
           zip_code = Some("Zip1")
         ),
       memo = None,
-      edge = edge3
+      edges = Set(edge3)
     )
   }
 
