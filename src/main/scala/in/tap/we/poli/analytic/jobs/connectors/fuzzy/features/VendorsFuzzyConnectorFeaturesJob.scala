@@ -1,11 +1,11 @@
-package in.tap.we.poli.analytic.jobs.connectors.fuzzy
+package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.base.spark.jobs.composite.ThreeInOnOutJob
 import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob._
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Features, UniqueVendorComparison, VendorComparison, buildSamplingRatio, reduceCandidates}
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
 import org.apache.spark.graphx.VertexId

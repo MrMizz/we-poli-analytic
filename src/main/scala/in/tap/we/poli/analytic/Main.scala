@@ -4,16 +4,14 @@ import in.tap.base.spark.jobs.composite.CompositeJob
 import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.{
-  VendorsFuzzyConnectorFeaturesJob, VendorsFuzzyConnectorJob, VendorsFuzzyConnectorTrainingJob, VendorsFuzzyPredictorJob
-}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.training.VendorsFuzzyConnectorTrainingJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.dynamo.edge.{EdgeDataDDBJob, EdgeDataJob}
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.{
-  GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job,
-  GraphTraversalSB2Job, GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job
-}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.{GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job, GraphTraversalSB2Job, GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job}
 import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob

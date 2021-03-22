@@ -4,13 +4,9 @@ import in.tap.base.spark.graph.ConnectedComponents
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorFeaturesJob.{
-  reduceCandidates, Comparator, UniqueVendorComparison
-}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.{
-  CandidateGenerator, EdgeBuilder, VertexBuilder
-}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyPredictorJob.Prediction
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.{CandidateGenerator, EdgeBuilder, VertexBuilder}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Comparator, UniqueVendorComparison, reduceCandidates}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import org.apache.spark.graphx.{Edge, VertexId}
 import org.apache.spark.rdd.RDD
