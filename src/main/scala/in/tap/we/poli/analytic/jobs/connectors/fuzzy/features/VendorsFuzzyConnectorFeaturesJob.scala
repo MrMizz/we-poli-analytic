@@ -173,8 +173,8 @@ object VendorsFuzzyConnectorFeaturesJob {
     }
 
     val addressTokens: Set[String] = {
-      vendor.addresses.flatMap(_.city) ++
-        vendor.addresses.flatMap(_.zip_code)
+      vendor.cities ++
+        vendor.zip_codes
     }
 
     val srcIdTokens: Set[String] = {
@@ -221,15 +221,15 @@ object VendorsFuzzyConnectorFeaturesJob {
     }
 
     private lazy val sameCity: Boolean = {
-      same(_.addresses.flatMap(_.city))
+      same(_.cities)
     }
 
     private lazy val sameZip: Boolean = {
-      same(_.addresses.flatMap(_.zip_code))
+      same(_.zip_codes)
     }
 
     private lazy val sameState: Boolean = {
-      same(_.addresses.flatMap(_.state))
+      same(_.states)
     }
 
     private def toDouble(bool: Boolean): Double = {

@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.TwoOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Vendor
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -42,7 +42,9 @@ object IdResVendorTransformerJob {
   final case class IdResVendor(
     uid: Long,
     names: Set[String],
-    addresses: Set[Address],
+    cities: Set[String],
+    zip_codes: Set[String],
+    states: Set[String],
     src_ids: Set[VertexId]
   )
 
@@ -52,7 +54,9 @@ object IdResVendorTransformerJob {
       IdResVendor(
         uid = vendor.uid,
         names = Set(vendor.name),
-        addresses = Set(vendor.address),
+        cities = vendor.address.city.toSet,
+        zip_codes = vendor.address.zip_code.toSet,
+        states = vendor.address.state.toSet,
         src_ids = vendor.edges.map(_.src_id)
       )
     }
@@ -61,7 +65,9 @@ object IdResVendorTransformerJob {
       IdResVendor(
         uid = uniqueVendor.uid,
         names = uniqueVendor.names,
-        addresses = uniqueVendor.addresses,
+        cities = uniqueVendor.addresses.flatMap(_.city),
+        zip_codes = uniqueVendor.addresses.flatMap(_.zip_code),
+        states = uniqueVendor.addresses.flatMap(_.state),
         src_ids = uniqueVendor.edges.map(_.src_id)
       )
     }
