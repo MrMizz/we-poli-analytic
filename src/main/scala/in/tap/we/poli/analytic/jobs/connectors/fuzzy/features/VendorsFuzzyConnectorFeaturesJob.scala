@@ -215,9 +215,8 @@ object VendorsFuzzyConnectorFeaturesJob {
     }
 
     private lazy val numSrcIdsInCommon: Double = {
-      Features.scale(
-        left_side.srcIdTokens.intersect(right_side.srcIdTokens).size.toDouble
-      )
+      // TODO: scale?
+      left_side.srcIdTokens.intersect(right_side.srcIdTokens).size.toDouble
     }
 
     private lazy val sameCity: Boolean = {
