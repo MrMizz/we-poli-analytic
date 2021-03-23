@@ -47,13 +47,13 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
     // identity comparison
     Comparison(uniqueVendor1, uniqueVendor1).features shouldBe {
       Features(
-        1.0, 1.0, 2.0, 1.0, 1.0, 1.0
+        1.0, 1.0, 3.0, 1.0, 1.0, 1.0
       )
     }
     // name token & edges in common
     Comparison(uniqueVendor1, uniqueVendor2).features shouldBe {
       Features(
-        1.0, 1.0, 2.0, 0.0, 0.0, 0.0
+        1.0, 1.0, 3.0, 0.0, 0.0, 0.0
       )
     }
     // only name token in common
