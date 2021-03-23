@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CLUSTER="j-3BZYK4LQOECGM"
-RUN_DATE="2020-03-16-01"
+RUN_DATE="latest"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 INCR="Prod" ## increment when deploying to tf-workspace -> Prod2
 
