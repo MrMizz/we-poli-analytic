@@ -9,9 +9,13 @@ import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.training.VendorsFuzzyConnectorTrainingJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.dynamo.edge.{EdgeDataDDBJob, EdgeDataJob}
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.{GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job, GraphTraversalSB2Job, GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.{
+  GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job,
+  GraphTraversalSB2Job, GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job
+}
 import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.NeptuneJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
@@ -30,6 +34,8 @@ object Main extends in.tap.base.spark.main.Main {
         new VendorsAutoConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-merger" =>
         new VendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "id-res-vendors" =>
+        new IdResVendorTransformerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[TwoOutArgs])
       case "unique-vendors-connector" =>
         new VendorsFuzzyConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "unique-vendors-merger" =>
