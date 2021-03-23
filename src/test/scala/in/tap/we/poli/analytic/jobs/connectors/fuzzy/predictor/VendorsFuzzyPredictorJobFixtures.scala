@@ -11,15 +11,17 @@ trait VendorsFuzzyPredictorJobFixtures {
       uid = 1L,
       uids = Nil,
       name = "Vendor1",
-      names = Set.empty,
-      address = Address
-        .empty
-        .copy(
-          city = Some("Los Angeles"),
-          state = Some("CA"),
-          zip_code = Some("90026")
-        ),
-      addresses = Set.empty[Address],
+      names = Set("Vendor1"),
+      addresses = Set(
+        Address
+          .empty
+          .copy(
+            city = Some("Los Angeles"),
+            state = Some("CA"),
+            zip_code = Some("90026")
+          )
+      ),
+      address = Address.empty,
       memos = Set.empty,
       edges = edgesInCommon,
       num_merged = 3L
@@ -31,15 +33,17 @@ trait VendorsFuzzyPredictorJobFixtures {
       uid = 2L,
       uids = Nil,
       name = "Vendor2",
-      names = Set.empty,
-      address = Address
-        .empty
-        .copy(
-          city = Some("los angeles"),
-          state = Some("ca"),
-          zip_code = Some("90026")
-        ),
-      addresses = Set.empty[Address],
+      names = Set("Vendor2"),
+      addresses = Set(
+        Address
+          .empty
+          .copy(
+            city = Some("los angeles"),
+            state = Some("ca"),
+            zip_code = Some("90026")
+          )
+      ),
+      address = Address.empty,
       memos = Set.empty,
       edges = edgesInCommon,
       num_merged = 3L
@@ -51,14 +55,16 @@ trait VendorsFuzzyPredictorJobFixtures {
       uid = 3L,
       uids = Nil,
       name = "Vendor3",
-      names = Set.empty,
-      address = Address
-        .empty
-        .copy(
-          city = Some("Santa Barbara"),
-          state = Some("CA")
-        ),
-      addresses = Set.empty[Address],
+      names = Set("Vendor3"),
+      addresses = Set(
+        Address
+          .empty
+          .copy(
+            city = Some("Santa Barbara"),
+            state = Some("CA")
+          )
+      ),
+      address = Address.empty,
       memos = Set.empty,
       edges = Set(emptyEdge),
       num_merged = 1L

@@ -1,8 +1,11 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Comparator, Features, UniqueVendorComparison}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
+  Comparator, Comparison, Features
+}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 
 class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJobFixtures {
 
@@ -12,7 +15,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          numEdgesInCommon = 0.0,
+          numSrcIdsInCommon = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -24,7 +27,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          numEdgesInCommon = 0.0,
+          numSrcIdsInCommon = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -36,7 +39,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          numEdgesInCommon = 1.0,
+          numSrcIdsInCommon = 1.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -48,7 +51,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          numEdgesInCommon = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -60,7 +63,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          numEdgesInCommon = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 1.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -72,7 +75,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          numEdgesInCommon = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 1.0,
           sameZip = 1.0,
           sameState = 0.0
@@ -84,7 +87,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          numEdgesInCommon = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 1.0,
           sameZip = 1.0,
           sameState = 1.0
@@ -115,7 +118,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          numEdgesInCommon = 0.0,
+          numSrcIdsInCommon = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -127,7 +130,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 1.0,
-          numEdgesInCommon = 0.0,
+          numSrcIdsInCommon = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -145,30 +148,42 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
   it should "build predictions from unique vendor comparisons" in {
     // identity
     Prediction(
-      UniqueVendorComparison(
-        Comparator(uniqueVendor1),
-        Comparator(uniqueVendor1)
+      Comparison(
+        Comparator(
+          IdResVendor(uniqueVendor1)
+        ),
+        Comparator(
+          IdResVendor(uniqueVendor1)
+        )
       )
     ) shouldBe {
       0.9999907636002814
     }
     // normalized as identity
     Prediction(
-      UniqueVendorComparison(
-        Comparator(uniqueVendor1),
-        Comparator(uniqueVendor2)
+      Comparison(
+        Comparator(
+          IdResVendor(uniqueVendor1)
+        ),
+        Comparator(
+          IdResVendor(uniqueVendor2)
+        )
       )
     ) shouldBe {
       0.9999907636002814
     }
     // nothing in common
     Prediction(
-      UniqueVendorComparison(
-        Comparator(uniqueVendor1),
-        Comparator(uniqueVendor3)
+      Comparison(
+        Comparator(
+          IdResVendor(uniqueVendor1)
+        ),
+        Comparator(
+          IdResVendor(uniqueVendor3)
+        )
       )
     ) shouldBe {
-      1.756493588665972E-4
+      1.756493588665972e-4
     }
   }
 

@@ -5,11 +5,12 @@ import in.tap.base.spark.main.InArgs.ThreeInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Features, UniqueVendorComparison, VendorComparison, buildSamplingRatio, reduceCandidates}
-import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Vendor, VendorLike}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
+  buildSamplingRatio, CandidateReducer, Comparator, Comparison, Features
+}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import org.apache.spark.graphx.VertexId
-import org.apache.spark.rdd.RDD
+import org.apache.spark.rdd.{PairRDDFunctions, RDD}
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
@@ -18,42 +19,37 @@ import scala.reflect.runtime.universe
 class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
-  val readTypeTagA: universe.TypeTag[Vendor],
+  val readTypeTagA: universe.TypeTag[IdResVendor],
   val readTypeTagB: universe.TypeTag[(VertexId, VertexId)],
-  val readTypeTagC: universe.TypeTag[UniqueVendor],
+  val readTypeTagC: universe.TypeTag[IdResVendor],
   val writeTypeTagA: universe.TypeTag[(Long, Features)]
-) extends ThreeInOnOutJob[Vendor, (VertexId, VertexId), UniqueVendor, (Long, Features)](inArgs, outArgs) {
+) extends ThreeInOnOutJob[IdResVendor, (VertexId, VertexId), IdResVendor, (Long, Features)](inArgs, outArgs) {
 
   override def transform(
-    input: (Dataset[Vendor], Dataset[(VertexId, VertexId)], Dataset[UniqueVendor])
+    input: (Dataset[IdResVendor], Dataset[(VertexId, VertexId)], Dataset[IdResVendor])
   ): Dataset[(Long, Features)] = {
     import spark.implicits._
-    val (vendors: Dataset[Vendor], connector: Dataset[(VertexId, VertexId)], uniqueVendors: Dataset[UniqueVendor]) = {
+    val (vendors: Dataset[IdResVendor], connector: Dataset[(VertexId, VertexId)], uniqueVendors: Dataset[IdResVendor]) = {
       input
     }
-    val vendorComparisons: RDD[VendorComparison] = {
-      vendors
-        .map { vendor: Vendor =>
-          vendor.uid -> Option(Seq(vendor))
-        }
-        .rdd
-        .join(
-          connector.rdd
-        )
-        .map {
-          case (_, (vendor: Option[Seq[Vendor]], connectedId: VertexId)) =>
-            connectedId -> vendor
-        }
-        .reduceByKey(reduceCandidates)
-        .flatMap {
-          case (_, candidates: Option[Seq[Vendor]]) =>
-            candidates match {
-              case Some(c) => VendorComparison(c)
-              case None    => Nil
-            }
-        }
+    val vendorComparisons: RDD[Comparison] = {
+      val comparators: RDD[(VertexId, Option[Seq[Comparator]])] = {
+        vendors
+          .map { vendor: IdResVendor =>
+            vendor.uid -> Option(Seq(Comparator(vendor)))
+          }
+          .rdd
+          .join(
+            connector.rdd
+          )
+          .map {
+            case (_, (vendor: Option[Seq[Comparator]], connectedId: VertexId)) =>
+              connectedId -> vendor
+          }
+      }
+      CandidateReducer(comparators)
     }
-    val uniqueVendorComparisons: RDD[UniqueVendorComparison] = {
+    val uniqueVendorComparisons: RDD[Comparison] = {
       CandidateGenerator(uniqueVendors)
     }
     val numPositives: Double = {
@@ -63,7 +59,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
       uniqueVendorComparisons.count.toDouble
     }
     vendorComparisons
-      .map { comparison: VendorComparison =>
+      .map { comparison: Comparison =>
         1L -> comparison.features
       }
       .sample(
@@ -71,7 +67,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
         fraction = buildSamplingRatio(numPositives, numNegatives)
       )
       .union(
-        uniqueVendorComparisons.map { comparison: UniqueVendorComparison =>
+        uniqueVendorComparisons.map { comparison: Comparison =>
           0L -> comparison.features
         }
       )
@@ -94,16 +90,38 @@ object VendorsFuzzyConnectorFeaturesJob {
     (numNegatives * POS_TO_NEG_RATIO) / numPositives
   }
 
-  def reduceCandidates[A](left: Option[Seq[A]], right: Option[Seq[A]]): Option[Seq[A]] = {
-    (left, right) match {
-      case (Some(l), Some(r)) =>
-        if ((l.size + r.size) <= MAX_COMPARISON_SIZE) {
-          Some(l ++ r)
-        } else {
-          None
+  object CandidateReducer {
+
+    def apply[A](rdd: PairRDDFunctions[A, Option[Seq[Comparator]]])(
+      implicit spark: SparkSession
+    ): RDD[Comparison] = {
+      rdd
+        .reduceByKey(reduce[Comparator])
+        .flatMap {
+          case (_, candidates: Option[Seq[Comparator]]) =>
+            unpack(candidates)
         }
-      case _ => None
     }
+
+    private def reduce[A](left: Option[Seq[A]], right: Option[Seq[A]]): Option[Seq[A]] = {
+      (left, right) match {
+        case (Some(l), Some(r)) =>
+          if ((l.size + r.size) <= MAX_COMPARISON_SIZE) {
+            Some(l ++ r)
+          } else {
+            None
+          }
+        case _ => None
+      }
+    }
+
+    private def unpack(maybeSeq: Option[Seq[Comparator]]): Seq[Comparison] = {
+      maybeSeq match {
+        case Some(seq) => Comparison(seq)
+        case None      => Nil
+      }
+    }
+
   }
 
   // TODO: scale numEdgesInCommon
@@ -111,7 +129,7 @@ object VendorsFuzzyConnectorFeaturesJob {
   final case class Features(
     numTokens: Double,
     numTokensInCommon: Double,
-    numEdgesInCommon: Double,
+    numSrcIdsInCommon: Double,
     sameCity: Double,
     sameZip: Double,
     sameState: Double
@@ -121,7 +139,7 @@ object VendorsFuzzyConnectorFeaturesJob {
       Array(
         numTokens,
         numTokensInCommon,
-        numEdgesInCommon,
+        numSrcIdsInCommon,
         sameCity,
         sameZip,
         sameState
@@ -133,7 +151,7 @@ object VendorsFuzzyConnectorFeaturesJob {
   object Features {
 
     /**
-     * Intended for use with [[Features.numEdgesInCommon]].
+     * Intended for use with [[Features.numSrcIdsInCommon]].
      * Raw -> Categorical Feature.
      */
     def scale(raw: Double): Double = {
@@ -146,106 +164,21 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   }
 
-  /**
-   * Used to build comparison
-   * between two vendors that have been auto connected.
-   *
-   * @param left_side vendor
-   * @param right_side vendor
-   * @param numDistinctSrcIds num merged in connected component
-   */
-  final case class VendorComparison(
-    left_side: Comparator[Vendor],
-    right_side: Comparator[Vendor],
-    numDistinctSrcIds: Double
-  ) extends Comparison[Vendor] {
-
-    override val numEdgesInCommon: Double = {
-      Features.scale(numDistinctSrcIds)
-    }
-
-  }
-
-  object VendorComparison {
-
-    def apply(seq: Seq[Vendor]): Seq[VendorComparison] = {
-      val numDistinctSrcIds: Double = {
-        seq.flatMap(_.edges.map(_.src_id)).distinct.size.toDouble
-      }
-      seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Vendor] =>
-        combination match {
-          case left :: right :: Nil =>
-            Some(
-              VendorComparison(
-                left_side = Comparator(left),
-                right_side = Comparator(right),
-                numDistinctSrcIds = numDistinctSrcIds
-              )
-            )
-          case _ => None
-        }
-      }
-    }
-
-  }
-
-  /**
-   * Used to build comparison
-   * between two unique vendors that share CG set.
-   *
-   * @param left_side unique vendor
-   * @param right_side unique vendor
-   */
-  final case class UniqueVendorComparison(
-    left_side: Comparator[UniqueVendor],
-    right_side: Comparator[UniqueVendor]
-  ) extends Comparison[UniqueVendor] {
-
-    override val numEdgesInCommon: Double = {
-      val leftSrcIds: Set[VertexId] = {
-        left_side.vendor.edges.map(_.src_id)
-      }
-      val rightSrcIds: Set[VertexId] = {
-        right_side.vendor.edges.map(_.src_id)
-      }
-      val intersection = {
-        leftSrcIds
-          .intersect(rightSrcIds)
-          .size
-          .toDouble
-      }
-      Features.scale(intersection)
-    }
-
-  }
-
-  object UniqueVendorComparison {
-
-    def apply(seq: Seq[Comparator[UniqueVendor]]): Seq[UniqueVendorComparison] = {
-      seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Comparator[UniqueVendor]] =>
-        combination match {
-          case left :: right :: Nil => Some(UniqueVendorComparison(left, right))
-          case _                    => None
-        }
-      }
-    }
-
-  }
-
-  final case class Comparator[A <: VendorLike](
-    vendor: A
+  final case class Comparator(
+    vendor: IdResVendor
   ) {
 
     val nameTokens: Set[String] = {
-      cleanedNameTokens(vendor.name).toSet
+      vendor.names.flatMap(cleanedNameTokens)
     }
 
     val addressTokens: Set[String] = {
-      Set(vendor.address.city, vendor.address.zip_code).flatten
+      vendor.addresses.flatMap(_.city) ++
+        vendor.addresses.flatMap(_.zip_code)
     }
 
     val srcIdTokens: Set[String] = {
-      vendor.edges.map(_.src_id.toString)
+      vendor.src_ids.map(_.toString)
     }
 
     val cgTokens: Set[String] = {
@@ -256,22 +189,19 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   }
 
-  trait Comparison[A <: VendorLike] {
-
-    val left_side: Comparator[A]
-
-    val right_side: Comparator[A]
-
-    val numEdgesInCommon: Double
+  final case class Comparison(
+    left_side: Comparator,
+    right_side: Comparator
+  ) {
 
     lazy val features: Features = {
       Features(
-        numTokens,
-        numTokensInCommon,
-        numEdgesInCommon,
-        toDouble(sameCity),
-        toDouble(sameZip),
-        toDouble(sameState)
+        numTokens = numTokens,
+        numTokensInCommon = numTokensInCommon,
+        numSrcIdsInCommon = numSrcIdsInCommon,
+        sameCity = toDouble(sameCity),
+        sameZip = toDouble(sameZip),
+        sameState = toDouble(sameState)
       )
     }
 
@@ -284,28 +214,51 @@ object VendorsFuzzyConnectorFeaturesJob {
       left_side.nameTokens.intersect(right_side.nameTokens).size.toDouble
     }
 
-    private lazy val sameCity: Option[Boolean] = {
-      same((u: VendorLike) => u.address.city)
+    private lazy val numSrcIdsInCommon: Double = {
+      Features.scale(
+        left_side.srcIdTokens.intersect(right_side.srcIdTokens).size.toDouble
+      )
     }
 
-    private lazy val sameZip: Option[Boolean] = {
-      same((u: VendorLike) => u.address.zip_code)
+    private lazy val sameCity: Boolean = {
+      same(_.addresses.flatMap(_.city))
     }
 
-    private lazy val sameState: Option[Boolean] = {
-      same((u: VendorLike) => u.address.state)
+    private lazy val sameZip: Boolean = {
+      same(_.addresses.flatMap(_.zip_code))
     }
 
-    private def toDouble(maybeBool: Option[Boolean]): Double = {
-      maybeBool.map(_.compare(false)).getOrElse(0).toDouble
+    private lazy val sameState: Boolean = {
+      same(_.addresses.flatMap(_.state))
     }
 
-    private def same(f: VendorLike => Option[String]): Option[Boolean] = {
-      for {
-        leftV <- f(left_side.vendor).map(_.toLowerCase)
-        rightV <- f(right_side.vendor).map(_.toLowerCase)
-      } yield {
-        leftV.equals(rightV)
+    private def toDouble(bool: Boolean): Double = {
+      bool.compare(false)
+    }
+
+    private def same(f: IdResVendor => Set[String]): Boolean = {
+      val left: Set[String] = {
+        f(left_side.vendor).map(_.toLowerCase)
+      }
+      val right = {
+        f(right_side.vendor).map(_.toLowerCase)
+      }
+      left.intersect(right).size match {
+        case 0 => false
+        case _ => true
+      }
+    }
+
+  }
+
+  object Comparison {
+
+    def apply(seq: Seq[Comparator]): Seq[Comparison] = {
+      seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Comparator] =>
+        combination match {
+          case left :: right :: Nil => Some(Comparison(left, right))
+          case _                    => None
+        }
       }
     }
 
