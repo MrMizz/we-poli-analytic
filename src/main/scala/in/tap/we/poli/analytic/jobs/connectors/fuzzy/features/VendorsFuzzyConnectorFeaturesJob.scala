@@ -6,9 +6,10 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, CandidateReducer, Comparator, Comparison, Features
+  buildSamplingRatio, CandidateReducer, Comparison, Features
 }
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.Source
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.{PairRDDFunctions, RDD}
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -19,35 +20,47 @@ import scala.reflect.runtime.universe
 class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
-  val readTypeTagA: universe.TypeTag[IdResVendor],
+  val readTypeTagA: universe.TypeTag[IdResVendorTransformerJob.Source.Vendor],
   val readTypeTagB: universe.TypeTag[(VertexId, VertexId)],
-  val readTypeTagC: universe.TypeTag[IdResVendor],
+  val readTypeTagC: universe.TypeTag[IdResVendorTransformerJob.Source.UniqueVendor],
   val writeTypeTagA: universe.TypeTag[(Long, Features)]
-) extends ThreeInOnOutJob[IdResVendor, (VertexId, VertexId), IdResVendor, (Long, Features)](inArgs, outArgs) {
+) extends ThreeInOnOutJob[
+      IdResVendorTransformerJob.Source.Vendor,
+      (VertexId, VertexId),
+      IdResVendorTransformerJob.Source.UniqueVendor,
+      (Long, Features)
+    ](inArgs, outArgs) {
 
   override def transform(
-    input: (Dataset[IdResVendor], Dataset[(VertexId, VertexId)], Dataset[IdResVendor])
+    input: (
+      Dataset[IdResVendorTransformerJob.Source.Vendor],
+      Dataset[(VertexId, VertexId)],
+      Dataset[IdResVendorTransformerJob.Source.UniqueVendor]
+    )
   ): Dataset[(Long, Features)] = {
     import spark.implicits._
-    val (vendors: Dataset[IdResVendor], connector: Dataset[(VertexId, VertexId)], uniqueVendors: Dataset[IdResVendor]) = {
+    val (vendors, connector, uniqueVendors) = {
       input
     }
     val vendorComparisons: RDD[Comparison] = {
-      val comparators: RDD[(VertexId, Option[Seq[Comparator]])] = {
+      val comparators: RDD[(VertexId, Option[List[Source.Vendor]])] = {
         vendors
-          .map { vendor: IdResVendor =>
-            vendor.uid -> Option(Seq(Comparator(vendor)))
+          .map { vendor: IdResVendorTransformerJob.Source.Vendor =>
+            vendor.model.uid -> Option(List(vendor))
           }
           .rdd
           .join(
             connector.rdd
           )
           .map {
-            case (_, (vendor: Option[Seq[Comparator]], connectedId: VertexId)) =>
+            case (_, (vendor: Option[List[Source.Vendor]], connectedId: VertexId)) =>
               connectedId -> vendor
           }
       }
       CandidateReducer(comparators)
+        .flatMap { maybe =>
+          Comparison.buildFromVendors(maybe.toList.flatten)
+        }
     }
     val uniqueVendorComparisons: RDD[Comparison] = {
       CandidateGenerator(uniqueVendors)
@@ -92,18 +105,18 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object CandidateReducer {
 
-    def apply[A](rdd: PairRDDFunctions[A, Option[Seq[Comparator]]])(
+    def apply[A, B](rdd: PairRDDFunctions[A, Option[List[B]]])(
       implicit spark: SparkSession
-    ): RDD[Comparison] = {
+    ): RDD[Option[List[B]]] = {
       rdd
-        .reduceByKey(reduce[Comparator])
-        .flatMap {
-          case (_, candidates: Option[Seq[Comparator]]) =>
-            unpack(candidates)
+        .reduceByKey(reduce)
+        .map {
+          case (_, candidates) =>
+            candidates
         }
     }
 
-    private def reduce[A](left: Option[Seq[A]], right: Option[Seq[A]]): Option[Seq[A]] = {
+    private def reduce[A](left: Option[List[A]], right: Option[List[A]]): Option[List[A]] = {
       (left, right) match {
         case (Some(l), Some(r)) =>
           if ((l.size + r.size) <= MAX_COMPARISON_SIZE) {
@@ -112,13 +125,6 @@ object VendorsFuzzyConnectorFeaturesJob {
             None
           }
         case _ => None
-      }
-    }
-
-    private def unpack(maybeSeq: Option[Seq[Comparator]]): Seq[Comparison] = {
-      maybeSeq match {
-        case Some(seq) => Comparison(seq)
-        case None      => Nil
       }
     }
 
@@ -165,20 +171,20 @@ object VendorsFuzzyConnectorFeaturesJob {
   }
 
   final case class Comparator(
-    vendor: IdResVendor
+    vendor: IdResVendorTransformerJob.Source
   ) {
 
     val nameTokens: Set[String] = {
-      vendor.names.flatMap(cleanedNameTokens)
+      vendor.model.names.flatMap(cleanedNameTokens)
     }
 
     val addressTokens: Set[String] = {
-      vendor.cities ++
-        vendor.zip_codes
+      vendor.model.cities ++
+        vendor.model.zip_codes
     }
 
     val srcIdTokens: Set[String] = {
-      vendor.src_ids.map(_.toString)
+      vendor.model.src_ids.map(_.toString)
     }
 
     val cgTokens: Set[String] = {
@@ -191,7 +197,8 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   final case class Comparison(
     left_side: Comparator,
-    right_side: Comparator
+    right_side: Comparator,
+    numSrcIdsInCommon: Double
   ) {
 
     lazy val features: Features = {
@@ -214,11 +221,6 @@ object VendorsFuzzyConnectorFeaturesJob {
       left_side.nameTokens.intersect(right_side.nameTokens).size.toDouble
     }
 
-    private lazy val numSrcIdsInCommon: Double = {
-      // TODO: scale?
-      left_side.srcIdTokens.intersect(right_side.srcIdTokens).size.toDouble
-    }
-
     private lazy val sameCity: Boolean = {
       same(_.cities)
     }
@@ -235,12 +237,12 @@ object VendorsFuzzyConnectorFeaturesJob {
       bool.compare(false)
     }
 
-    private def same(f: IdResVendor => Set[String]): Boolean = {
+    private def same(f: IdResVendorTransformerJob.Model => Set[String]): Boolean = {
       val left: Set[String] = {
-        f(left_side.vendor).map(_.toLowerCase)
+        f(left_side.vendor.model).map(_.toLowerCase)
       }
       val right = {
-        f(right_side.vendor).map(_.toLowerCase)
+        f(right_side.vendor.model).map(_.toLowerCase)
       }
       left.intersect(right).size match {
         case 0 => false
@@ -252,15 +254,44 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object Comparison {
 
-    def apply(seq: Seq[Comparator]): Seq[Comparison] = {
-      seq.combinations(n = 2).toSeq.flatMap { combination: Seq[Comparator] =>
-        combination match {
-          case left :: right :: Nil => Some(Comparison(left, right))
-          case _                    => None
-        }
+    def buildFromVendors(list: List[IdResVendorTransformerJob.Source]): List[Comparison] = {
+      val numUniqueSrcIds: Double = {
+        list.flatMap(_.model.src_ids).distinct.length
+      }
+      combinations(list).map {
+        case (left, right) =>
+          Comparison(
+            Comparator(left),
+            Comparator(right),
+            numUniqueSrcIds
+          )
       }
     }
 
+    def buildFromUniqueVendors(list: List[IdResVendorTransformerJob.Source]): List[Comparison] = {
+      combinations(list).map {
+        case (left, right) =>
+          val numSrcIdsInCommon = {
+            left.model.src_ids.intersect(right.model.src_ids).size.toDouble
+          }
+          Comparison(
+            Comparator(left),
+            Comparator(right),
+            numSrcIdsInCommon
+          )
+      }
+    }
+
+    private def combinations[A <: IdResVendorTransformerJob.Source](list: List[A]): List[(A, A)] = {
+      list.combinations(n = 2).toList.flatMap { combination: Seq[A] =>
+        combination match {
+          case left :: right :: Nil =>
+            Some((left, right))
+          case _ =>
+            None
+        }
+      }
+    }
   }
 
 }
