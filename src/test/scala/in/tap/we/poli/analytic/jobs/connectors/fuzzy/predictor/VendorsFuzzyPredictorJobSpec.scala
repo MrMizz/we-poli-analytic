@@ -5,7 +5,7 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnec
   Comparator, Comparison, Features
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
 
 class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJobFixtures {
 
@@ -150,11 +150,12 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     Prediction(
       Comparison(
         Comparator(
-          IdResVendor(uniqueVendor1)
+          IdResVendorTransformerJob.Source(uniqueVendor1)
         ),
         Comparator(
-          IdResVendor(uniqueVendor1)
-        )
+          IdResVendorTransformerJob.Source(uniqueVendor1)
+        ),
+        3
       )
     ) shouldBe {
       0.9999999933542082
@@ -163,11 +164,12 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     Prediction(
       Comparison(
         Comparator(
-          IdResVendor(uniqueVendor1)
+          IdResVendorTransformerJob.Source(uniqueVendor1)
         ),
         Comparator(
-          IdResVendor(uniqueVendor2)
-        )
+          IdResVendorTransformerJob.Source(uniqueVendor2)
+        ),
+        3
       )
     ) shouldBe {
       0.9999999933542082
@@ -176,11 +178,12 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     Prediction(
       Comparison(
         Comparator(
-          IdResVendor(uniqueVendor1)
+          IdResVendorTransformerJob.Source(uniqueVendor1)
         ),
         Comparator(
-          IdResVendor(uniqueVendor3)
-        )
+          IdResVendorTransformerJob.Source(uniqueVendor3)
+        ),
+        0
       )
     ) shouldBe {
       1.756493588665972e-4

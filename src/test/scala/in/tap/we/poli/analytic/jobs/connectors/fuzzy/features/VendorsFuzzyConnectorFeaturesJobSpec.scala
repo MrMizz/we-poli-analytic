@@ -2,41 +2,59 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, Comparison, Features
+  buildSamplingRatio, Comparator, Comparison, Features
 }
 
 class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesJobFixtures {
 
   it should "build comparisons from vendors" in {
-    Comparison(Nil) shouldBe {
+    Comparison.buildFromVendors(Nil) shouldBe {
       Nil
     }
-    Comparison(Seq(vendor1)) shouldBe {
+    Comparison.buildFromVendors(List(vendor1)) shouldBe {
       Nil
     }
-    Comparison(Seq(vendor1, vendor2)) shouldBe {
-      Seq(
-        Comparison(vendor1, vendor2)
+    Comparison.buildFromVendors(List(vendor1, vendor2)) shouldBe {
+      List(
+        Comparison(
+          Comparator(vendor1),
+          Comparator(vendor2),
+          2
+        )
       )
     }
-    Comparison(Seq(vendor1, vendor2, vendor3)) shouldBe {
+    Comparison.buildFromVendors(List(vendor1, vendor2, vendor3)) shouldBe {
       Seq(
-        Comparison(vendor1, vendor2),
-        Comparison(vendor1, vendor3),
-        Comparison(vendor2, vendor3)
+        Comparison(
+          Comparator(vendor1),
+          Comparator(vendor2),
+          3
+        ),
+        Comparison(
+          Comparator(vendor1),
+          Comparator(vendor3),
+          3
+        ),
+        Comparison(
+          Comparator(vendor2),
+          Comparator(vendor3),
+          3
+        )
       )
     }
   }
 
+  // TODO: it should "build comparisons from unique vendors" in {
+
   it should "build feature space from vendor comparison" in {
     // identity comparison
-    Comparison(vendor1, vendor1).features shouldBe {
+    Comparison(Comparator(vendor1), Comparator(vendor1), 1).features shouldBe {
       Features(
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0
       )
     }
     // only name token in common
-    Comparison(vendor1, vendor2).features shouldBe {
+    Comparison(Comparator(vendor1), Comparator(vendor2), 0).features shouldBe {
       Features(
         1.0, 1.0, 0.0, 0.0, 0.0, 0.0
       )
@@ -45,19 +63,19 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
 
   it should "build feature space from unique vendor comparison" in {
     // identity comparison
-    Comparison(uniqueVendor1, uniqueVendor1).features shouldBe {
+    Comparison(Comparator(uniqueVendor1), Comparator(uniqueVendor1), 3).features shouldBe {
       Features(
         1.0, 1.0, 3.0, 1.0, 1.0, 1.0
       )
     }
     // name token & edges in common
-    Comparison(uniqueVendor1, uniqueVendor2).features shouldBe {
+    Comparison(Comparator(uniqueVendor1), Comparator(uniqueVendor2), 3).features shouldBe {
       Features(
         1.0, 1.0, 3.0, 0.0, 0.0, 0.0
       )
     }
     // only name token in common
-    Comparison(uniqueVendor1, uniqueVendor3).features shouldBe {
+    Comparison(Comparator(uniqueVendor1), Comparator(uniqueVendor3), 0).features shouldBe {
       Features(
         1.0, 1.0, 0.0, 0.0, 0.0, 0.0
       )
