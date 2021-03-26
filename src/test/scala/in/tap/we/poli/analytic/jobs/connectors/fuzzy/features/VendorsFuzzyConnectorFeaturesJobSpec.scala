@@ -44,7 +44,42 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
     }
   }
 
-  // TODO: it should "build comparisons from unique vendors" in {
+  it should "build comparisons from unique vendors" in {
+    Comparison.buildFromUniqueVendors(Nil) shouldBe {
+      Nil
+    }
+    Comparison.buildFromUniqueVendors(List(uniqueVendor1)) shouldBe {
+      Nil
+    }
+    Comparison.buildFromUniqueVendors(List(uniqueVendor1, uniqueVendor2)) shouldBe {
+      List(
+        Comparison(
+          Comparator(uniqueVendor1),
+          Comparator(uniqueVendor2),
+          3
+        )
+      )
+    }
+    Comparison.buildFromVendors(List(uniqueVendor1, uniqueVendor2, uniqueVendor3)) shouldBe {
+      Seq(
+        Comparison(
+          Comparator(uniqueVendor1),
+          Comparator(uniqueVendor2),
+          3
+        ),
+        Comparison(
+          Comparator(uniqueVendor1),
+          Comparator(uniqueVendor3),
+          3
+        ),
+        Comparison(
+          Comparator(uniqueVendor2),
+          Comparator(uniqueVendor3),
+          3
+        )
+      )
+    }
+  }
 
   it should "build feature space from vendor comparison" in {
     // identity comparison
