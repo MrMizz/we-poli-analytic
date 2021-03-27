@@ -135,7 +135,7 @@ object VendorsFuzzyConnectorFeaturesJob {
   final case class Features(
     numTokens: Double,
     numTokensInCommon: Double,
-    numSrcIdsInCommon: Double,
+    srcIdSimilarity: Double,
     sameCity: Double,
     sameZip: Double,
     sameState: Double
@@ -145,7 +145,7 @@ object VendorsFuzzyConnectorFeaturesJob {
       Array(
         numTokens,
         numTokensInCommon,
-        numSrcIdsInCommon,
+        srcIdSimilarity,
         sameCity,
         sameZip,
         sameState
@@ -156,10 +156,7 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object Features {
 
-    /**
-     * Intended for use with [[Features.numSrcIdsInCommon]].
-     * Raw -> Categorical Feature.
-     */
+    // TODO: delete ?
     def scale(raw: Double): Double = {
       raw match {
         case 0 => 0
@@ -198,14 +195,14 @@ object VendorsFuzzyConnectorFeaturesJob {
   final case class Comparison(
     left_side: Comparator,
     right_side: Comparator,
-    numSrcIdsInCommon: Double
+    srcIdSimilarity: Double
   ) {
 
     lazy val features: Features = {
       Features(
         numTokens = numTokens,
         numTokensInCommon = numTokensInCommon,
-        numSrcIdsInCommon = numSrcIdsInCommon,
+        srcIdSimilarity = srcIdSimilarity,
         sameCity = toDouble(sameCity),
         sameZip = toDouble(sameZip),
         sameState = toDouble(sameState)
@@ -255,15 +252,12 @@ object VendorsFuzzyConnectorFeaturesJob {
   object Comparison {
 
     def buildFromVendors(list: List[IdResVendorTransformerJob.Source]): List[Comparison] = {
-      val numUniqueSrcIds: Double = {
-        list.flatMap(_.model.src_ids).distinct.length
-      }
       combinations(list).map {
         case (left, right) =>
           Comparison(
-            Comparator(left),
-            Comparator(right),
-            numUniqueSrcIds
+            left_side = Comparator(left),
+            right_side = Comparator(right),
+            srcIdSimilarity = 1.0
           )
       }
     }
@@ -271,13 +265,19 @@ object VendorsFuzzyConnectorFeaturesJob {
     def buildFromUniqueVendors(list: List[IdResVendorTransformerJob.Source]): List[Comparison] = {
       combinations(list).map {
         case (left, right) =>
-          val numSrcIdsInCommon = {
+          val numSrcIds: Double = {
+            left.model.src_ids.union(right.model.src_ids).size.toDouble
+          }
+          val numSrcIdsInCommon: Double = {
             left.model.src_ids.intersect(right.model.src_ids).size.toDouble
           }
+          val srcIdSimilarity: Double = {
+            numSrcIdsInCommon / numSrcIds
+          }
           Comparison(
-            Comparator(left),
-            Comparator(right),
-            numSrcIdsInCommon
+            left_side = Comparator(left),
+            right_side = Comparator(right),
+            srcIdSimilarity = srcIdSimilarity
           )
       }
     }

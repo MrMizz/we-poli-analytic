@@ -26,6 +26,26 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
     )
   }
 
+  val vendor2: Source.Vendor = {
+    IdResVendorTransformerJob.Source(
+      emptyVendor.copy(
+        uid = 2L,
+        name = "Vendor2",
+        edges = Set(emptyEdge.copy(src_id = 22L))
+      )
+    )
+  }
+
+  val vendor3: Source.Vendor = {
+    IdResVendorTransformerJob.Source(
+      emptyVendor.copy(
+        uid = 3L,
+        name = "Vendor3",
+        edges = Set(emptyEdge.copy(src_id = 33L))
+      )
+    )
+  }
+
   val uniqueVendor1: Source.UniqueVendor = {
     IdResVendorTransformerJob.Source(
       UniqueVendor(
@@ -50,16 +70,6 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
     )
   }
 
-  val vendor2: Source.Vendor = {
-    IdResVendorTransformerJob.Source(
-      emptyVendor.copy(
-        uid = 2L,
-        name = "Vendor2",
-        edges = Set(emptyEdge.copy(src_id = 22L))
-      )
-    )
-  }
-
   val uniqueVendor2: Source.UniqueVendor = {
     IdResVendorTransformerJob.Source(
       emptyUniqueVendor.copy(
@@ -73,18 +83,18 @@ trait VendorsFuzzyConnectorFeaturesJobFixtures {
   val uniqueVendor3: Source.UniqueVendor = {
     IdResVendorTransformerJob.Source(
       emptyUniqueVendor.copy(
-        uid = 3L,
-        names = Set("Vendor3")
+        uid = 2L,
+        names = Set("Vendor2"),
+        edges = edgesInCommon + emptyEdge.copy(src_id = 44L)
       )
     )
   }
 
-  val vendor3: Source.Vendor = {
+  val uniqueVendor4: Source.UniqueVendor = {
     IdResVendorTransformerJob.Source(
-      emptyVendor.copy(
+      emptyUniqueVendor.copy(
         uid = 3L,
-        name = "Vendor3",
-        edges = Set(emptyEdge.copy(src_id = 33L))
+        names = Set("Vendor3")
       )
     )
   }

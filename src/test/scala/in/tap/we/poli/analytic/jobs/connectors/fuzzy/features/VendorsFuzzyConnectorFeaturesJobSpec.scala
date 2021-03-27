@@ -19,7 +19,7 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
         Comparison(
           Comparator(vendor1),
           Comparator(vendor2),
-          2
+          1.0
         )
       )
     }
@@ -28,17 +28,17 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
         Comparison(
           Comparator(vendor1),
           Comparator(vendor2),
-          3
+          1.0
         ),
         Comparison(
           Comparator(vendor1),
           Comparator(vendor3),
-          3
+          1.0
         ),
         Comparison(
           Comparator(vendor2),
           Comparator(vendor3),
-          3
+          1.0
         )
       )
     }
@@ -56,26 +56,41 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
         Comparison(
           Comparator(uniqueVendor1),
           Comparator(uniqueVendor2),
-          3
+          1.0
         )
       )
     }
-    Comparison.buildFromVendors(List(uniqueVendor1, uniqueVendor2, uniqueVendor3)) shouldBe {
+    Comparison.buildFromUniqueVendors(List(uniqueVendor1, uniqueVendor2, uniqueVendor3, uniqueVendor4)) shouldBe {
       Seq(
         Comparison(
           Comparator(uniqueVendor1),
           Comparator(uniqueVendor2),
-          3
+          1.0
         ),
         Comparison(
           Comparator(uniqueVendor1),
           Comparator(uniqueVendor3),
-          3
+          0.75
+        ),
+        Comparison(
+          Comparator(uniqueVendor1),
+          Comparator(uniqueVendor4),
+          0.0
         ),
         Comparison(
           Comparator(uniqueVendor2),
           Comparator(uniqueVendor3),
-          3
+          0.75
+        ),
+        Comparison(
+          Comparator(uniqueVendor2),
+          Comparator(uniqueVendor4),
+          0.00
+        ),
+        Comparison(
+          Comparator(uniqueVendor3),
+          Comparator(uniqueVendor4),
+          0.00
         )
       )
     }
