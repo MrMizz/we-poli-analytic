@@ -2,7 +2,7 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, Comparator, Comparison, Features
+  buildSamplingRatio, Comparison, Features
 }
 
 class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesJobFixtures {
@@ -17,8 +17,8 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
     Comparison.buildFromVendors(List(vendor1, vendor2)) shouldBe {
       List(
         Comparison(
-          Comparator(vendor1),
-          Comparator(vendor2),
+          vendor1,
+          vendor2,
           1.0
         )
       )
@@ -26,18 +26,18 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
     Comparison.buildFromVendors(List(vendor1, vendor2, vendor3)) shouldBe {
       Seq(
         Comparison(
-          Comparator(vendor1),
-          Comparator(vendor2),
+          vendor1,
+          vendor2,
           1.0
         ),
         Comparison(
-          Comparator(vendor1),
-          Comparator(vendor3),
+          vendor1,
+          vendor3,
           1.0
         ),
         Comparison(
-          Comparator(vendor2),
-          Comparator(vendor3),
+          vendor2,
+          vendor3,
           1.0
         )
       )
@@ -54,8 +54,8 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
     Comparison.buildFromUniqueVendors(List(uniqueVendor1, uniqueVendor2)) shouldBe {
       List(
         Comparison(
-          Comparator(uniqueVendor1),
-          Comparator(uniqueVendor2),
+          uniqueVendor1,
+          uniqueVendor2,
           1.0
         )
       )
@@ -63,33 +63,33 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
     Comparison.buildFromUniqueVendors(List(uniqueVendor1, uniqueVendor2, uniqueVendor3, uniqueVendor4)) shouldBe {
       Seq(
         Comparison(
-          Comparator(uniqueVendor1),
-          Comparator(uniqueVendor2),
+          uniqueVendor1,
+          uniqueVendor2,
           1.0
         ),
         Comparison(
-          Comparator(uniqueVendor1),
-          Comparator(uniqueVendor3),
+          uniqueVendor1,
+          uniqueVendor3,
           0.75
         ),
         Comparison(
-          Comparator(uniqueVendor1),
-          Comparator(uniqueVendor4),
+          uniqueVendor1,
+          uniqueVendor4,
           0.0
         ),
         Comparison(
-          Comparator(uniqueVendor2),
-          Comparator(uniqueVendor3),
+          uniqueVendor2,
+          uniqueVendor3,
           0.75
         ),
         Comparison(
-          Comparator(uniqueVendor2),
-          Comparator(uniqueVendor4),
+          uniqueVendor2,
+          uniqueVendor4,
           0.00
         ),
         Comparison(
-          Comparator(uniqueVendor3),
-          Comparator(uniqueVendor4),
+          uniqueVendor3,
+          uniqueVendor4,
           0.00
         )
       )
@@ -98,13 +98,13 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
 
   it should "build feature space from vendor comparison" in {
     // identity comparison
-    Comparison(Comparator(vendor1), Comparator(vendor1), 1).features shouldBe {
+    Comparison(vendor1, vendor1, 1).features shouldBe {
       Features(
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0
       )
     }
     // only name token in common
-    Comparison(Comparator(vendor1), Comparator(vendor2), 0).features shouldBe {
+    Comparison(vendor1, vendor2, 0).features shouldBe {
       Features(
         1.0, 1.0, 0.0, 0.0, 0.0, 0.0
       )
@@ -113,19 +113,19 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSpec with VendorsFuzzyCon
 
   it should "build feature space from unique vendor comparison" in {
     // identity comparison
-    Comparison(Comparator(uniqueVendor1), Comparator(uniqueVendor1), 3).features shouldBe {
+    Comparison(uniqueVendor1, uniqueVendor1, 3).features shouldBe {
       Features(
         1.0, 1.0, 3.0, 1.0, 1.0, 1.0
       )
     }
     // name token & edges in common
-    Comparison(Comparator(uniqueVendor1), Comparator(uniqueVendor2), 3).features shouldBe {
+    Comparison(uniqueVendor1, uniqueVendor2, 3).features shouldBe {
       Features(
         1.0, 1.0, 3.0, 0.0, 0.0, 0.0
       )
     }
     // only name token in common
-    Comparison(Comparator(uniqueVendor1), Comparator(uniqueVendor3), 0).features shouldBe {
+    Comparison(uniqueVendor1, uniqueVendor3, 0).features shouldBe {
       Features(
         1.0, 1.0, 0.0, 0.0, 0.0, 0.0
       )

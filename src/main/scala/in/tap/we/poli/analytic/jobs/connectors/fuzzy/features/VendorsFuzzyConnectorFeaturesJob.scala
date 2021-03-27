@@ -6,7 +6,7 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, CandidateReducer, Comparison, Features
+  buildSamplingRatio, CandidateReducer, Comparator, Comparison, Features
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.Source
@@ -43,17 +43,17 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
       input
     }
     val vendorComparisons: RDD[Comparison] = {
-      val comparators: RDD[(VertexId, Option[List[Source.Vendor]])] = {
+      val comparators: RDD[(VertexId, Option[List[Comparator]])] = {
         vendors
           .map { vendor: IdResVendorTransformerJob.Source.Vendor =>
-            vendor.model.uid -> Option(List(vendor))
+            vendor.model.uid -> Option(List(Comparator(vendor)))
           }
           .rdd
           .join(
             connector.rdd
           )
           .map {
-            case (_, (vendor: Option[List[Source.Vendor]], connectedId: VertexId)) =>
+            case (_, (vendor: Option[List[Comparator]], connectedId: VertexId)) =>
               connectedId -> vendor
           }
       }
@@ -251,38 +251,38 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object Comparison {
 
-    def buildFromVendors(list: List[IdResVendorTransformerJob.Source]): List[Comparison] = {
+    def buildFromVendors(list: List[Comparator]): List[Comparison] = {
       combinations(list).map {
         case (left, right) =>
           Comparison(
-            left_side = Comparator(left),
-            right_side = Comparator(right),
+            left_side = left,
+            right_side = right,
             srcIdSimilarity = 1.0
           )
       }
     }
 
-    def buildFromUniqueVendors(list: List[IdResVendorTransformerJob.Source]): List[Comparison] = {
+    def buildFromUniqueVendors(list: List[Comparator]): List[Comparison] = {
       combinations(list).map {
         case (left, right) =>
           val numSrcIds: Double = {
-            left.model.src_ids.union(right.model.src_ids).size.toDouble
+            left.vendor.model.src_ids.union(right.vendor.model.src_ids).size.toDouble
           }
           val numSrcIdsInCommon: Double = {
-            left.model.src_ids.intersect(right.model.src_ids).size.toDouble
+            left.vendor.model.src_ids.intersect(right.vendor.model.src_ids).size.toDouble
           }
           val srcIdSimilarity: Double = {
             numSrcIdsInCommon / numSrcIds
           }
           Comparison(
-            left_side = Comparator(left),
-            right_side = Comparator(right),
+            left_side = left,
+            right_side = right,
             srcIdSimilarity = srcIdSimilarity
           )
       }
     }
 
-    private def combinations[A <: IdResVendorTransformerJob.Source](list: List[A]): List[(A, A)] = {
+    private def combinations[A](list: List[A]): List[(A, A)] = {
       list.combinations(n = 2).toList.flatMap { combination: Seq[A] =>
         combination match {
           case left :: right :: Nil =>

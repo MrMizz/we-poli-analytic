@@ -70,7 +70,7 @@ object VendorsFuzzyConnectorJob {
         }.rdd
       }
       CandidateReducer(comparators).flatMap { maybe =>
-        Comparison.buildFromUniqueVendors(maybe.toList.flatten.map(_.vendor))
+        Comparison.buildFromUniqueVendors(maybe.toList.flatten)
       }
     }
 
