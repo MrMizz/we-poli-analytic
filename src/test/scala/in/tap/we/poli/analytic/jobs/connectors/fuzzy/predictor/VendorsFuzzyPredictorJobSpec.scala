@@ -150,10 +150,10 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     Prediction(
       Comparison(
         Comparator(
-          IdResVendorTransformerJob.Source(uniqueVendor1)
+          IdResVendorTransformerJob.Source(uniqueVendor1).model
         ),
         Comparator(
-          IdResVendorTransformerJob.Source(uniqueVendor1)
+          IdResVendorTransformerJob.Source(uniqueVendor1).model
         ),
         3
       )
@@ -164,10 +164,10 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     Prediction(
       Comparison(
         Comparator(
-          IdResVendorTransformerJob.Source(uniqueVendor1)
+          IdResVendorTransformerJob.Source(uniqueVendor1).model
         ),
         Comparator(
-          IdResVendorTransformerJob.Source(uniqueVendor2)
+          IdResVendorTransformerJob.Source(uniqueVendor2).model
         ),
         3
       )
@@ -178,10 +178,10 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     Prediction(
       Comparison(
         Comparator(
-          IdResVendorTransformerJob.Source(uniqueVendor1)
+          IdResVendorTransformerJob.Source(uniqueVendor1).model
         ),
         Comparator(
-          IdResVendorTransformerJob.Source(uniqueVendor3)
+          IdResVendorTransformerJob.Source(uniqueVendor3).model
         ),
         0
       )

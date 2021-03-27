@@ -9,7 +9,6 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnec
   buildSamplingRatio, CandidateReducer, Comparator, Comparison, Features
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.Source
 import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.{PairRDDFunctions, RDD}
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -46,7 +45,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
       val comparators: RDD[(VertexId, Option[List[Comparator]])] = {
         vendors
           .map { vendor: IdResVendorTransformerJob.Source.Vendor =>
-            vendor.model.uid -> Option(List(Comparator(vendor)))
+            vendor.model.uid -> Option(List(Comparator(vendor.model)))
           }
           .rdd
           .join(
@@ -168,20 +167,20 @@ object VendorsFuzzyConnectorFeaturesJob {
   }
 
   final case class Comparator(
-    vendor: IdResVendorTransformerJob.Source
+    vendor: IdResVendorTransformerJob.Model
   ) {
 
     val nameTokens: Set[String] = {
-      vendor.model.names.flatMap(cleanedNameTokens)
+      vendor.names.flatMap(cleanedNameTokens)
     }
 
     val addressTokens: Set[String] = {
-      vendor.model.cities ++
-        vendor.model.zip_codes
+      vendor.cities ++
+        vendor.zip_codes
     }
 
     val srcIdTokens: Set[String] = {
-      vendor.model.src_ids.map(_.toString)
+      vendor.src_ids.map(_.toString)
     }
 
     val cgTokens: Set[String] = {
@@ -236,10 +235,10 @@ object VendorsFuzzyConnectorFeaturesJob {
 
     private def same(f: IdResVendorTransformerJob.Model => Set[String]): Boolean = {
       val left: Set[String] = {
-        f(left_side.vendor.model).map(_.toLowerCase)
+        f(left_side.vendor).map(_.toLowerCase)
       }
       val right = {
-        f(right_side.vendor.model).map(_.toLowerCase)
+        f(right_side.vendor).map(_.toLowerCase)
       }
       left.intersect(right).size match {
         case 0 => false
@@ -266,10 +265,10 @@ object VendorsFuzzyConnectorFeaturesJob {
       combinations(list).map {
         case (left, right) =>
           val numSrcIds: Double = {
-            left.vendor.model.src_ids.union(right.vendor.model.src_ids).size.toDouble
+            left.vendor.src_ids.union(right.vendor.src_ids).size.toDouble
           }
           val numSrcIdsInCommon: Double = {
-            left.vendor.model.src_ids.intersect(right.vendor.model.src_ids).size.toDouble
+            left.vendor.src_ids.intersect(right.vendor.src_ids).size.toDouble
           }
           val srcIdSimilarity: Double = {
             numSrcIdsInCommon / numSrcIds

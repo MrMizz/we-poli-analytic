@@ -59,7 +59,7 @@ object VendorsFuzzyConnectorJob {
       val comparators: RDD[(String, Option[List[Comparator]])] = {
         uniqueVendors.flatMap { uniqueVendor =>
           val comparator: Comparator = {
-            Comparator(uniqueVendor)
+            Comparator(uniqueVendor.model)
           }
           val candidate: Option[List[Comparator]] = {
             Option(List(comparator))
@@ -82,8 +82,8 @@ object VendorsFuzzyConnectorJob {
       if (Prediction(uniqueVendorComparison) >= THRESHOLD) {
         Some(
           Edge(
-            srcId = uniqueVendorComparison.left_side.vendor.model.uid,
-            dstId = uniqueVendorComparison.right_side.vendor.model.uid,
+            srcId = uniqueVendorComparison.left_side.vendor.uid,
+            dstId = uniqueVendorComparison.right_side.vendor.uid,
             attr = 1L
           )
         )
