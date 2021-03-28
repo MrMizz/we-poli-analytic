@@ -158,10 +158,10 @@ object VendorsFuzzyConnectorFeaturesJob {
   object Features {
 
     def scale(raw: Double): Double = {
-      if (raw <= 10) {
+      if (raw <= 5) {
         raw
       } else {
-        10
+        5
       }
     }
 

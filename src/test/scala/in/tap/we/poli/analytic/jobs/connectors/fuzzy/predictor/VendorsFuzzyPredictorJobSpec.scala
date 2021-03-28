@@ -197,7 +197,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         3.0
       )
     ) shouldBe {
-      0.5295862648678485
+      0.9576487641751946
     }
     // normalized as identity
     Prediction(
@@ -212,7 +212,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         3.0
       )
     ) shouldBe {
-      0.5295862648678485
+      0.9576487641751946
     }
     // nothing in common
     Prediction(
@@ -227,7 +227,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         0.0
       )
     ) shouldBe {
-      1.3143962490355153E-12
+      4.2967657101400455E-6
     }
   }
 

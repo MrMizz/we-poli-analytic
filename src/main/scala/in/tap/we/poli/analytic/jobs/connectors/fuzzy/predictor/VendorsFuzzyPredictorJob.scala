@@ -46,8 +46,8 @@ object VendorsFuzzyPredictorJob {
       Features(
         numTokens = -3.5002769364675266,
         numTokensInCommon = 4.554445146317124,
-        numSrcIds = -6.236932839134266,
-        numSrcIdsInCommon = 7.236932839134266,
+        numSrcIds = -1.236932839134266,
+        numSrcIdsInCommon = 3.236932839134266,
         sameCity = 3.008792710911732,
         sameZip = 2.7565359279982005,
         sameState = 3.7694252974252604
