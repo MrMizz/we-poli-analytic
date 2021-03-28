@@ -134,7 +134,6 @@ object VendorsFuzzyConnectorFeaturesJob {
   final case class Features(
     numTokens: Double,
     numTokensInCommon: Double,
-    srcIdSimilarity: Double,
     sameCity: Double,
     sameZip: Double,
     sameState: Double
@@ -144,7 +143,6 @@ object VendorsFuzzyConnectorFeaturesJob {
       Array(
         numTokens,
         numTokensInCommon,
-        srcIdSimilarity,
         sameCity,
         sameZip,
         sameState
@@ -201,7 +199,6 @@ object VendorsFuzzyConnectorFeaturesJob {
       Features(
         numTokens = numTokens,
         numTokensInCommon = numTokensInCommon,
-        srcIdSimilarity = srcIdSimilarity,
         sameCity = toDouble(sameCity),
         sameZip = toDouble(sameZip),
         sameState = toDouble(sameState)

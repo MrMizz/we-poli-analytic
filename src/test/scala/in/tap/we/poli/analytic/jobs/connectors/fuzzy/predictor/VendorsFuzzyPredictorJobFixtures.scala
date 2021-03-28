@@ -71,6 +71,20 @@ trait VendorsFuzzyPredictorJobFixtures {
     )
   }
 
+  lazy val uniqueVendor4: UniqueVendor = {
+    UniqueVendor(
+      uid = 3L,
+      uids = Nil,
+      name = "Tacos Rico",
+      names = Set.empty,
+      addresses = Set.empty,
+      address = Address.empty,
+      memos = Set.empty,
+      edges = Set(emptyEdge),
+      num_merged = 1L
+    )
+  }
+
   lazy val edgesInCommon: Set[ExpenditureEdge] = {
     Set(emptyEdge.copy(src_id = 11L), emptyEdge.copy(src_id = 22L), emptyEdge.copy(src_id = 33L))
   }

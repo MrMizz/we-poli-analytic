@@ -15,7 +15,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          srcIdSimilarity = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -27,7 +26,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -39,8 +37,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 1.0,
-          sameCity = 0.0,
+          sameCity = 1.0,
           sameZip = 0.0,
           sameState = 0.0
         )
@@ -51,9 +48,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
-          sameCity = 0.0,
-          sameZip = 0.0,
+          sameCity = 1.0,
+          sameZip = 1.0,
           sameState = 0.0
         )
       )
@@ -63,31 +59,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
-          sameCity = 1.0,
-          sameZip = 0.0,
-          sameState = 0.0
-        )
-      )
-    }
-    val prediction6: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
-          sameCity = 1.0,
-          sameZip = 1.0,
-          sameState = 0.0
-        )
-      )
-    }
-    val prediction7: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
           sameCity = 1.0,
           sameZip = 1.0,
           sameState = 1.0
@@ -100,16 +71,12 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
       prediction2,
       prediction3,
       prediction4,
-      prediction5,
-      prediction6,
-      prediction7
+      prediction5
     ).foreach(println)
     assert(prediction1 < prediction2)
     assert(prediction2 < prediction3)
     assert(prediction3 < prediction4)
     assert(prediction4 < prediction5)
-    assert(prediction5 < prediction6)
-    assert(prediction6 < prediction7)
   }
 
   it should "also product non-monotonically increasing predictions" in {
@@ -118,7 +85,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          srcIdSimilarity = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -130,7 +96,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 1.0,
-          srcIdSimilarity = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -158,7 +123,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         3
       )
     ) shouldBe {
-      0.9999999933542082
+      0.9868910644018303
     }
     // normalized as identity
     Prediction(
@@ -172,9 +137,9 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         3
       )
     ) shouldBe {
-      0.9999999933542082
+      0.9868910644018303
     }
-    // nothing in common
+    // some in common
     Prediction(
       Comparison(
         Comparator(
@@ -186,7 +151,21 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         0
       )
     ) shouldBe {
-      1.756493588665972e-4
+      0.7142319915816597
+    }
+    // nothing in common
+    Prediction(
+      Comparison(
+        Comparator(
+          IdResVendorTransformerJob.Source(uniqueVendor1).model
+        ),
+        Comparator(
+          IdResVendorTransformerJob.Source(uniqueVendor4).model
+        ),
+        0
+      )
+    ) shouldBe {
+      6.155752099077389E-4
     }
   }
 
