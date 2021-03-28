@@ -58,7 +58,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: ThreeInArgs, val outArgs: One
       }
       CandidateReducer(comparators)
         .flatMap { maybe =>
-          Comparison.buildFromVendors(maybe.toList.flatten)
+          Comparison(maybe.toList.flatten)
         }
     }
     val uniqueVendorComparisons: RDD[Comparison] = {
@@ -191,8 +191,7 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   final case class Comparison(
     left_side: Comparator,
-    right_side: Comparator,
-    srcIdSimilarity: Double
+    right_side: Comparator
   ) {
 
     lazy val features: Features = {
@@ -247,33 +246,12 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object Comparison {
 
-    def buildFromVendors(list: List[Comparator]): List[Comparison] = {
+    def apply(list: List[Comparator]): List[Comparison] = {
       combinations(list).map {
         case (left, right) =>
           Comparison(
             left_side = left,
-            right_side = right,
-            srcIdSimilarity = 1.0
-          )
-      }
-    }
-
-    def buildFromUniqueVendors(list: List[Comparator]): List[Comparison] = {
-      combinations(list).map {
-        case (left, right) =>
-          val numSrcIds: Double = {
-            left.vendor.src_ids.union(right.vendor.src_ids).size.toDouble
-          }
-          val numSrcIdsInCommon: Double = {
-            left.vendor.src_ids.intersect(right.vendor.src_ids).size.toDouble
-          }
-          val srcIdSimilarity: Double = {
-            numSrcIdsInCommon / numSrcIds
-          }
-          Comparison(
-            left_side = left,
-            right_side = right,
-            srcIdSimilarity = srcIdSimilarity
+            right_side = right
           )
       }
     }

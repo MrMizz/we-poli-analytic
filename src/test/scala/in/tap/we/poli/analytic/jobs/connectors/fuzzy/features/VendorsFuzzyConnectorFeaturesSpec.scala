@@ -8,89 +8,33 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnec
 class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesFixtures {
 
   it should "build comparisons from vendors" in {
-    Comparison.buildFromVendors(Nil) shouldBe {
+    Comparison(Nil) shouldBe {
       Nil
     }
-    Comparison.buildFromVendors(List(vendor1)) shouldBe {
+    Comparison(List(vendor1)) shouldBe {
       Nil
     }
-    Comparison.buildFromVendors(List(vendor1, vendor2)) shouldBe {
+    Comparison(List(vendor1, vendor2)) shouldBe {
       List(
         Comparison(
           vendor1,
-          vendor2,
-          1.0
+          vendor2
         )
       )
     }
-    Comparison.buildFromVendors(List(vendor1, vendor2, vendor3)) shouldBe {
+    Comparison(List(vendor1, vendor2, vendor3)) shouldBe {
       Seq(
         Comparison(
           vendor1,
-          vendor2,
-          1.0
+          vendor2
         ),
         Comparison(
           vendor1,
-          vendor3,
-          1.0
+          vendor3
         ),
         Comparison(
           vendor2,
-          vendor3,
-          1.0
-        )
-      )
-    }
-  }
-
-  it should "build comparisons from unique vendors" in {
-    Comparison.buildFromUniqueVendors(Nil) shouldBe {
-      Nil
-    }
-    Comparison.buildFromUniqueVendors(List(uniqueVendor1)) shouldBe {
-      Nil
-    }
-    Comparison.buildFromUniqueVendors(List(uniqueVendor1, uniqueVendor2)) shouldBe {
-      List(
-        Comparison(
-          uniqueVendor1,
-          uniqueVendor2,
-          1.0
-        )
-      )
-    }
-    Comparison.buildFromUniqueVendors(List(uniqueVendor1, uniqueVendor2, uniqueVendor3, uniqueVendor4)) shouldBe {
-      Seq(
-        Comparison(
-          uniqueVendor1,
-          uniqueVendor2,
-          1.0
-        ),
-        Comparison(
-          uniqueVendor1,
-          uniqueVendor3,
-          0.75
-        ),
-        Comparison(
-          uniqueVendor1,
-          uniqueVendor4,
-          0.0
-        ),
-        Comparison(
-          uniqueVendor2,
-          uniqueVendor3,
-          0.75
-        ),
-        Comparison(
-          uniqueVendor2,
-          uniqueVendor4,
-          0.00
-        ),
-        Comparison(
-          uniqueVendor3,
-          uniqueVendor4,
-          0.00
+          vendor3
         )
       )
     }
@@ -98,36 +42,56 @@ class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnec
 
   it should "build feature space from vendor comparison" in {
     // identity comparison
-    Comparison(vendor1, vendor1, 1).features shouldBe {
+    Comparison(vendor1, vendor1).features shouldBe {
       Features(
-        1.0, 1.0, 1.0, 1.0, 1.0
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
       )
     }
     // only name token in common
-    Comparison(vendor1, vendor2, 0).features shouldBe {
+    Comparison(vendor1, vendor2).features shouldBe {
       Features(
-        1.0, 1.0, 0.0, 0.0, 0.0
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
       )
     }
   }
 
   it should "build feature space from unique vendor comparison" in {
     // identity comparison
-    Comparison(uniqueVendor1, uniqueVendor1, 3).features shouldBe {
+    Comparison(uniqueVendor1, uniqueVendor1).features shouldBe {
       Features(
-        1.0, 1.0, 1.0, 1.0, 1.0
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
       )
     }
     // name token & edges in common
-    Comparison(uniqueVendor1, uniqueVendor2, 3).features shouldBe {
+    Comparison(uniqueVendor1, uniqueVendor2).features shouldBe {
       Features(
-        1.0, 1.0, 0.0, 0.0, 0.0
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
       )
     }
     // only name token in common
-    Comparison(uniqueVendor1, uniqueVendor3, 0).features shouldBe {
+    Comparison(uniqueVendor1, uniqueVendor3).features shouldBe {
       Features(
-        1.0, 1.0, 0.0, 0.0, 0.0
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
       )
     }
   }

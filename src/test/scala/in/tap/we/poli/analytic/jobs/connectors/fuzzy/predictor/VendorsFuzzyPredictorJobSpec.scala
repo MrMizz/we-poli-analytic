@@ -119,8 +119,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         ),
         Comparator(
           IdResVendorTransformerJob.Source(uniqueVendor1).model
-        ),
-        3
+        )
       )
     ) shouldBe {
       0.9868910644018303
@@ -133,8 +132,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         ),
         Comparator(
           IdResVendorTransformerJob.Source(uniqueVendor2).model
-        ),
-        3
+        )
       )
     ) shouldBe {
       0.9868910644018303
@@ -147,8 +145,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         ),
         Comparator(
           IdResVendorTransformerJob.Source(uniqueVendor3).model
-        ),
-        0
+        )
       )
     ) shouldBe {
       0.7142319915816597
@@ -161,8 +158,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         ),
         Comparator(
           IdResVendorTransformerJob.Source(uniqueVendor4).model
-        ),
-        0
+        )
       )
     ) shouldBe {
       6.155752099077389E-4
