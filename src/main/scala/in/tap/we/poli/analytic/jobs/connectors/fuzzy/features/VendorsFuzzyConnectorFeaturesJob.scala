@@ -145,8 +145,8 @@ object VendorsFuzzyConnectorFeaturesJob {
       Array(
         numTokens,
         numTokensInCommon,
-        numSrcIds,
-        numSrcIdsInCommon,
+        Features.scale(numSrcIds),
+        Features.scale(numSrcIdsInCommon),
         sameCity,
         sameZip,
         sameState
@@ -157,12 +157,11 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object Features {
 
-    // TODO: delete ?
     def scale(raw: Double): Double = {
-      raw match {
-        case 0 => 0
-        case 1 => 1
-        case _ => 2
+      if (raw <= 10) {
+        raw
+      } else {
+        10
       }
     }
 
