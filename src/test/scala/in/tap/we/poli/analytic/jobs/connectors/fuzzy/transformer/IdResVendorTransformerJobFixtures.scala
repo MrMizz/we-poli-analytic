@@ -28,7 +28,7 @@ trait IdResVendorTransformerJobFixtures {
       name = "Vendor1",
       address = Address.empty,
       memo = None,
-      edges = Set.empty
+      edge = emptyEdge
     )
   }
 

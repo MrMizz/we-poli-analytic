@@ -77,7 +77,7 @@ object IdResVendorTransformerJob {
           cities = vendor.address.city.toSet,
           zip_codes = vendor.address.zip_code.toSet,
           states = vendor.address.state.toSet,
-          src_ids = vendor.edges.map(_.src_id)
+          src_ids = Set(vendor.edge.src_id)
         )
       )
     }
