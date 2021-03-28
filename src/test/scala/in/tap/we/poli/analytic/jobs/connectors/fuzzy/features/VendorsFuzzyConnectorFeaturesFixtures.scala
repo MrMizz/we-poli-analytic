@@ -107,7 +107,8 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
       IdResVendorTransformerJob.Source(
         emptyUniqueVendor.copy(
           uid = 3L,
-          names = Set("Vendor3")
+          names = Set("Vendor3"),
+          edges = Set(emptyEdge.copy(src_id = 55L))
         )
       ).model
     )

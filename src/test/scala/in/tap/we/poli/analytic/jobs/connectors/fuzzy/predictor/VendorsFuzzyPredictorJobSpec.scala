@@ -15,7 +15,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          srcIdSimilarity = 0.0,
+          numSrcIds = 0.0,
+          numSrcIdsInCommon = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -27,7 +28,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 0.0,
+          numSrcIds = 0.0,
+          numSrcIdsInCommon = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -39,7 +41,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 1.0,
+          numSrcIds = 1.0,
+          numSrcIdsInCommon = 1.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -51,7 +54,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
+          numSrcIds = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -63,7 +67,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
+          numSrcIds = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 1.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -75,7 +80,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
+          numSrcIds = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 1.0,
           sameZip = 1.0,
           sameState = 0.0
@@ -87,7 +93,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          srcIdSimilarity = 2.0,
+          numSrcIds = 2.0,
+          numSrcIdsInCommon = 2.0,
           sameCity = 1.0,
           sameZip = 1.0,
           sameState = 1.0
@@ -118,7 +125,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          srcIdSimilarity = 0.0,
+          numSrcIds = 0.0,
+          numSrcIdsInCommon = 0.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -130,7 +138,34 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 1.0,
-          srcIdSimilarity = 0.0,
+          numSrcIds = 0.0,
+          numSrcIdsInCommon = 0.0,
+          sameCity = 0.0,
+          sameZip = 0.0,
+          sameState = 0.0
+        )
+      )
+    }
+    val prediction3: Double = {
+      Prediction.predict(
+        Features(
+          numTokens = 2.0,
+          numTokensInCommon = 2.0,
+          numSrcIds = 1.0,
+          numSrcIdsInCommon = 1.0,
+          sameCity = 0.0,
+          sameZip = 0.0,
+          sameState = 0.0
+        )
+      )
+    }
+    val prediction4: Double = {
+      Prediction.predict(
+        Features(
+          numTokens = 2.0,
+          numTokensInCommon = 2.0,
+          numSrcIds = 2.0,
+          numSrcIdsInCommon = 1.0,
           sameCity = 0.0,
           sameZip = 0.0,
           sameState = 0.0
@@ -140,9 +175,12 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     println("Non-Monotonically Increasing")
     Seq(
       prediction1,
-      prediction2
+      prediction2,
+      prediction3,
+      prediction4
     ).foreach(println)
     assert(prediction1 > prediction2)
+    assert(prediction3 > prediction4)
   }
 
   it should "build predictions from unique vendor comparisons" in {
@@ -155,10 +193,11 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Comparator(
           IdResVendorTransformerJob.Source(uniqueVendor1).model
         ),
-        3
+        3.0,
+        3.0
       )
     ) shouldBe {
-      0.9999999933542082
+      0.5295862648678485
     }
     // normalized as identity
     Prediction(
@@ -169,10 +208,11 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Comparator(
           IdResVendorTransformerJob.Source(uniqueVendor2).model
         ),
-        3
+        3.0,
+        3.0
       )
     ) shouldBe {
-      0.9999999933542082
+      0.5295862648678485
     }
     // nothing in common
     Prediction(
@@ -183,10 +223,11 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Comparator(
           IdResVendorTransformerJob.Source(uniqueVendor3).model
         ),
-        0
+        3.0,
+        0.0
       )
     ) shouldBe {
-      1.756493588665972e-4
+      1.3143962490355153E-12
     }
   }
 

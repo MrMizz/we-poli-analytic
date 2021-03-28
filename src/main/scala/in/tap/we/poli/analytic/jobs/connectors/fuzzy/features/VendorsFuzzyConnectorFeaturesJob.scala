@@ -134,7 +134,8 @@ object VendorsFuzzyConnectorFeaturesJob {
   final case class Features(
     numTokens: Double,
     numTokensInCommon: Double,
-    srcIdSimilarity: Double,
+    numSrcIds: Double,
+    numSrcIdsInCommon: Double,
     sameCity: Double,
     sameZip: Double,
     sameState: Double
@@ -144,7 +145,8 @@ object VendorsFuzzyConnectorFeaturesJob {
       Array(
         numTokens,
         numTokensInCommon,
-        srcIdSimilarity,
+        numSrcIds,
+        numSrcIdsInCommon,
         sameCity,
         sameZip,
         sameState
@@ -194,14 +196,16 @@ object VendorsFuzzyConnectorFeaturesJob {
   final case class Comparison(
     left_side: Comparator,
     right_side: Comparator,
-    srcIdSimilarity: Double
+    numSrcIds: Double,
+    numSrcIdsInCommon: Double
   ) {
 
     lazy val features: Features = {
       Features(
         numTokens = numTokens,
         numTokensInCommon = numTokensInCommon,
-        srcIdSimilarity = srcIdSimilarity,
+        numSrcIds = numSrcIds,
+        numSrcIdsInCommon = numSrcIdsInCommon,
         sameCity = toDouble(sameCity),
         sameZip = toDouble(sameZip),
         sameState = toDouble(sameState)
@@ -251,12 +255,16 @@ object VendorsFuzzyConnectorFeaturesJob {
   object Comparison {
 
     def buildFromVendors(list: List[Comparator]): List[Comparison] = {
+      val numSrcIds: Double = {
+        list.flatMap(_.srcIdTokens).distinct.size.toDouble
+      }
       combinations(list).map {
         case (left, right) =>
           Comparison(
             left_side = left,
             right_side = right,
-            srcIdSimilarity = 1.0
+            numSrcIds = numSrcIds,
+            numSrcIdsInCommon = numSrcIds
           )
       }
     }
@@ -270,13 +278,11 @@ object VendorsFuzzyConnectorFeaturesJob {
           val numSrcIdsInCommon: Double = {
             left.vendor.src_ids.intersect(right.vendor.src_ids).size.toDouble
           }
-          val srcIdSimilarity: Double = {
-            numSrcIdsInCommon / numSrcIds
-          }
           Comparison(
             left_side = left,
             right_side = right,
-            srcIdSimilarity = srcIdSimilarity
+            numSrcIds = numSrcIds,
+            numSrcIdsInCommon = numSrcIdsInCommon
           )
       }
     }
