@@ -49,6 +49,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
         Comparison(maybe.toList.flatten.map(Comparator))
       }
     }
+    // TODO: CC ?
     val negatives: RDD[Comparison] = {
       CandidateGenerator(vendors)
     }
