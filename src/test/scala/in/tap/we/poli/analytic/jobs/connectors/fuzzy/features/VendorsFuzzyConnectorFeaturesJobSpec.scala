@@ -1,7 +1,7 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.base.spark.io.{Formats, In, Out}
-import in.tap.base.spark.main.InArgs.ThreeInArgs
+import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import org.apache.spark.sql.SaveMode
@@ -22,10 +22,6 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSparkJobSpec with Vendors
     s"$resourcePath/in2/"
   }
 
-  val in3Path: String = {
-    s"$resourcePath/in3/"
-  }
-
   val outPath: String = {
     s"$resourcePath/out/"
   }
@@ -34,7 +30,7 @@ class VendorsFuzzyConnectorFeaturesJobSpec extends BaseSparkJobSpec with Vendors
     import spark.implicits._
     connector.toDS.write.mode(SaveMode.Overwrite).parquet(in2Path)
     new VendorsFuzzyConnectorFeaturesJob(
-      ThreeInArgs(In(in1Path, Formats.PARQUET), In(in2Path, Formats.PARQUET), In(in3Path, Formats.PARQUET)),
+      TwoInArgs(In(in1Path, Formats.PARQUET), In(in2Path, Formats.PARQUET)),
       OneOutArgs(Out(outPath, Formats.PARQUET))
     ).execute()
   }

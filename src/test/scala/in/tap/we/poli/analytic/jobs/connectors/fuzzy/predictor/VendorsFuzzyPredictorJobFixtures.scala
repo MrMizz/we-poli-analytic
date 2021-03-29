@@ -1,92 +1,75 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor
 
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
-import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
+import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}
 
 trait VendorsFuzzyPredictorJobFixtures {
 
-  lazy val uniqueVendor1: UniqueVendor = {
-    UniqueVendor(
-      uid = 1L,
-      uids = Nil,
-      name = "Vendor1",
-      names = Set("Vendor1"),
-      addresses = Set(
-        Address
-          .empty
-          .copy(
-            city = Some("Los Angeles"),
-            state = Some("CA"),
-            zip_code = Some("90026")
-          )
-      ),
-      address = Address.empty,
-      memos = Set.empty,
-      edges = edgesInCommon,
-      num_merged = 3L
-    )
-  }
-
-  lazy val uniqueVendor2: UniqueVendor = {
-    UniqueVendor(
-      uid = 2L,
-      uids = Nil,
-      name = "Vendor2",
-      names = Set("Vendor2"),
-      addresses = Set(
-        Address
+  lazy val vendor1: IdResVendor = {
+    IdResVendor(
+      Vendor(
+        uid = 1L,
+        name = "Vendor1",
+        address = Address
           .empty
           .copy(
             city = Some("los angeles"),
             state = Some("ca"),
             zip_code = Some("90026")
-          )
-      ),
-      address = Address.empty,
-      memos = Set.empty,
-      edges = edgesInCommon,
-      num_merged = 3L
+          ),
+        memo = None,
+        edge = emptyEdge.copy(src_id = 11L)
+      )
     )
   }
 
-  lazy val uniqueVendor3: UniqueVendor = {
-    UniqueVendor(
-      uid = 3L,
-      uids = Nil,
-      name = "Vendor3",
-      names = Set("Vendor3"),
-      addresses = Set(
-        Address
+  lazy val vendor2: IdResVendor = {
+    IdResVendor(
+      Vendor(
+        uid = 2L,
+        name = "Vendor2",
+        address = Address
           .empty
           .copy(
-            city = Some("Santa Barbara"),
-            state = Some("CA")
-          )
-      ),
-      address = Address.empty,
-      memos = Set.empty,
-      edges = Set(emptyEdge),
-      num_merged = 1L
+            city = Some("los angeles"),
+            state = Some("ca"),
+            zip_code = Some("90026")
+          ),
+        memo = None,
+        edge = emptyEdge.copy(src_id = 11L)
+      )
     )
   }
 
-  lazy val uniqueVendor4: UniqueVendor = {
-    UniqueVendor(
-      uid = 3L,
-      uids = Nil,
-      name = "Tacos Rico",
-      names = Set.empty,
-      addresses = Set.empty,
-      address = Address.empty,
-      memos = Set.empty,
-      edges = Set(emptyEdge),
-      num_merged = 1L
+  lazy val vendor3: IdResVendor = {
+    IdResVendor(
+      Vendor(
+        uid = 3L,
+        name = "Vendor3",
+        address = Address
+          .empty
+          .copy(
+            city = Some("santa barbara"),
+            state = Some("ca")
+          ),
+        memo = None,
+        edge = emptyEdge.copy(src_id = 33L)
+      )
     )
   }
 
-  lazy val edgesInCommon: Set[ExpenditureEdge] = {
-    Set(emptyEdge.copy(src_id = 11L), emptyEdge.copy(src_id = 22L), emptyEdge.copy(src_id = 33L))
+  lazy val vendor4: IdResVendor = {
+    IdResVendor(
+      Vendor(
+        uid = 3L,
+        name = "Tacos Rico",
+        address = Address.empty,
+        memo = None,
+        edge = emptyEdge.copy(src_id = 44L)
+      )
+    )
   }
 
   lazy val emptyEdge: ExpenditureEdge = {

@@ -11,7 +11,7 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnec
   CandidateReducer, Comparator, Comparison
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import org.apache.spark.graphx.{Edge, VertexId}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -21,13 +21,11 @@ import scala.reflect.runtime.universe
 class VendorsFuzzyConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
-  val readTypeTagA: universe.TypeTag[IdResVendorTransformerJob.Source.UniqueVendor],
+  val readTypeTagA: universe.TypeTag[IdResVendor],
   val writeTypeTagA: universe.TypeTag[(VertexId, VertexId)]
-) extends OneInOneOutJob[IdResVendorTransformerJob.Source.UniqueVendor, (VertexId, VertexId)](inArgs, outArgs) {
+) extends OneInOneOutJob[IdResVendor, (VertexId, VertexId)](inArgs, outArgs) {
 
-  override def transform(
-    input: Dataset[IdResVendorTransformerJob.Source.UniqueVendor]
-  ): Dataset[(VertexId, VertexId)] = {
+  override def transform(input: Dataset[IdResVendor]): Dataset[(VertexId, VertexId)] = {
     import spark.implicits._
     val edges: RDD[Edge[Long]] = {
       CandidateGenerator(input).flatMap(EdgeBuilder(_))
@@ -52,20 +50,15 @@ object VendorsFuzzyConnectorJob {
 
   object CandidateGenerator {
 
-    def apply(
-      uniqueVendors: Dataset[IdResVendorTransformerJob.Source.UniqueVendor]
-    )(implicit spark: SparkSession): RDD[Comparison] = {
+    def apply(vendors: Dataset[IdResVendor])(implicit spark: SparkSession): RDD[Comparison] = {
       import spark.implicits._
-      val comparators: RDD[(String, Option[List[Comparator]])] = {
-        uniqueVendors.flatMap { uniqueVendor =>
+      val comparators: RDD[(String, Comparator)] = {
+        vendors.flatMap { vendor: IdResVendor =>
           val comparator: Comparator = {
-            Comparator(uniqueVendor.model)
-          }
-          val candidate: Option[List[Comparator]] = {
-            Option(List(comparator))
+            Comparator(vendor)
           }
           comparator.cgTokens.map { token: String =>
-            token -> candidate
+            token -> comparator
           }
         }.rdd
       }
@@ -96,8 +89,8 @@ object VendorsFuzzyConnectorJob {
 
   object VertexBuilder {
 
-    def apply(uniqueVendor: IdResVendorTransformerJob.Source.UniqueVendor): (VertexId, Long) = {
-      uniqueVendor.model.uid -> 1L
+    def apply(uniqueVendor: IdResVendor): (VertexId, Long) = {
+      uniqueVendor.uid -> 1L
     }
 
   }

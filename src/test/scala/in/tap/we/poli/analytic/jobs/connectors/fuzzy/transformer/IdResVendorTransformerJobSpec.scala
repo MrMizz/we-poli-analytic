@@ -1,8 +1,8 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.transformer
 
 import in.tap.base.spark.io.{Formats, In, Out}
-import in.tap.base.spark.main.InArgs.TwoInArgs
-import in.tap.base.spark.main.OutArgs.TwoOutArgs
+import in.tap.base.spark.main.InArgs.OneInArgs
+import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
 import org.apache.spark.sql.SaveMode
@@ -15,29 +15,20 @@ class IdResVendorTransformerJobSpec extends BaseSparkJobSpec with IdResVendorTra
     getClass.getResource("../../../../../../../../../connectors/vendors/fuzzy").toString
   }
 
-  val in1Path: String = {
-    s"$resourcePath/transformer/in1/"
+  val inPath: String = {
+    s"$resourcePath/transformer/in/"
   }
 
-  val in2Path: String = {
-    s"$resourcePath/transformer/in2/"
-  }
-
-  val out1Path: String = {
+  val outPath: String = {
     s"$resourcePath/features/in1/"
-  }
-
-  val out2Path: String = {
-    s"$resourcePath/features/in3/"
   }
 
   val _: Unit = {
     import spark.implicits._
-    vendors.toDS.write.mode(SaveMode.Overwrite).parquet(in1Path)
-    uniqueVendors.toDS.write.mode(SaveMode.Overwrite).parquet(in2Path)
+    vendors.toDS.write.mode(SaveMode.Overwrite).parquet(inPath)
     new IdResVendorTransformerJob(
-      TwoInArgs(In(in1Path, Formats.PARQUET), In(in2Path, Formats.PARQUET)),
-      TwoOutArgs(Out(out1Path, Formats.PARQUET), Out(out2Path, Formats.PARQUET))
+      OneInArgs(In(inPath, Formats.PARQUET)),
+      OneOutArgs(Out(outPath, Formats.PARQUET))
     ).execute()
   }
 

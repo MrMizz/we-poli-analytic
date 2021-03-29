@@ -35,7 +35,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "vendors-merger" =>
         new VendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "id-res-vendors" =>
-        new IdResVendorTransformerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[TwoOutArgs])
+        new IdResVendorTransformerJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "unique-vendors-connector" =>
         new VendorsFuzzyConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "unique-vendors-merger" =>
@@ -81,7 +81,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "dynamo-graph-traversal-page-count-writer" =>
         new GraphTraversalPageCountDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "fuzzy-connector-features" =>
-        new VendorsFuzzyConnectorFeaturesJob(inArgs.asInstanceOf[ThreeInArgs], outArgs.asInstanceOf[OneOutArgs])
+        new VendorsFuzzyConnectorFeaturesJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "fuzzy-connector-training" =>
         new VendorsFuzzyConnectorTrainingJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "fuzzy-predictor" =>

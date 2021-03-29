@@ -6,7 +6,7 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Comparison, Features}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
@@ -14,16 +14,11 @@ import scala.reflect.runtime.universe
 class VendorsFuzzyPredictorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
-  val readTypeTagA: universe.TypeTag[IdResVendorTransformerJob.Source.UniqueVendor],
+  val readTypeTagA: universe.TypeTag[IdResVendor],
   val writeTypeTagA: universe.TypeTag[(Double, Features, Comparison)]
-) extends OneInOneOutJob[IdResVendorTransformerJob.Source.UniqueVendor, (Double, Features, Comparison)](
-      inArgs,
-      outArgs
-    ) {
+) extends OneInOneOutJob[IdResVendor, (Double, Features, Comparison)](inArgs, outArgs) {
 
-  override def transform(
-    input: Dataset[IdResVendorTransformerJob.Source.UniqueVendor]
-  ): Dataset[(Double, Features, Comparison)] = {
+  override def transform(input: Dataset[IdResVendor]): Dataset[(Double, Features, Comparison)] = {
     import spark.implicits._
     CandidateGenerator(input).map { uniqueVendorComparison =>
       (Prediction(uniqueVendorComparison), uniqueVendorComparison.features, uniqueVendorComparison)
@@ -46,6 +41,7 @@ object VendorsFuzzyPredictorJob {
       Features(
         numTokens = -3.237250238895349,
         numTokensInCommon = 3.950137514245034,
+        sameSrcId = 4.00,
         sameCity = 2.748107675843963,
         sameZip = 0.6571303772050864,
         sameState = 4.358227653087805

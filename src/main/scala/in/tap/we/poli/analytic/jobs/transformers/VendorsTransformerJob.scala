@@ -65,8 +65,8 @@ object VendorsTransformerJob {
 
     lazy val hash1: Option[String] = {
       for {
-        city <- address.city.map(_.toLowerCase)
-        state <- address.state.map(_.toLowerCase)
+        city <- address.city.map(clean)
+        state <- address.state.map(clean)
       } yield {
         s"${name.toLowerCase}_${city}_$state"
       }
@@ -74,8 +74,8 @@ object VendorsTransformerJob {
 
     lazy val hash2: Option[String] = {
       for {
-        city <- address.city.map(_.toLowerCase)
-        state <- address.state.map(_.toLowerCase)
+        city <- address.city.map(clean)
+        state <- address.state.map(clean)
       } yield {
         s"${cleanedName}_${city}_$state"
       }
@@ -83,7 +83,7 @@ object VendorsTransformerJob {
 
     lazy val hash3: Option[String] = {
       for {
-        zip <- address.zip_code.map(_.toLowerCase.take(5))
+        zip <- address.zip_code.map(clean(_).take(5))
       } yield {
         s"${cleanedName}_$zip"
       }
@@ -101,6 +101,9 @@ object VendorsTransformerJob {
       connectors.cleanedName(name)
     }
 
+    private def clean(str: String): String = {
+      str.toLowerCase.trim
+    }
   }
 
   object Vendor {
