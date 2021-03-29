@@ -20,8 +20,6 @@ $JAR_PATH,\
 --in1-format,parquet,\
 --in2,s3://big-time-tap-in-spark/poli/connector/vendors/auto/$RUN_DATE/,\
 --in2-format,parquet,\
---in3,s3://big-time-tap-in-spark/poli/id-res/transformed/unique-vendors/$RUN_DATE/,\
---in3-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/id-res/features/$RUN_DATE2/,\
 --out1-format,parquet\
 ]
@@ -48,7 +46,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,fuzzy-predictor,\
---in1,s3://big-time-tap-in-spark/poli/id-res/transformed/unique-vendors/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/id-res/transformed/vendors/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/id-res/prediction/$RUN_DATE2/,\
 --out1-format,parquet\
