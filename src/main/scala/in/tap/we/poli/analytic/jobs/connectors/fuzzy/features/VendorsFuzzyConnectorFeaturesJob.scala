@@ -133,7 +133,6 @@ object VendorsFuzzyConnectorFeaturesJob {
     numTokensInCommon: Double,
     sameSrcId: Double,
     sameCity: Double,
-    sameZip: Double,
     sameState: Double
   ) {
 
@@ -143,7 +142,6 @@ object VendorsFuzzyConnectorFeaturesJob {
         numTokensInCommon,
         sameSrcId,
         sameCity,
-        sameZip,
         sameState
       )
     }
@@ -192,7 +190,6 @@ object VendorsFuzzyConnectorFeaturesJob {
         numTokensInCommon = numTokensInCommon,
         sameSrcId = toDouble(sameSrcId),
         sameCity = toDouble(sameCity),
-        sameZip = toDouble(sameZip),
         sameState = toDouble(sameState)
       )
     }
@@ -212,10 +209,6 @@ object VendorsFuzzyConnectorFeaturesJob {
 
     private lazy val sameCity: Boolean = {
       same(_.address.city)
-    }
-
-    private lazy val sameZip: Boolean = {
-      same(_.address.zip_code)
     }
 
     private lazy val sameState: Boolean = {

@@ -43,7 +43,6 @@ object VendorsFuzzyPredictorJob {
         numTokensInCommon = 3.950137514245034,
         sameSrcId = 4.00,
         sameCity = 2.748107675843963,
-        sameZip = 0.6571303772050864,
         sameState = 4.358227653087805
       )
     }

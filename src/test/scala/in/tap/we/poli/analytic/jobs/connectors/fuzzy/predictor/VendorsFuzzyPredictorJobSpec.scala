@@ -16,7 +16,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
           numTokensInCommon = 1.0,
           sameSrcId = 0.0,
           sameCity = 0.0,
-          sameZip = 0.0,
           sameState = 0.0
         )
       )
@@ -28,7 +27,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
           numTokensInCommon = 2.0,
           sameSrcId = 0.0,
           sameCity = 0.0,
-          sameZip = 0.0,
           sameState = 0.0
         )
       )
@@ -40,7 +38,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
           numTokensInCommon = 2.0,
           sameSrcId = 1.0,
           sameCity = 0.0,
-          sameZip = 0.0,
           sameState = 0.0
         )
       )
@@ -52,7 +49,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
           numTokensInCommon = 2.0,
           sameSrcId = 1.0,
           sameCity = 1.0,
-          sameZip = 0.0,
           sameState = 0.0
         )
       )
@@ -64,19 +60,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
           numTokensInCommon = 2.0,
           sameSrcId = 1.0,
           sameCity = 1.0,
-          sameZip = 1.0,
-          sameState = 0.0
-        )
-      )
-    }
-    val prediction6: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
-          sameSrcId = 1.0,
-          sameCity = 1.0,
-          sameZip = 1.0,
           sameState = 1.0
         )
       )
@@ -87,14 +70,12 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
       prediction2,
       prediction3,
       prediction4,
-      prediction5,
-      prediction6
+      prediction5
     ).foreach(println)
     assert(prediction1 < prediction2)
     assert(prediction2 < prediction3)
     assert(prediction3 < prediction4)
     assert(prediction4 < prediction5)
-    assert(prediction5 < prediction6)
   }
 
   it should "also product non-monotonically increasing predictions" in {
@@ -105,7 +86,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
           numTokensInCommon = 1.0,
           sameSrcId = 0.0,
           sameCity = 0.0,
-          sameZip = 0.0,
           sameState = 0.0
         )
       )
@@ -117,7 +97,6 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
           numTokensInCommon = 1.0,
           sameSrcId = 0.0,
           sameCity = 0.0,
-          sameZip = 0.0,
           sameState = 0.0
         )
       )
@@ -142,7 +121,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      0.9997567714001465
+      0.9995308577045356
     }
     // normalized as identity
     Prediction(
@@ -155,7 +134,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      0.9997567714001465
+      0.9995308577045356
     }
     // some in common
     Prediction(

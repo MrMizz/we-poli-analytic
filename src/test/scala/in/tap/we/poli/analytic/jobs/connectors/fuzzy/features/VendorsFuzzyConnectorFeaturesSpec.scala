@@ -44,13 +44,13 @@ class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnec
     // identity comparison
     Comparison(vendor1, vendor1).features shouldBe {
       Features(
-        1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+        1.0, 1.0, 1.0, 1.0, 1.0
       )
     }
     // only name token in common
     Comparison(vendor1, vendor2).features shouldBe {
       Features(
-        1.0, 1.0, 0.0, 0.0, 0.0, 0.0
+        1.0, 1.0, 0.0, 0.0, 0.0
       )
     }
   }
