@@ -79,11 +79,11 @@ object VendorsFuzzyConnectorFeaturesJob {
     def positives(vendors: Dataset[IdResVendor], connector: Dataset[(VertexId, VertexId)])(
       implicit spark: SparkSession
     ): RDD[Comparison] = {
-      CandidateReducer(
+      CandidateReducer[VertexId, Comparator](
         join(vendors, connector)
       ).flatMap { maybe =>
         Comparison(
-          maybe.toList.flatten.map(Comparator)
+          maybe.toList.flatten
         )
       }
     }
@@ -92,21 +92,14 @@ object VendorsFuzzyConnectorFeaturesJob {
       implicit spark: SparkSession
     ): RDD[Comparison] = {
       import spark.implicits._
-      val singletons = {
-        join(vendors, connector)
-          .reduceByKey {
-            case (left, _) =>
-              left
-          }
-          .toDS
-          .map(_._2)
-      }
-      CandidateConnector(singletons)
+      CandidateConnector(
+        join(vendors, connector).map(_._2).toDS
+      )
     }
 
     private def join(vendors: Dataset[IdResVendor], connector: Dataset[(VertexId, VertexId)])(
       implicit spark: SparkSession
-    ): RDD[(VertexId, IdResVendor)] = {
+    ): RDD[(VertexId, Comparator)] = {
       import spark.implicits._
       vendors
         .map { vendor: IdResVendor =>
@@ -117,8 +110,8 @@ object VendorsFuzzyConnectorFeaturesJob {
           connector.rdd
         }
         .map {
-          case (_, (vendor: IdResVendor, connectedId: VertexId)) =>
-            (connectedId, vendor)
+          case (_, (vendor: IdResVendor, ccid: VertexId)) =>
+            (ccid, Comparator(vendor, ccid))
         }
     }
 
@@ -126,12 +119,12 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object CandidateConnector {
 
-    def apply(vendors: Dataset[IdResVendor])(implicit spark: SparkSession): RDD[Comparison] = {
+    def apply(vendors: Dataset[Comparator])(implicit spark: SparkSession): RDD[Comparison] = {
       apply(CandidateGenerator(vendors))
     }
 
     private def apply(comparisons: RDD[Comparison])(implicit spark: SparkSession): RDD[Comparison] = {
-      val vertices: RDD[(VertexId, IdResVendor)] = {
+      val vertices: RDD[(VertexId, Comparator)] = {
         comparisons
           .flatMap(VertexBuilder.apply)
           .reduceByKey(VertexBuilder.reduce)
@@ -139,22 +132,30 @@ object VendorsFuzzyConnectorFeaturesJob {
       val edges: RDD[Edge[Int]] = {
         comparisons.map(EdgeBuilder.apply)
       }
-      val cc: RDD[(VertexId, IdResVendor)] = {
+      val cc: RDD[(VertexId, Comparator)] = {
         ConnectedComponents
           .withVertexAttr(
             vertices = vertices,
             edges = edges
           )
           .flatMap {
-            case (_, ccid: VertexId, maybeIdResVendor: Option[IdResVendor]) =>
-              maybeIdResVendor.map { idResVendor =>
-                (ccid, idResVendor)
+            case (_, ccid, maybeComparator) =>
+              maybeComparator.map { comparator =>
+                ((ccid, comparator.ccid), comparator)
               }
+          }
+          .reduceByKey {
+            case (left, _) =>
+              left
+          }
+          .map {
+            case ((ccid, _), comparator) =>
+              (ccid, comparator)
           }
       }
       CandidateReducer(cc)
-        .flatMap { maybe: Option[List[IdResVendor]] =>
-          Comparison(maybe.toList.flatten.map(Comparator))
+        .flatMap { maybe =>
+          Comparison(maybe.toList.flatten)
         }
     }
 
@@ -172,14 +173,14 @@ object VendorsFuzzyConnectorFeaturesJob {
 
     private object VertexBuilder {
 
-      def apply(comparison: Comparison): Seq[(VertexId, IdResVendor)] = {
+      def apply(comparison: Comparison): Seq[(VertexId, Comparator)] = {
         Seq(
-          (comparison.left.uid, comparison.left),
-          (comparison.right.uid, comparison.right)
+          (comparison.left.uid, comparison.left_side),
+          (comparison.right.uid, comparison.right_side)
         )
       }
 
-      def reduce(left: IdResVendor, right: IdResVendor): IdResVendor = {
+      def reduce(left: Comparator, right: Comparator): Comparator = {
         left
       }
 
@@ -225,17 +226,24 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   object CandidateGenerator {
 
-    def apply(vendors: Dataset[IdResVendor])(implicit spark: SparkSession): RDD[Comparison] = {
+    def apply(vendors: Dataset[Comparator])(implicit spark: SparkSession): RDD[Comparison] = {
       import spark.implicits._
       val comparators: RDD[(String, Comparator)] = {
-        vendors.flatMap { vendor: IdResVendor =>
-          val comparator: Comparator = {
-            Comparator(vendor)
+        vendors
+          .flatMap { comparator: Comparator =>
+            comparator.cgTokens.map { token: String =>
+              (token, comparator.ccid) -> comparator
+            }
           }
-          comparator.cgTokens.map { token: String =>
-            token -> comparator
+          .rdd
+          .reduceByKey {
+            case (left, _) =>
+              left
           }
-        }.rdd
+          .map {
+            case ((token, _), comparator: Comparator) =>
+              (token, comparator)
+          }
       }
       CandidateReducer(comparators).flatMap { maybe =>
         Comparison(maybe.toList.flatten)
@@ -282,7 +290,8 @@ object VendorsFuzzyConnectorFeaturesJob {
   }
 
   final case class Comparator(
-    vendor: IdResVendor
+    vendor: IdResVendor,
+    ccid: VertexId
   ) {
 
     val nameTokens: Set[String] = {

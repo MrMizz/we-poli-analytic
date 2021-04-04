@@ -24,7 +24,8 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
           memo = None,
           edge = emptyEdge.copy(src_id = -111L)
         )
-      )
+      ),
+      900L
     )
   }
 
@@ -36,7 +37,8 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
           name = "Vendor2",
           edge = emptyEdge.copy(src_id = 22L)
         )
-      )
+      ),
+      901L
     )
   }
 
@@ -48,7 +50,8 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
           name = "Vendor3",
           edge = emptyEdge.copy(src_id = 33L)
         )
-      )
+      ),
+      902L
     )
   }
 

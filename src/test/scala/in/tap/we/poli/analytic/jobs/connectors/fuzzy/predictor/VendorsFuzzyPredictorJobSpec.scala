@@ -1,9 +1,7 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  Comparator, Comparison, Features
-}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Comparison, Features}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
 
 class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJobFixtures {
@@ -134,12 +132,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     // identity
     Prediction(
       Comparison(
-        Comparator(
-          vendor1
-        ),
-        Comparator(
-          vendor1
-        )
+        vendor1,
+        vendor1
       )
     ) shouldBe {
       0.9610213510130177
@@ -147,12 +141,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     // normalized as identity
     Prediction(
       Comparison(
-        Comparator(
-          vendor1
-        ),
-        Comparator(
-          vendor2
-        )
+        vendor1,
+        vendor2
       )
     ) shouldBe {
       0.9610213510130177
@@ -160,12 +150,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     // some in common
     Prediction(
       Comparison(
-        Comparator(
-          vendor1
-        ),
-        Comparator(
-          vendor3
-        )
+        vendor1,
+        vendor3
       )
     ) shouldBe {
       0.25230384672676265
@@ -173,15 +159,11 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     // nothing in common
     Prediction(
       Comparison(
-        Comparator(
-          vendor3
-        ),
-        Comparator(
-          vendor4
-        )
+        vendor3,
+        vendor4
       )
     ) shouldBe {
-      7.312407874470114E-8
+      7.312407874470114e-8
     }
   }
 
