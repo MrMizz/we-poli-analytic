@@ -14,7 +14,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          sameSrcId = 0.0,
+          sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
         )
@@ -25,7 +25,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          sameSrcId = 0.0,
+          sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
         )
@@ -36,7 +36,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          sameSrcId = 1.0,
+          sameZip = 1.0,
           sameCity = 0.0,
           sameState = 0.0
         )
@@ -47,7 +47,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          sameSrcId = 1.0,
+          sameZip = 1.0,
           sameCity = 1.0,
           sameState = 0.0
         )
@@ -58,7 +58,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          sameSrcId = 1.0,
+          sameZip = 1.0,
           sameCity = 1.0,
           sameState = 1.0
         )
@@ -84,7 +84,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
-          sameSrcId = 0.0,
+          sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
         )
@@ -95,7 +95,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 1.0,
-          sameSrcId = 0.0,
+          sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
         )
