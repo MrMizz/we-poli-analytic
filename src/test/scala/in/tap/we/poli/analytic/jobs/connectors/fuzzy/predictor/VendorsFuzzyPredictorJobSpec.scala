@@ -142,7 +142,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      0.9998273609976435
+      0.9610213510130177
     }
     // normalized as identity
     Prediction(
@@ -155,7 +155,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      0.9998273609976435
+      0.9610213510130177
     }
     // some in common
     Prediction(
@@ -168,7 +168,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      0.7142319915816597
+      0.25230384672676265
     }
     // nothing in common
     Prediction(
@@ -181,7 +181,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      2.4189011696155995e-5
+      7.312407874470114E-8
     }
   }
 
