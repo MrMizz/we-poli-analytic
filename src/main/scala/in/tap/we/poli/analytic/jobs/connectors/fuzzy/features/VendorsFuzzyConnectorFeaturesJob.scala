@@ -7,7 +7,7 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, CandidateConnector, CandidateReducer, Comparator, Comparison, Features
+  buildSamplingRatio, Comparison, Features, SampleBuilder
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import org.apache.spark.graphx.{Edge, VertexId}
@@ -32,26 +32,10 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
       input
     }
     val positives: RDD[Comparison] = {
-      val join: RDD[(VertexId, IdResVendor)] = {
-        vendors
-          .map { vendor: IdResVendor =>
-            vendor.uid -> vendor
-          }
-          .rdd
-          .join {
-            connector.rdd
-          }
-          .map {
-            case (_, (vendor: IdResVendor, connectedId: VertexId)) =>
-              (connectedId, vendor)
-          }
-      }
-      CandidateReducer(join).flatMap { maybe =>
-        Comparison(maybe.toList.flatten.map(Comparator))
-      }
+      SampleBuilder.positives(vendors, connector)
     }
     val negatives: RDD[Comparison] = {
-      CandidateConnector(vendors)
+      SampleBuilder.negatives(vendors, connector)
     }
     val numPositives: Double = {
       positives.count.toDouble
@@ -89,6 +73,56 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   def buildSamplingRatio(numPositives: Double, numNegatives: Double): Double = {
     (numNegatives * POS_TO_NEG_RATIO) / numPositives
+  }
+
+  object SampleBuilder {
+
+    def positives(vendors: Dataset[IdResVendor], connector: Dataset[(VertexId, VertexId)])(
+      implicit spark: SparkSession
+    ): RDD[Comparison] = {
+      CandidateReducer(
+        join(vendors, connector)
+      ).flatMap { maybe =>
+        Comparison(
+          maybe.toList.flatten.map(Comparator)
+        )
+      }
+    }
+
+    def negatives(vendors: Dataset[IdResVendor], connector: Dataset[(VertexId, VertexId)])(
+      implicit spark: SparkSession
+    ): RDD[Comparison] = {
+      import spark.implicits._
+      val singletons = {
+        join(vendors, connector)
+          .reduceByKey {
+            case (left, _) =>
+              left
+          }
+          .toDS
+          .map(_._2)
+      }
+      CandidateConnector(singletons)
+    }
+
+    private def join(vendors: Dataset[IdResVendor], connector: Dataset[(VertexId, VertexId)])(
+      implicit spark: SparkSession
+    ): RDD[(VertexId, IdResVendor)] = {
+      import spark.implicits._
+      vendors
+        .map { vendor: IdResVendor =>
+          vendor.uid -> vendor
+        }
+        .rdd
+        .join {
+          connector.rdd
+        }
+        .map {
+          case (_, (vendor: IdResVendor, connectedId: VertexId)) =>
+            (connectedId, vendor)
+        }
+    }
+
   }
 
   object CandidateConnector {
