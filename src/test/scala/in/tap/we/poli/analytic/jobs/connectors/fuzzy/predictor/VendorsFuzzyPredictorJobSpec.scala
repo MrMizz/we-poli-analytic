@@ -14,6 +14,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
+          sameSrcId = 0.0,
           sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
@@ -25,6 +26,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
+          sameSrcId = 0.0,
           sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
@@ -36,7 +38,8 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
-          sameZip = 1.0,
+          sameSrcId = 1.0,
+          sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
         )
@@ -47,8 +50,9 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
+          sameSrcId = 1.0,
           sameZip = 1.0,
-          sameCity = 1.0,
+          sameCity = 0.0,
           sameState = 0.0
         )
       )
@@ -58,6 +62,19 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 2.0,
+          sameSrcId = 1.0,
+          sameZip = 1.0,
+          sameCity = 1.0,
+          sameState = 0.0
+        )
+      )
+    }
+    val prediction6: Double = {
+      Prediction.predict(
+        Features(
+          numTokens = 2.0,
+          numTokensInCommon = 2.0,
+          sameSrcId = 1.0,
           sameZip = 1.0,
           sameCity = 1.0,
           sameState = 1.0
@@ -70,12 +87,14 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
       prediction2,
       prediction3,
       prediction4,
-      prediction5
+      prediction5,
+      prediction6
     ).foreach(println)
     assert(prediction1 < prediction2)
     assert(prediction2 < prediction3)
     assert(prediction3 < prediction4)
     assert(prediction4 < prediction5)
+    assert(prediction5 < prediction6)
   }
 
   it should "also product non-monotonically increasing predictions" in {
@@ -84,6 +103,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 1.0,
           numTokensInCommon = 1.0,
+          sameSrcId = 0.0,
           sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
@@ -95,6 +115,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         Features(
           numTokens = 2.0,
           numTokensInCommon = 1.0,
+          sameSrcId = 0.0,
           sameZip = 0.0,
           sameCity = 0.0,
           sameState = 0.0
@@ -121,7 +142,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      0.9995308577045356
+      0.9998273609976435
     }
     // normalized as identity
     Prediction(
@@ -134,7 +155,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      0.9995308577045356
+      0.9998273609976435
     }
     // some in common
     Prediction(
@@ -160,7 +181,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         )
       )
     ) shouldBe {
-      2.4189011696155995E-5
+      2.4189011696155995e-5
     }
   }
 
