@@ -88,6 +88,8 @@ $JAR_PATH,\
 --step,unique-vendors-connector,\
 --in1,s3://big-time-tap-in-spark/poli/id-res/transformed/vendors/$RUN_DATE/,\
 --in1-format,parquet,\
+--in2,s3://big-time-tap-in-spark/poli/connector/vendors/auto/$RUN_DATE/,\
+--in2-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/connector/vendors/fuzzy/$RUN_DATE/,\
 --out1-format,parquet\
 ]

@@ -1,30 +1,40 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor
 
-import in.tap.base.spark.jobs.composite.OneInOneOutJob
-import in.tap.base.spark.main.InArgs.OneInArgs
+import in.tap.base.spark.jobs.composite.TwoInOneOutJob
+import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Comparison, Features}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
+  Comparison, Features, SampleBuilder
+}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
+import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-class VendorsFuzzyPredictorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+class VendorsFuzzyPredictorJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[IdResVendor],
+  val readTypeTagB: universe.TypeTag[(VertexId, VertexId)],
   val writeTypeTagA: universe.TypeTag[(Double, Features, Comparison)]
-) extends OneInOneOutJob[IdResVendor, (Double, Features, Comparison)](inArgs, outArgs) {
+) extends TwoInOneOutJob[IdResVendor, (VertexId, VertexId), (Double, Features, Comparison)](inArgs, outArgs) {
 
-  override def transform(input: Dataset[IdResVendor]): Dataset[(Double, Features, Comparison)] = {
+  override def transform(
+    input: (Dataset[IdResVendor], Dataset[(VertexId, VertexId)])
+  ): Dataset[(Double, Features, Comparison)] = {
+    val (vendors, connector) = {
+      input
+    }
     import spark.implicits._
-    CandidateGenerator(input).map { uniqueVendorComparison =>
-      (Prediction(uniqueVendorComparison), uniqueVendorComparison.features, uniqueVendorComparison)
-    }.toDS
+    SampleBuilder
+      .negatives(vendors, connector)
+      .map { comparison: Comparison =>
+        (Prediction(comparison), comparison.features, comparison)
+      }
+      .toDS
   }
-
 }
 
 object VendorsFuzzyPredictorJob {

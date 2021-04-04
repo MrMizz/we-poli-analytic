@@ -5,7 +5,6 @@ import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.CandidateGenerator
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
   buildSamplingRatio, Comparison, Features, SampleBuilder
 }
@@ -219,6 +218,27 @@ object VendorsFuzzyConnectorFeaturesJob {
             None
           }
         case _ => None
+      }
+    }
+
+  }
+
+  object CandidateGenerator {
+
+    def apply(vendors: Dataset[IdResVendor])(implicit spark: SparkSession): RDD[Comparison] = {
+      import spark.implicits._
+      val comparators: RDD[(String, Comparator)] = {
+        vendors.flatMap { vendor: IdResVendor =>
+          val comparator: Comparator = {
+            Comparator(vendor)
+          }
+          comparator.cgTokens.map { token: String =>
+            token -> comparator
+          }
+        }.rdd
+      }
+      CandidateReducer(comparators).flatMap { maybe =>
+        Comparison(maybe.toList.flatten)
       }
     }
 

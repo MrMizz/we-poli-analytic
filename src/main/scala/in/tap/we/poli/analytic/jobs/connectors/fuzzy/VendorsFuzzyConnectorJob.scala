@@ -1,14 +1,12 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy
 
 import in.tap.base.spark.graph.ConnectedComponents
-import in.tap.base.spark.jobs.composite.OneInOneOutJob
-import in.tap.base.spark.main.InArgs.OneInArgs
+import in.tap.base.spark.jobs.composite.TwoInOneOutJob
+import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.{
-  CandidateGenerator, EdgeBuilder, VertexBuilder
-}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.{Connector, EdgeBuilder, VertexBuilder}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  CandidateReducer, Comparator, Comparison
+  Comparison, SampleBuilder
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
@@ -18,27 +16,33 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
-class VendorsFuzzyConnectorJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
+class VendorsFuzzyConnectorJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[IdResVendor],
+  val readTypeTagB: universe.TypeTag[(VertexId, VertexId)],
   val writeTypeTagA: universe.TypeTag[(VertexId, VertexId)]
-) extends OneInOneOutJob[IdResVendor, (VertexId, VertexId)](inArgs, outArgs) {
+) extends TwoInOneOutJob[IdResVendor, (VertexId, VertexId), (VertexId, VertexId)](inArgs, outArgs) {
 
-  override def transform(input: Dataset[IdResVendor]): Dataset[(VertexId, VertexId)] = {
-    import spark.implicits._
+  override def transform(
+    input: (Dataset[IdResVendor], Dataset[(VertexId, VertexId)])
+  ): Dataset[(VertexId, VertexId)] = {
+    val (vendors, connector) = {
+      input
+    }
     val edges: RDD[Edge[Long]] = {
-      CandidateGenerator(input).flatMap(EdgeBuilder(_))
+      SampleBuilder
+        .negatives(vendors, connector)
+        .flatMap(EdgeBuilder(_))
     }
     val vertices: RDD[(VertexId, VertexId)] = {
-      input.map(VertexBuilder(_)).rdd
+      vendors.map(VertexBuilder(_))(writeEncoderA).rdd
     }
-    ConnectedComponents(
+    Connector(
       vertices,
       edges
-    ).toDS
+    )
   }
-
 }
 
 object VendorsFuzzyConnectorJob {
@@ -46,27 +50,6 @@ object VendorsFuzzyConnectorJob {
   // TODO
   val THRESHOLD: Double = {
     0.90
-  }
-
-  object CandidateGenerator {
-
-    def apply(vendors: Dataset[IdResVendor])(implicit spark: SparkSession): RDD[Comparison] = {
-      import spark.implicits._
-      val comparators: RDD[(String, Comparator)] = {
-        vendors.flatMap { vendor: IdResVendor =>
-          val comparator: Comparator = {
-            Comparator(vendor)
-          }
-          comparator.cgTokens.map { token: String =>
-            token -> comparator
-          }
-        }.rdd
-      }
-      CandidateReducer(comparators).flatMap { maybe =>
-        Comparison(maybe.toList.flatten)
-      }
-    }
-
   }
 
   object EdgeBuilder {
@@ -91,6 +74,20 @@ object VendorsFuzzyConnectorJob {
 
     def apply(uniqueVendor: IdResVendor): (VertexId, Long) = {
       uniqueVendor.uid -> 1L
+    }
+
+  }
+
+  object Connector {
+
+    def apply(vertices: RDD[(VertexId, VertexId)], edges: RDD[Edge[Long]])(
+      implicit spark: SparkSession
+    ): Dataset[(VertexId, VertexId)] = {
+      import spark.implicits._
+      ConnectedComponents(
+        vertices,
+        edges
+      ).toDS()
     }
 
   }

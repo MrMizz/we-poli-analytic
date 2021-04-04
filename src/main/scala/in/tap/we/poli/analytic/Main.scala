@@ -1,7 +1,7 @@
 package in.tap.we.poli.analytic
 
 import in.tap.base.spark.jobs.composite.CompositeJob
-import in.tap.base.spark.main.InArgs.{OneInArgs, ThreeInArgs, TwoInArgs}
+import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob
@@ -37,7 +37,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "id-res-vendors" =>
         new IdResVendorTransformerJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "unique-vendors-connector" =>
-        new VendorsFuzzyConnectorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+        new VendorsFuzzyConnectorJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "unique-vendors-merger" =>
         new UniqueVendorsMergerJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "vendors-vertex" =>
@@ -85,7 +85,7 @@ object Main extends in.tap.base.spark.main.Main {
       case "fuzzy-connector-training" =>
         new VendorsFuzzyConnectorTrainingJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "fuzzy-predictor" =>
-        new VendorsFuzzyPredictorJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+        new VendorsFuzzyPredictorJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }
   }
