@@ -1,9 +1,8 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.{AddressFeatures, CompositeFeatures}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.CompositeFeatures
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.buildSamplingRatio
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.Prediction
 
 class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesFixtures {
 
