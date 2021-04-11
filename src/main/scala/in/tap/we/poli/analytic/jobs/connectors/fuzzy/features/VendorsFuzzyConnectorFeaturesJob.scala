@@ -47,7 +47,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
         1L -> comparison.features
       }
       .sample(
-        withReplacement = false,
+        withReplacement = true,
         fraction = buildSamplingRatio(numPositives, numNegatives)
       )
       .union(
@@ -63,7 +63,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
 object VendorsFuzzyConnectorFeaturesJob {
 
   val POS_TO_NEG_RATIO: Double = {
-    1.0
+    2.0
   }
 
   val MAX_COMPARISON_SIZE: Int = {
