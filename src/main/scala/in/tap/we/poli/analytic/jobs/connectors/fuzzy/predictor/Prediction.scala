@@ -36,14 +36,14 @@ object Prediction {
   final case class CompositePrediction(features: CompositeFeatures) extends Prediction[CompositeFeatures](features) {
 
     override protected val INTERCEPT: Double = {
-      0.0
+      -10.279727464750225
     }
 
     override protected val COEFFICIENTS: CompositeFeatures = {
       CompositeFeatures(
-        sameSrcId = 1.0,
-        nameScore = 1.0,
-        addressScore = 1.0
+        sameSrcId = -0.21441445096301498,
+        nameScore = 9.79417768313024,
+        addressScore = 9.46038399497283
       )
     }
 
