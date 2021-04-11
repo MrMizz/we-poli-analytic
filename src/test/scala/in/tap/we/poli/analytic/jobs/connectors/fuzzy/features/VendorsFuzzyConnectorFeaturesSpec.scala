@@ -1,8 +1,9 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.CompositeFeatures
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.{AddressFeatures, CompositeFeatures}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.buildSamplingRatio
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.Prediction
 
 class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesFixtures {
 
@@ -44,16 +45,16 @@ class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnec
     Comparison(vendor1, vendor1).compositeFeatures shouldBe {
       CompositeFeatures(
         sameSrcId = 1.0,
-        nameScore = 0.5,
-        addressScore = 0.9525741268224333
+        nameScore = 0.5415311246598542,
+        addressScore = 0.771801656426786
       )
     }
     // only name token in common
     Comparison(vendor1, vendor2).compositeFeatures shouldBe {
       CompositeFeatures(
         sameSrcId = 0.0,
-        nameScore = 0.5,
-        addressScore = 0.5
+        nameScore = 0.5415311246598542,
+        addressScore = 0.0023222118822516643
       )
     }
   }
