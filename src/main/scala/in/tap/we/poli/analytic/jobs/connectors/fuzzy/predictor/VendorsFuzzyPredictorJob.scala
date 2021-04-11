@@ -44,17 +44,17 @@ object VendorsFuzzyPredictorJob {
   ) {
 
     private val INTERCEPT: Double = {
-      -5.350359854927325
+      -4.68897505832906
     }
 
     private val COEFFICIENTS: Features = {
       Features(
-        numTokens = -3.1704798007999533,
-        numTokensInCommon = 3.5226370719003652,
-        sameSrcId = 0.270993018807278,
-        sameZip = 1.2424255525873722,
-        sameCity = 2.4738347799208733,
-        sameState = 4.757282878941463
+        numTokens = -2.735514394166897,
+        numTokensInCommon = 3.0781215618268343,
+        sameSrcId = 0.2289390859890858,
+        sameZip = 1.273224159572643,
+        sameCity = 2.3260977265320752,
+        sameState = 4.55193095977757
       )
     }
 
