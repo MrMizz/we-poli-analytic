@@ -1,81 +1,36 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{Comparison, Features}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Comparison
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.CompositeFeatures
 
 class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJobFixtures {
 
   it should "produce monotonically increasing predictions" in {
     val prediction1: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 1.0,
-          numTokensInCommon = 1.0,
-          sameSrcId = 0.0,
-          sameZip = 0.0,
-          sameCity = 0.0,
-          sameState = 0.0
+      Prediction(
+        CompositeFeatures(
+          sameSrcId = 1.0,
+          nameScore = 0.0,
+          addressScore = 0.0
         )
       )
     }
     val prediction2: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
-          sameSrcId = 0.0,
-          sameZip = 0.0,
-          sameCity = 0.0,
-          sameState = 0.0
+      Prediction(
+        CompositeFeatures(
+          sameSrcId = 1.0,
+          nameScore = 1.0,
+          addressScore = 0.0
         )
       )
     }
     val prediction3: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
+      Prediction(
+        CompositeFeatures(
           sameSrcId = 1.0,
-          sameZip = 0.0,
-          sameCity = 0.0,
-          sameState = 0.0
-        )
-      )
-    }
-    val prediction4: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
-          sameSrcId = 1.0,
-          sameZip = 1.0,
-          sameCity = 0.0,
-          sameState = 0.0
-        )
-      )
-    }
-    val prediction5: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
-          sameSrcId = 1.0,
-          sameZip = 1.0,
-          sameCity = 1.0,
-          sameState = 0.0
-        )
-      )
-    }
-    val prediction6: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 2.0,
-          sameSrcId = 1.0,
-          sameZip = 1.0,
-          sameCity = 1.0,
-          sameState = 1.0
+          nameScore = 1.0,
+          addressScore = 1.0
         )
       )
     }
@@ -83,49 +38,10 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     Seq(
       prediction1,
       prediction2,
-      prediction3,
-      prediction4,
-      prediction5,
-      prediction6
+      prediction3
     ).foreach(println)
     assert(prediction1 < prediction2)
     assert(prediction2 < prediction3)
-    assert(prediction3 < prediction4)
-    assert(prediction4 < prediction5)
-    assert(prediction5 < prediction6)
-  }
-
-  it should "also product non-monotonically increasing predictions" in {
-    val prediction1: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 1.0,
-          numTokensInCommon = 1.0,
-          sameSrcId = 0.0,
-          sameZip = 0.0,
-          sameCity = 0.0,
-          sameState = 0.0
-        )
-      )
-    }
-    val prediction2: Double = {
-      Prediction.predict(
-        Features(
-          numTokens = 2.0,
-          numTokensInCommon = 1.0,
-          sameSrcId = 0.0,
-          sameZip = 0.0,
-          sameCity = 0.0,
-          sameState = 0.0
-        )
-      )
-    }
-    println("Non-Monotonically Increasing")
-    Seq(
-      prediction1,
-      prediction2
-    ).foreach(println)
-    assert(prediction1 > prediction2)
   }
 
   it should "build predictions from vendor comparisons" in {
@@ -136,7 +52,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor1
       )
     ) shouldBe {
-      0.982601575059166
+      0.9207494880634969
     }
     // normalized as identity
     Prediction(
@@ -145,7 +61,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor2
       )
     ) shouldBe {
-      0.982601575059166
+      0.9207494880634969
     }
     // some in common
     Prediction(
@@ -154,7 +70,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor3
       )
     ) shouldBe {
-      0.5512105639363013
+      0.7740037965825924
     }
     // nothing in common
     Prediction(
@@ -163,7 +79,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor4
       )
     ) shouldBe {
-      3.868562271470949E-5
+      0.6500372439329319
     }
   }
 

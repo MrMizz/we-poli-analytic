@@ -1,9 +1,8 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, Comparison, Features
-}
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.CompositeFeatures
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.buildSamplingRatio
 
 class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnectorFeaturesFixtures {
 
@@ -42,15 +41,19 @@ class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnec
 
   it should "build feature space from vendor comparison" in {
     // identity comparison
-    Comparison(vendor1, vendor1).features shouldBe {
-      Features(
-        1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+    Comparison(vendor1, vendor1).compositeFeatures shouldBe {
+      CompositeFeatures(
+        sameSrcId = 1.0,
+        nameScore = 0.5,
+        addressScore = 0.9525741268224333
       )
     }
     // only name token in common
-    Comparison(vendor1, vendor2).features shouldBe {
-      Features(
-        1.0, 1.0, 0.0, 0.0, 0.0, 0.0
+    Comparison(vendor1, vendor2).compositeFeatures shouldBe {
+      CompositeFeatures(
+        sameSrcId = 0.0,
+        nameScore = 0.5,
+        addressScore = 0.5
       )
     }
   }

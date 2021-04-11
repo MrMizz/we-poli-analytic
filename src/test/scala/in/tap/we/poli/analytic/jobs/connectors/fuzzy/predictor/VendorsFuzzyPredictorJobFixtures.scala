@@ -1,6 +1,6 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor
 
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.Comparator
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Comparator
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}

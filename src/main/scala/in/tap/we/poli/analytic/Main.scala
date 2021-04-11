@@ -6,7 +6,7 @@ import in.tap.base.spark.main.OutArgs.{OneOutArgs, TwoOutArgs}
 import in.tap.base.spark.main.{InArgs, OutArgs}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob
 import in.tap.we.poli.analytic.jobs.connectors.auto.VendorsAutoConnectorJob
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.{Comparison, VendorsFuzzyConnectorFeaturesJob}
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.training.VendorsFuzzyConnectorTrainingJob
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob
@@ -80,11 +80,27 @@ object Main extends in.tap.base.spark.main.Main {
         new GraphTraversalPageCountJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-page-count-writer" =>
         new GraphTraversalPageCountDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "fuzzy-connector-features" =>
+      case "id-res-features" =>
         new VendorsFuzzyConnectorFeaturesJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "fuzzy-connector-training" =>
-        new VendorsFuzzyConnectorTrainingJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "fuzzy-predictor" =>
+      case "id-res-name-training" =>
+        new VendorsFuzzyConnectorTrainingJob(
+          inArgs.asInstanceOf[OneInArgs],
+          outArgs.asInstanceOf[OneOutArgs],
+          (c: Comparison) => c.nameFeatures.toArray
+        )
+      case "id-res-address-training" =>
+        new VendorsFuzzyConnectorTrainingJob(
+          inArgs.asInstanceOf[OneInArgs],
+          outArgs.asInstanceOf[OneOutArgs],
+          (c: Comparison) => c.addressFeatures.toArray
+        )
+      case "id-res-composite-training" =>
+        new VendorsFuzzyConnectorTrainingJob(
+          inArgs.asInstanceOf[OneInArgs],
+          outArgs.asInstanceOf[OneOutArgs],
+          (c: Comparison) => c.compositeFeatures.toArray
+        )
+      case "id-res-predictor" =>
         new VendorsFuzzyPredictorJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case _ => throw new MatchError("Invalid Step!")
     }

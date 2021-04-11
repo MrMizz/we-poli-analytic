@@ -5,10 +5,9 @@ import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.VendorsFuzzyConnectorJob.{Connector, EdgeBuilder, VertexBuilder}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  Comparison, SampleBuilder
-}
-import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.VendorsFuzzyPredictorJob.Prediction
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Comparison
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.SampleBuilder
+import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.Prediction
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import org.apache.spark.graphx.{Edge, VertexId}
 import org.apache.spark.rdd.RDD
@@ -54,12 +53,12 @@ object VendorsFuzzyConnectorJob {
 
   object EdgeBuilder {
 
-    def apply(uniqueVendorComparison: Comparison): Option[Edge[Long]] = {
-      if (Prediction(uniqueVendorComparison) >= THRESHOLD) {
+    def apply(comparison: Comparison): Option[Edge[Long]] = {
+      if (Prediction(comparison) >= THRESHOLD) {
         Some(
           Edge(
-            srcId = uniqueVendorComparison.left_side.vendor.uid,
-            dstId = uniqueVendorComparison.right_side.vendor.uid,
+            srcId = comparison.left.uid,
+            dstId = comparison.right.uid,
             attr = 1L
           )
         )

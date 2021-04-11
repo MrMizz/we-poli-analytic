@@ -4,9 +4,8 @@ import in.tap.base.spark.graph.ConnectedComponents
 import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.cleanedNameTokens
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnectorFeaturesJob.{
-  buildSamplingRatio, Comparison, Features, SampleBuilder
+  buildSamplingRatio, SampleBuilder
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import org.apache.spark.graphx.{Edge, VertexId}
@@ -22,10 +21,10 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[IdResVendor],
   val readTypeTagB: universe.TypeTag[(VertexId, VertexId)],
-  val writeTypeTagA: universe.TypeTag[(Long, Features)]
-) extends TwoInOneOutJob[IdResVendor, (VertexId, VertexId), (Long, Features)](inArgs, outArgs) {
+  val writeTypeTagA: universe.TypeTag[(Long, Comparison)]
+) extends TwoInOneOutJob[IdResVendor, (VertexId, VertexId), (Long, Comparison)](inArgs, outArgs) {
 
-  override def transform(input: (Dataset[IdResVendor], Dataset[(VertexId, VertexId)])): Dataset[(Long, Features)] = {
+  override def transform(input: (Dataset[IdResVendor], Dataset[(VertexId, VertexId)])): Dataset[(Long, Comparison)] = {
     import spark.implicits._
     val (vendors, connector) = {
       input
@@ -44,7 +43,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
     }
     positives
       .map { comparison: Comparison =>
-        1L -> comparison.features
+        1L -> comparison
       }
       .sample(
         withReplacement = true,
@@ -52,7 +51,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
       )
       .union(
         negatives.map { comparison: Comparison =>
-          0L -> comparison.features
+          0L -> comparison
         }
       )
       .toDS
@@ -117,7 +116,7 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   }
 
-  object CandidateConnector {
+  private object CandidateConnector {
 
     def apply(vendors: Dataset[Comparator])(implicit spark: SparkSession): RDD[Comparison] = {
       apply(CandidateGenerator(vendors))
@@ -188,7 +187,7 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   }
 
-  object CandidateReducer {
+  private object CandidateReducer {
 
     def apply[A: ClassTag, B](rdd: RDD[(A, B)])(
       implicit spark: SparkSession
@@ -224,7 +223,7 @@ object VendorsFuzzyConnectorFeaturesJob {
 
   }
 
-  object CandidateGenerator {
+  private object CandidateGenerator {
 
     def apply(vendors: Dataset[Comparator])(implicit spark: SparkSession): RDD[Comparison] = {
       import spark.implicits._
@@ -250,154 +249,6 @@ object VendorsFuzzyConnectorFeaturesJob {
       }
     }
 
-  }
-
-  // TODO: scale numEdgesInCommon
-  // TODO: 0, 1, more than 1 -> categorical
-  final case class Features(
-    numTokens: Double,
-    numTokensInCommon: Double,
-    sameSrcId: Double,
-    sameZip: Double,
-    sameCity: Double,
-    sameState: Double
-  ) {
-
-    def toArray: Array[Double] = {
-      Array(
-        numTokens,
-        numTokensInCommon,
-        sameSrcId,
-        sameZip,
-        sameCity,
-        sameState
-      )
-    }
-
-  }
-
-  object Features {
-
-    // TODO: delete ?
-    def scale(raw: Double): Double = {
-      raw match {
-        case 0 => 0
-        case 1 => 1
-        case _ => 2
-      }
-    }
-
-  }
-
-  final case class Comparator(
-    vendor: IdResVendor,
-    ccid: VertexId
-  ) {
-
-    val nameTokens: Set[String] = {
-      cleanedNameTokens(vendor.name).toSet
-    }
-
-    val addressTokens: Set[String] = {
-      Set(vendor.address.city, vendor.address.zip_code).flatten
-    }
-
-    val cgTokens: Set[String] = {
-      nameTokens ++ addressTokens
-    }
-
-  }
-
-  final case class Comparison(
-    left_side: Comparator,
-    right_side: Comparator
-  ) {
-
-    lazy val features: Features = {
-      Features(
-        numTokens = numTokens,
-        numTokensInCommon = numTokensInCommon,
-        sameSrcId = toDouble(sameSrcId),
-        sameZip = toDouble(sameZip),
-        sameCity = toDouble(sameCity),
-        sameState = toDouble(sameState)
-      )
-    }
-
-    private lazy val numTokens: Double = {
-      Seq(left_side.nameTokens.size, right_side.nameTokens.size).max.toDouble
-    }
-
-    // TODO: Validate for city/state
-    private lazy val numTokensInCommon: Double = {
-      left_side.nameTokens.intersect(right_side.nameTokens).size.toDouble
-    }
-
-    private lazy val sameSrcId: Boolean = {
-      left_side.vendor.src_id.equals(right_side.vendor.src_id)
-    }
-
-    private lazy val sameZip: Boolean = {
-      same(_.address.zip_code)
-    }
-
-    private lazy val sameCity: Boolean = {
-      same(_.address.city)
-    }
-
-    private lazy val sameState: Boolean = {
-      same(_.address.state)
-    }
-
-    private def toDouble(bool: Boolean): Double = {
-      bool.compare(false)
-    }
-
-    private def same(f: IdResVendor => Option[String]): Boolean = {
-      (f(left_side.vendor), f(right_side.vendor)) match {
-        case (Some(left), Some(right)) =>
-          left.equals(right)
-        case _ =>
-          false
-      }
-    }
-
-  }
-
-  object Comparison {
-
-    implicit class Syntax(comparison: Comparison) {
-
-      val left: IdResVendor = {
-        comparison.left_side.vendor
-      }
-
-      val right: IdResVendor = {
-        comparison.right_side.vendor
-      }
-
-    }
-
-    def apply(list: List[Comparator]): List[Comparison] = {
-      combinations(list).map {
-        case (left, right) =>
-          Comparison(
-            left_side = left,
-            right_side = right
-          )
-      }
-    }
-
-    private def combinations[A](list: List[A]): List[(A, A)] = {
-      list.combinations(n = 2).toList.flatMap { combination: Seq[A] =>
-        combination match {
-          case left :: right :: Nil =>
-            Some((left, right))
-          case _ =>
-            None
-        }
-      }
-    }
   }
 
 }
