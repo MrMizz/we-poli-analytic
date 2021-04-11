@@ -48,7 +48,7 @@ object VendorsFuzzyConnectorJob {
 
   // TODO
   val THRESHOLD: Double = {
-    0.90
+    0.30
   }
 
   object EdgeBuilder {
