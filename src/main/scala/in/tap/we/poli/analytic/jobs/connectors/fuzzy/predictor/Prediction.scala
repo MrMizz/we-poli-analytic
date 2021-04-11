@@ -52,13 +52,13 @@ object Prediction {
   final case class NamePrediction(features: NameFeatures) extends Prediction[NameFeatures](features) {
 
     override protected val INTERCEPT: Double = {
-      0.0
+      -0.9047493027508691
     }
 
     override protected val COEFFICIENTS: NameFeatures = {
       NameFeatures(
-        numTokens = -1.0,
-        numTokensInCommon = 1.0
+        numTokens = -3.0693857072278545,
+        numTokensInCommon = 4.140643147635645
       )
     }
 
@@ -67,14 +67,14 @@ object Prediction {
   final case class AddressPrediction(features: AddressFeatures) extends Prediction[AddressFeatures](features) {
 
     override protected val INTERCEPT: Double = {
-      0.0
+      -6.06291023757855
     }
 
     override protected val COEFFICIENTS: AddressFeatures = {
       AddressFeatures(
-        sameZip = 1.0,
-        sameCity = 1.0,
-        sameState = 1.0
+        sameZip = 1.1382999227893942,
+        sameCity = 2.269141627071912,
+        sameState = 3.873981104265902
       )
     }
 
