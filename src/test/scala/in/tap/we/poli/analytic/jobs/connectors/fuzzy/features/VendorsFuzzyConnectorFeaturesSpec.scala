@@ -56,9 +56,9 @@ class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnec
   }
 
   it should "sample positive label features in ratio to negative labels" in {
-    buildSamplingRatio(10.0, 5.0) shouldBe 1.5
-    buildSamplingRatio(10.0, 10.0) shouldBe 3.0
-    buildSamplingRatio(10.0, 3.0) shouldBe 0.9
+    buildSamplingRatio(10.0, 5.0) shouldBe 2.5
+    buildSamplingRatio(10.0, 10.0) shouldBe 5.0
+    buildSamplingRatio(10.0, 3.0) shouldBe 1.5
   }
 
 }
