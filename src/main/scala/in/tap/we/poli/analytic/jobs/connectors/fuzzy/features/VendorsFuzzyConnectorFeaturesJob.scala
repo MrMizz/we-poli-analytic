@@ -63,7 +63,7 @@ class VendorsFuzzyConnectorFeaturesJob(val inArgs: TwoInArgs, val outArgs: OneOu
 object VendorsFuzzyConnectorFeaturesJob {
 
   val POS_TO_NEG_RATIO: Double = {
-    10.0
+    0.25
   }
 
   val MAX_COMPARISON_SIZE: Int = {
