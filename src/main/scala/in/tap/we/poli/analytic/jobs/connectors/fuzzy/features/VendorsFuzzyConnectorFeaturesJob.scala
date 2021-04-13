@@ -1,6 +1,5 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
-import in.tap.base.spark.graph.ConnectedComponents
 import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
@@ -8,7 +7,7 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.VendorsFuzzyConnec
   buildSamplingRatio, SampleBuilder
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
-import org.apache.spark.graphx.{Edge, VertexId}
+import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.{PairRDDFunctions, RDD}
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -91,7 +90,7 @@ object VendorsFuzzyConnectorFeaturesJob {
       implicit spark: SparkSession
     ): RDD[Comparison] = {
       import spark.implicits._
-      CandidateConnector(
+      CandidateGenerator(
         join(vendors, connector).map(_._2).toDS
       )
     }
@@ -112,77 +111,6 @@ object VendorsFuzzyConnectorFeaturesJob {
           case (_, (vendor: IdResVendor, ccid: VertexId)) =>
             (ccid, Comparator(vendor, ccid))
         }
-    }
-
-  }
-
-  private object CandidateConnector {
-
-    def apply(vendors: Dataset[Comparator])(implicit spark: SparkSession): RDD[Comparison] = {
-      apply(CandidateGenerator(vendors))
-    }
-
-    private def apply(comparisons: RDD[Comparison])(implicit spark: SparkSession): RDD[Comparison] = {
-      val vertices: RDD[(VertexId, Comparator)] = {
-        comparisons
-          .flatMap(VertexBuilder.apply)
-          .reduceByKey(VertexBuilder.reduce)
-      }
-      val edges: RDD[Edge[Int]] = {
-        comparisons.map(EdgeBuilder.apply)
-      }
-      val cc: RDD[(VertexId, Comparator)] = {
-        ConnectedComponents
-          .withVertexAttr(
-            vertices = vertices,
-            edges = edges
-          )
-          .flatMap {
-            case (_, ccid, maybeComparator) =>
-              maybeComparator.map { comparator =>
-                ((ccid, comparator.ccid), comparator)
-              }
-          }
-          .reduceByKey {
-            case (left, _) =>
-              left
-          }
-          .map {
-            case ((ccid, _), comparator) =>
-              (ccid, comparator)
-          }
-      }
-      CandidateReducer(cc)
-        .flatMap { maybe =>
-          Comparison(maybe.toList.flatten)
-        }
-    }
-
-    private object EdgeBuilder {
-
-      def apply(comparison: Comparison): Edge[Int] = {
-        Edge(
-          srcId = comparison.left.uid,
-          dstId = comparison.right.uid,
-          attr = 1
-        )
-      }
-
-    }
-
-    private object VertexBuilder {
-
-      def apply(comparison: Comparison): Seq[(VertexId, Comparator)] = {
-        Seq(
-          (comparison.left.uid, comparison.left_side),
-          (comparison.right.uid, comparison.right_side)
-        )
-      }
-
-      def reduce(left: Comparator, right: Comparator): Comparator = {
-        left
-      }
-
     }
 
   }
