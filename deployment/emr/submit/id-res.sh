@@ -53,6 +53,20 @@ $JAR_PATH,\
 ]
 
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=IdResTransactionTraining,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=IdResTransactionTraining,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,id-res-transaction-training,\
+--in1,s3://big-time-tap-in-spark/poli/id-res/features/$RUN_DATE2/,\
+--in1-format,parquet,\
+--out1,s3://big-time-tap-in-spark/poli/id-res/training/transaction/$RUN_DATE2/,\
+--out1-format,parquet\
+]
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
 --steps Type=spark,Name=IdResCompositeTraining,\
 Args=[\
 --deploy-mode,cluster,\
