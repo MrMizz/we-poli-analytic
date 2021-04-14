@@ -1,7 +1,7 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor
 
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.{
-  AddressFeatures, CompositeFeatures, NameFeatures
+  AddressFeatures, CompositeFeatures, NameFeatures, TransactionFeatures
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.{Comparison, Features}
 
@@ -41,9 +41,9 @@ object Prediction {
 
     override protected val COEFFICIENTS: CompositeFeatures = {
       CompositeFeatures(
-        sameSrcId = -0.21441445096301498,
         nameScore = 9.79417768313024,
-        addressScore = 9.46038399497283
+        addressScore = 9.46038399497283,
+        transactionScore = 1.0
       )
     }
 
@@ -80,6 +80,27 @@ object Prediction {
 
   }
 
+  final case class TransactionPrediction(features: TransactionFeatures)
+      extends Prediction[TransactionFeatures](features) {
+
+    override protected val INTERCEPT: Double = {
+      0.0
+    }
+
+    override protected val COEFFICIENTS: TransactionFeatures = {
+      TransactionFeatures(
+        sameSrcId = 1.0,
+        reportYearDiff = 1.0,
+        sameReportType = 1.0,
+        sameFormType = 1.0,
+        amountPaidDiffRatio = 1.0,
+        sameDisbursementCategory = 1.0,
+        sameEntityType = 1.0
+      )
+    }
+
+  }
+
   def apply(comparison: Comparison): Double = {
     CompositePrediction(comparison.compositeFeatures).sigmoid
   }
@@ -94,6 +115,10 @@ object Prediction {
 
   def apply(features: AddressFeatures): Double = {
     AddressPrediction(features).sigmoid
+  }
+
+  def apply(features: TransactionFeatures): Double = {
+    TransactionPrediction(features).sigmoid
   }
 
 }

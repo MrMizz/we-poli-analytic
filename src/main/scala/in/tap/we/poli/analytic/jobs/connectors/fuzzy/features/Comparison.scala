@@ -1,7 +1,7 @@
 package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.features.Features.{
-  AddressFeatures, CompositeFeatures, NameFeatures
+  AddressFeatures, CompositeFeatures, NameFeatures, TransactionFeatures
 }
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.predictor.Prediction
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
@@ -13,9 +13,9 @@ final case class Comparison(
 
   lazy val compositeFeatures: CompositeFeatures = {
     CompositeFeatures(
-      sameSrcId = toDouble(sameSrcId),
       nameScore = Prediction(nameFeatures),
-      addressScore = Prediction(addressFeatures)
+      addressScore = Prediction(addressFeatures),
+      transactionScore = Prediction(transactionFeatures)
     )
   }
 
@@ -34,6 +34,18 @@ final case class Comparison(
     )
   }
 
+  lazy val transactionFeatures: TransactionFeatures = {
+    TransactionFeatures(
+      sameSrcId = toDouble(sameSrcId),
+      reportYearDiff = reportYearDiff,
+      sameReportType = toDouble(sameReportType),
+      sameFormType = toDouble(sameFormType),
+      amountPaidDiffRatio = amountPaidDiffRatio,
+      sameDisbursementCategory = toDouble(sameDisbursementCategory),
+      sameEntityType = toDouble(sameEntityType)
+    )
+  }
+
   private lazy val numTokens: Double = {
     Seq(left_side.nameTokens.size, right_side.nameTokens.size).max.toDouble
   }
@@ -44,7 +56,7 @@ final case class Comparison(
   }
 
   private lazy val sameSrcId: Boolean = {
-    left_side.vendor.src_id.equals(right_side.vendor.src_id)
+    left_side.vendor.edge.src_id.equals(right_side.vendor.edge.src_id)
   }
 
   private lazy val sameZip: Boolean = {
@@ -59,11 +71,67 @@ final case class Comparison(
     same(_.address.state)
   }
 
+  private lazy val sameReportType: Boolean = {
+    same(_.edge.report_year)
+  }
+
+  private lazy val sameFormType: Boolean = {
+    same(_.edge.form_type)
+  }
+
+  private lazy val sameDisbursementCategory: Boolean = {
+    same(_.edge.disbursement_category)
+  }
+
+  private lazy val sameEntityType: Boolean = {
+    same(_.edge.entity_type)
+  }
+
+  private lazy val reportYearDiff: Double = {
+    val left: Option[Long] = {
+      left_side.vendor.edge.report_year
+    }
+    val right: Option[Long] = {
+      right_side.vendor.edge.report_year
+    }
+    (left, right) match {
+      case (Some(l), Some(r)) =>
+        math.abs(l - r).toDouble
+      case _ =>
+        0.0d
+    }
+  }
+
+  private lazy val amountPaidDiffRatio: Double = {
+    val left: Option[Double] = {
+      left_side.vendor.edge.transaction_amount
+    }
+    val right: Option[Double] = {
+      right_side.vendor.edge.transaction_amount
+    }
+    (left, right) match {
+      case (Some(l), Some(r)) =>
+        val max = {
+          Seq(l, r).max
+        }
+        val diff = {
+          math.abs(l - r)
+        }
+        if (max > 0.0) {
+          diff / max
+        } else {
+          0.0
+        }
+      case _ =>
+        0.0
+    }
+  }
+
   private def toDouble(bool: Boolean): Double = {
     bool.compare(false)
   }
 
-  private def same(f: IdResVendor => Option[String]): Boolean = {
+  private def same[A](f: IdResVendor => Option[A]): Boolean = {
     (f(left_side.vendor), f(right_side.vendor)) match {
       case (Some(left), Some(right)) =>
         left.equals(right)

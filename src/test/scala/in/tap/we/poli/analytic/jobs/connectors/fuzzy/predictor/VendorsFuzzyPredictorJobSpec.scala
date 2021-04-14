@@ -10,27 +10,27 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
     val prediction1: Double = {
       Prediction(
         CompositeFeatures(
-          sameSrcId = 1.0,
-          nameScore = 0.0,
-          addressScore = 0.0
+          nameScore = 1.0,
+          addressScore = 0.0,
+          transactionScore = 0.0
         )
       )
     }
     val prediction2: Double = {
       Prediction(
         CompositeFeatures(
-          sameSrcId = 1.0,
           nameScore = 1.0,
-          addressScore = 0.0
+          addressScore = 1.0,
+          transactionScore = 0.0
         )
       )
     }
     val prediction3: Double = {
       Prediction(
         CompositeFeatures(
-          sameSrcId = 1.0,
           nameScore = 1.0,
-          addressScore = 1.0
+          addressScore = 1.0,
+          transactionScore = 1.0
         )
       )
     }
@@ -52,7 +52,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor1
       )
     ) shouldBe {
-      0.8919918374154903
+      0.9650739505571826
     }
     // normalized as identity
     Prediction(
@@ -61,7 +61,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor2
       )
     ) shouldBe {
-      0.8919918374154903
+      0.9650739505571826
     }
     // some in common
     Prediction(
@@ -70,7 +70,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor3
       )
     ) shouldBe {
-      0.017588750133502494
+      0.028671795652417387
     }
     // nothing in common
     Prediction(
@@ -79,7 +79,7 @@ class VendorsFuzzyPredictorJobSpec extends BaseSpec with VendorsFuzzyPredictorJo
         vendor4
       )
     ) shouldBe {
-      3.538401085201577E-5
+      5.8337032245134935e-5
     }
   }
 

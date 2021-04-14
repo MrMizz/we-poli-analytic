@@ -7,16 +7,16 @@ sealed trait Features {
 object Features {
 
   final case class CompositeFeatures(
-    sameSrcId: Double,
     nameScore: Double,
-    addressScore: Double
+    addressScore: Double,
+    transactionScore: Double
   ) extends Features {
 
     override def toArray: Array[Double] = {
       Array(
-        sameSrcId,
         nameScore,
-        addressScore
+        addressScore,
+        transactionScore
       )
     }
 
@@ -47,6 +47,30 @@ object Features {
         sameZip,
         sameCity,
         sameState
+      )
+    }
+
+  }
+
+  final case class TransactionFeatures(
+    sameSrcId: Double,
+    reportYearDiff: Double,
+    sameReportType: Double,
+    sameFormType: Double,
+    amountPaidDiffRatio: Double,
+    sameDisbursementCategory: Double,
+    sameEntityType: Double
+  ) extends Features {
+
+    override def toArray: Array[Double] = {
+      Array(
+        sameSrcId,
+        reportYearDiff,
+        sameReportType,
+        sameFormType,
+        amountPaidDiffRatio,
+        sameDisbursementCategory,
+        sameEntityType
       )
     }
 

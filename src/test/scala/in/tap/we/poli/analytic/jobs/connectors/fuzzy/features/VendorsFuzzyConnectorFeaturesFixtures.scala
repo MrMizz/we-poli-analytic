@@ -2,7 +2,6 @@ package in.tap.we.poli.analytic.jobs.connectors.fuzzy.features
 
 import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTransformerJob.IdResVendor
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.ExpenditureEdge
-import in.tap.we.poli.analytic.jobs.mergers.VendorsMergerJob.UniqueVendor
 import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.{Address, Vendor}
 
 trait VendorsFuzzyConnectorFeaturesFixtures {
@@ -21,7 +20,7 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
               zip_code = Some("90026")
             ),
           memo = None,
-          edge = emptyEdge.copy(src_id = -111L)
+          edge = edge
         )
       ),
       900L
@@ -46,7 +45,7 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
       IdResVendor(
         emptyVendor.copy(
           uid = 3L,
-          name = "Vendor3",
+          name = "",
           edge = emptyEdge.copy(src_id = 33L)
         )
       ),
@@ -64,20 +63,6 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
     )
   }
 
-  lazy val emptyUniqueVendor: UniqueVendor = {
-    UniqueVendor(
-      uid = -1L,
-      uids = Nil,
-      name = "",
-      names = Set.empty,
-      address = Address.empty,
-      addresses = Set.empty[Address],
-      memos = Set.empty,
-      edges = Set.empty,
-      num_merged = 0
-    )
-  }
-
   lazy val emptyEdge: ExpenditureEdge = {
     ExpenditureEdge(
       src_id = -111L,
@@ -92,6 +77,23 @@ trait VendorsFuzzyConnectorFeaturesFixtures {
       None,
       None,
       None
+    )
+  }
+
+  lazy val edge: ExpenditureEdge = {
+    ExpenditureEdge(
+      src_id = 111L,
+      report_year = Some(2010L),
+      report_type = Some("report type 1"),
+      form_type = Some("form type 1"),
+      transaction_amount = Some(100.0),
+      disbursement_category = Some("disbursement category 1"),
+      entity_type = Some("entity type 1"),
+      schedule_type = None,
+      transaction_date = None,
+      primary_general_indicator = None,
+      transaction_id = None,
+      back_reference_transaction_number = None
     )
   }
 

@@ -43,17 +43,25 @@ class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnec
     // identity comparison
     Comparison(vendor1, vendor1).compositeFeatures shouldBe {
       CompositeFeatures(
-        sameSrcId = 1.0,
         nameScore = 0.5415311246598542,
-        addressScore = 0.771801656426786
+        addressScore = 0.771801656426786,
+        transactionScore = 0.9933071490757152
       )
     }
     // only name token in common
     Comparison(vendor1, vendor2).compositeFeatures shouldBe {
       CompositeFeatures(
-        sameSrcId = 0.0,
         nameScore = 0.5415311246598542,
-        addressScore = 0.0023222118822516643
+        addressScore = 0.0023222118822516643,
+        transactionScore = 0.5
+      )
+    }
+    // nothing in common
+    Comparison(vendor2, vendor3).compositeFeatures shouldBe {
+      CompositeFeatures(
+        nameScore = 0.018448797097395154,
+        addressScore = 0.0023222118822516643,
+        transactionScore = 0.5
       )
     }
   }

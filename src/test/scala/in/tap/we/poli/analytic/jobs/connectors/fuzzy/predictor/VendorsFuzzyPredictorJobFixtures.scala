@@ -21,7 +21,7 @@ trait VendorsFuzzyPredictorJobFixtures {
               zip_code = Some("90026")
             ),
           memo = None,
-          edge = emptyEdge.copy(src_id = 11L)
+          edge = edge.copy(src_id = 11L)
         )
       ),
       901L
@@ -42,7 +42,7 @@ trait VendorsFuzzyPredictorJobFixtures {
               zip_code = Some("90026")
             ),
           memo = None,
-          edge = emptyEdge.copy(src_id = 11L)
+          edge = edge.copy(src_id = 11L)
         )
       ),
       901L
@@ -98,6 +98,23 @@ trait VendorsFuzzyPredictorJobFixtures {
       None,
       None,
       None
+    )
+  }
+
+  lazy val edge: ExpenditureEdge = {
+    ExpenditureEdge(
+      src_id = 111L,
+      report_year = Some(2010L),
+      report_type = Some("report type 1"),
+      form_type = Some("form type 1"),
+      transaction_amount = Some(100.0),
+      disbursement_category = Some("disbursement category 1"),
+      entity_type = Some("entity type 1"),
+      schedule_type = None,
+      transaction_date = None,
+      primary_general_indicator = None,
+      transaction_id = None,
+      back_reference_transaction_number = None
     )
   }
 
