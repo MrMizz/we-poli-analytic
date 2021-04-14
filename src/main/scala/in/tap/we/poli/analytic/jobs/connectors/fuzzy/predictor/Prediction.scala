@@ -52,13 +52,13 @@ object Prediction {
   final case class NamePrediction(features: NameFeatures) extends Prediction[NameFeatures](features) {
 
     override protected val INTERCEPT: Double = {
-      -0.9047493027508691
+      1.7326492057241745
     }
 
     override protected val COEFFICIENTS: NameFeatures = {
       NameFeatures(
-        numTokens = -3.0693857072278545,
-        numTokensInCommon = 4.140643147635645
+        numTokens = -3.9644754241549336,
+        numTokensInCommon = 4.729780984275538
       )
     }
 
@@ -67,13 +67,13 @@ object Prediction {
   final case class AddressPrediction(features: AddressFeatures) extends Prediction[AddressFeatures](features) {
 
     override protected val INTERCEPT: Double = {
-      -6.06291023757855
+      -5.433298940120562
     }
 
     override protected val COEFFICIENTS: AddressFeatures = {
       AddressFeatures(
-        sameCity = 2.269141627071912,
-        sameState = 3.873981104265902
+        sameCity = 2.2614036885291404,
+        sameState = 3.807641154215986
       )
     }
 
@@ -83,16 +83,16 @@ object Prediction {
       extends Prediction[TransactionFeatures](features) {
 
     override protected val INTERCEPT: Double = {
-      0.0
+      -1.5349463675370292
     }
 
     override protected val COEFFICIENTS: TransactionFeatures = {
       TransactionFeatures(
-        sameSrcId = 1.0,
-        reportYearDiff = 1.0,
-        sameFormType = 1.0,
-        sameDisbursementCategory = 1.0,
-        sameEntityType = 1.0
+        sameSrcId = 2.9261128664105405,
+        reportYearDiff = -0.1589814644507821,
+        sameFormType = 0.39738259265256026,
+        sameDisbursementCategory = 0.497894548703555,
+        sameEntityType = 1.1239140395319738
       )
     }
 
