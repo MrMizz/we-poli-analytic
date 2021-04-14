@@ -94,6 +94,12 @@ object Main extends in.tap.base.spark.main.Main {
           outArgs.asInstanceOf[OneOutArgs],
           (c: Comparison) => c.addressFeatures.toArray
         )
+      case "id-res-transaction-training" =>
+        new VendorsFuzzyConnectorTrainingJob(
+          inArgs.asInstanceOf[OneInArgs],
+          outArgs.asInstanceOf[OneOutArgs],
+          (c: Comparison) => c.transactionFeatures.toArray
+        )
       case "id-res-composite-training" =>
         new VendorsFuzzyConnectorTrainingJob(
           inArgs.asInstanceOf[OneInArgs],
