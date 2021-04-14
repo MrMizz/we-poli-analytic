@@ -72,7 +72,6 @@ object Prediction {
 
     override protected val COEFFICIENTS: AddressFeatures = {
       AddressFeatures(
-        sameZip = 1.1382999227893942,
         sameCity = 2.269141627071912,
         sameState = 3.873981104265902
       )
@@ -91,9 +90,7 @@ object Prediction {
       TransactionFeatures(
         sameSrcId = 1.0,
         reportYearDiff = 1.0,
-        sameReportType = 1.0,
         sameFormType = 1.0,
-        amountPaidDiffRatio = 1.0,
         sameDisbursementCategory = 1.0,
         sameEntityType = 1.0
       )

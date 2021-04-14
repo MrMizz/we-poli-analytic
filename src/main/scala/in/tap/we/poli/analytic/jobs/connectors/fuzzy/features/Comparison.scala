@@ -28,7 +28,6 @@ final case class Comparison(
 
   lazy val addressFeatures: AddressFeatures = {
     AddressFeatures(
-      sameZip = toDouble(sameZip),
       sameCity = toDouble(sameCity),
       sameState = toDouble(sameState)
     )
@@ -38,9 +37,7 @@ final case class Comparison(
     TransactionFeatures(
       sameSrcId = toDouble(sameSrcId),
       reportYearDiff = reportYearDiff,
-      sameReportType = toDouble(sameReportType),
       sameFormType = toDouble(sameFormType),
-      amountPaidDiffRatio = amountPaidDiffRatio,
       sameDisbursementCategory = toDouble(sameDisbursementCategory),
       sameEntityType = toDouble(sameEntityType)
     )
@@ -59,6 +56,7 @@ final case class Comparison(
     left_side.vendor.edge.src_id.equals(right_side.vendor.edge.src_id)
   }
 
+  // insignificant
   private lazy val sameZip: Boolean = {
     same(_.address.zip_code)
   }
@@ -71,6 +69,7 @@ final case class Comparison(
     same(_.address.state)
   }
 
+  // insignificant
   private lazy val sameReportType: Boolean = {
     same(_.edge.report_year)
   }
@@ -102,6 +101,7 @@ final case class Comparison(
     }
   }
 
+  // insignificant
   private lazy val amountPaidDiffRatio: Double = {
     val left: Option[Double] = {
       left_side.vendor.edge.transaction_amount

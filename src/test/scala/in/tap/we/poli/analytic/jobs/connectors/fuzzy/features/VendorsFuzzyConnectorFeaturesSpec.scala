@@ -44,8 +44,8 @@ class VendorsFuzzyConnectorFeaturesSpec extends BaseSpec with VendorsFuzzyConnec
     Comparison(vendor1, vendor1).compositeFeatures shouldBe {
       CompositeFeatures(
         nameScore = 0.5415311246598542,
-        addressScore = 0.771801656426786,
-        transactionScore = 0.9933071490757152
+        addressScore = 0.5200423784629902,
+        transactionScore = 0.9820137900379085
       )
     }
     // only name token in common

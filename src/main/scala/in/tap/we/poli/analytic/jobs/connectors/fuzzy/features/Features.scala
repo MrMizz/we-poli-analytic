@@ -37,14 +37,12 @@ object Features {
   }
 
   final case class AddressFeatures(
-    sameZip: Double,
     sameCity: Double,
     sameState: Double
   ) extends Features {
 
     def toArray: Array[Double] = {
       Array(
-        sameZip,
         sameCity,
         sameState
       )
@@ -55,9 +53,7 @@ object Features {
   final case class TransactionFeatures(
     sameSrcId: Double,
     reportYearDiff: Double,
-    sameReportType: Double,
     sameFormType: Double,
-    amountPaidDiffRatio: Double,
     sameDisbursementCategory: Double,
     sameEntityType: Double
   ) extends Features {
@@ -66,9 +62,7 @@ object Features {
       Array(
         sameSrcId,
         reportYearDiff,
-        sameReportType,
         sameFormType,
-        amountPaidDiffRatio,
         sameDisbursementCategory,
         sameEntityType
       )
