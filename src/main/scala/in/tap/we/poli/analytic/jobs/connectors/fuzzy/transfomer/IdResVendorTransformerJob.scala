@@ -28,7 +28,7 @@ object IdResVendorTransformerJob {
   final case class IdResVendor(
     uid: Long,
     name: String,
-    address: Address,
+    address: Address, // TODO; IdResAddress
     edge: IdResEdge
   )
 
@@ -48,9 +48,11 @@ object IdResVendorTransformerJob {
   final case class IdResEdge(
     src_id: VertexId,
     report_year: Option[Long],
-    report_type: Option[String], // TODO: drop
+    @deprecated
+    report_type: Option[String],
     form_type: Option[String],
-    transaction_amount: Option[Double],  // TODO: drop
+    @deprecated
+    transaction_amount: Option[Double],
     disbursement_category: Option[String],
     entity_type: Option[String]
   )

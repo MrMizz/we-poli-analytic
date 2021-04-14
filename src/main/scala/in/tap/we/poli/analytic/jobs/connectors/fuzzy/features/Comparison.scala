@@ -56,7 +56,7 @@ final case class Comparison(
     left_side.vendor.edge.src_id.equals(right_side.vendor.edge.src_id)
   }
 
-  // insignificant
+  @deprecated
   private lazy val sameZip: Boolean = {
     same(_.address.zip_code)
   }
@@ -69,7 +69,7 @@ final case class Comparison(
     same(_.address.state)
   }
 
-  // insignificant
+  @deprecated
   private lazy val sameReportType: Boolean = {
     same(_.edge.report_year)
   }
@@ -101,7 +101,7 @@ final case class Comparison(
     }
   }
 
-  // insignificant
+  @deprecated
   private lazy val amountPaidDiffRatio: Double = {
     val left: Option[Double] = {
       left_side.vendor.edge.transaction_amount
