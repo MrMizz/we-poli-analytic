@@ -48,9 +48,9 @@ object IdResVendorTransformerJob {
   final case class IdResEdge(
     src_id: VertexId,
     report_year: Option[Long],
-    report_type: Option[String],
+    report_type: Option[String], // TODO: drop
     form_type: Option[String],
-    transaction_amount: Option[Double],
+    transaction_amount: Option[Double],  // TODO: drop
     disbursement_category: Option[String],
     entity_type: Option[String]
   )
