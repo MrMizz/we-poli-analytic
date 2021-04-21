@@ -10,6 +10,7 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
 
+@deprecated
 class UniqueVendorsMergerJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
