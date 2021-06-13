@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal.TraversalWithCount
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalSB1Job.sortBy
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalSB3Job.sortBy
 import org.apache.spark.sql.SparkSession
 
 /**
