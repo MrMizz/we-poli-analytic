@@ -4,7 +4,7 @@ import in.tap.base.spark.graph.ConnectedComponents
 import in.tap.base.spark.jobs.composite.TwoInOneOutJob
 import in.tap.base.spark.main.InArgs.TwoInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.connectors.unify.ConnectorsUnifyJob.distinct
+import in.tap.we.poli.analytic.jobs.connectors.unify.ConnectorsUnifyJob.{distinct, EdgeBuilder}
 import in.tap.we.poli.analytic.jobs.connectors.{buildEdges, Connection}
 import org.apache.spark.graphx.{Edge, VertexId}
 import org.apache.spark.rdd.RDD
@@ -25,21 +25,17 @@ class ConnectorsUnifyJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs)(
     val (connector1, connector2) = {
       input
     }
-    val vertexUnion: Dataset[Connection] = {
-      connector1.union(connector2)
-    }
     val edges: RDD[Edge[Int]] = {
-      vertexUnion
-        .rdd
-        .map(_.swap)
-        .groupByKey
-        .flatMap {
-          case (_, iter: Iterable[VertexId]) =>
-            buildEdges(iter.toList)
-        }
+      EdgeBuilder(connector1.rdd)
+        .union(EdgeBuilder(connector2.rdd))
     }
     val vertices: RDD[Connection] = {
-      vertexUnion.rdd.reduceByKey(distinct)
+      connector1
+        .union(connector2)
+        .rdd
+        .reduceByKey(
+          distinct
+        )
     }
     ConnectedComponents
       .withVertexAttr(vertices, edges)
@@ -66,6 +62,20 @@ object ConnectorsUnifyJob {
    */
   def distinct(left: VertexId, right: VertexId): VertexId = {
     right
+  }
+
+  object EdgeBuilder {
+
+    def apply(rdd: RDD[Connection])(implicit spark: SparkSession): RDD[Edge[Int]] = {
+      rdd
+        .map(_.swap)
+        .groupByKey
+        .flatMap {
+          case (_, iter: Iterable[VertexId]) =>
+            buildEdges(iter.toList)
+        }
+    }
+
   }
 
 }
