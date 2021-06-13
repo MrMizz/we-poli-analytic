@@ -51,8 +51,10 @@ object VendorsMergerJob {
     uids: Seq[Long],
     name: String,
     names: Set[String],
+    name_freq: Map[String, Long],
     address: Address,
     addresses: Set[Address],
+    address_freq: Map[Address, Long],
     memos: Set[String],
     edges: Set[ExpenditureEdge],
     num_merged: BigInt
@@ -66,8 +68,10 @@ object VendorsMergerJob {
         uids = Seq(vendor.uid),
         name = vendor.name,
         names = Set(vendor.name),
+        name_freq = SetFreq.init(vendor.name),
         address = vendor.address,
         addresses = Set(vendor.address),
+        address_freq = SetFreq.init(vendor.address),
         memos = Set(vendor.memo).flatten,
         edges = Set(vendor.edge),
         num_merged = 1
@@ -75,19 +79,21 @@ object VendorsMergerJob {
     }
 
     def reduce(left: UniqueVendor, right: UniqueVendor): UniqueVendor = {
-      val names: Set[String] = {
-        left.names ++ right.names
+      val nameFreq: Map[String, Long] = {
+        SetFreq.reduce(left.name_freq, right.name_freq)
       }
-      val addresses: Set[Address] = {
-        left.addresses ++ right.addresses
+      val addressFreq: Map[Address, Long] = {
+        SetFreq.reduce(left.address_freq, right.address_freq)
       }
       UniqueVendor(
         uid = Seq(left.uid, right.uid).min,
         uids = left.uids ++ right.uids,
-        name = getMostCommon(names.toSeq).getOrElse(left.name),
-        names = names,
-        address = getMostCommon(addresses.toSeq).getOrElse(left.address),
-        addresses = addresses,
+        name = SetFreq.getMostCommon(nameFreq).getOrElse(left.name),
+        names = left.names ++ right.names,
+        name_freq = nameFreq,
+        address = SetFreq.getMostCommon(addressFreq).getOrElse(left.address),
+        addresses = left.addresses ++ right.addresses,
+        address_freq = addressFreq,
         memos = left.memos ++ right.memos,
         edges = left.edges ++ right.edges,
         num_merged = left.num_merged + right.num_merged

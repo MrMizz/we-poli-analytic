@@ -43,10 +43,15 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
         UniqueVendor(
           uid = 1L,
           uids = Seq(3L, 1L),
-          name = "Vendor, Inc. # 1",
+          name = "Vendor",
           names = Set("Vendor", "Vendor, Inc. # 1"),
+          name_freq = Map(
+            "Vendor" -> 1L,
+            "Vendor, Inc. # 1" -> 1L
+          ),
           address = address1,
           addresses = Set(address1),
+          address_freq = Map(address1 -> 2L),
           num_merged = 2,
           memos = Set("memo1"),
           edges = Set(AutoConnectorMockEdges.edge3, AutoConnectorMockEdges.edge1)
@@ -56,8 +61,10 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
           uids = Seq(2L),
           name = "Vendor Two",
           names = Set("Vendor Two"),
+          name_freq = Map("Vendor Two" -> 1L),
           address = address2,
           addresses = Set(address2),
+          address_freq = Map(address2 -> 1L),
           num_merged = 1,
           memos = Set(),
           edges = Set(AutoConnectorMockEdges.edge2)
@@ -71,10 +78,17 @@ class VendorsMergerJobSpec extends BaseSparkJobSpec with VendorsMergerJobFixture
       UniqueVendor(
         uid = 1L,
         uids = Seq(1L, 2L),
-        name = "Vendor2",
+        name = "Vendor1",
         names = Set("Vendor1", "Vendor2"),
+        name_freq = Map(
+          "Vendor1" -> 1L,
+          "Vendor2" -> 1L
+        ),
         address = address1,
         addresses = Set(address1, address2),
+        address_freq = Map(
+          address2 -> 2L
+        ),
         num_merged = 2,
         memos = Set("memo1"),
         edges = Set(edge1, edge2)

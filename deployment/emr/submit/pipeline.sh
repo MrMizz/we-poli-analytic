@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CLUSTER="j-1H6UH4M19DKMH"
+CLUSTER="j-2ASXSEFWDXBKA"
 RUN_DATE="latest"
 JAR_PATH="s3://big-time-tap-in-spark/poli/jars/latest/we-poli-analytic-assembly-1.0.0-SNAPSHOT.jar"
 

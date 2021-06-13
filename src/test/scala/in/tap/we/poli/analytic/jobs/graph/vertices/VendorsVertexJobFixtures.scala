@@ -15,14 +15,18 @@ trait VendorsVertexJobFixtures {
           city = Some("Los Angeles")
         )
     }
-
     new UniqueVendor(
       uid = 1L,
       uids = Seq(1L),
       name = "Mickey's Consulting",
       names = Set("Mickey's Consulting", "McDonald's"),
+      name_freq = Map(
+        "Mickey's Consulting" -> 1L,
+        "McDonald's" -> 1L
+      ),
       address = address,
       addresses = Set(address),
+      address_freq = Map(address -> 1L),
       memos = Set("payroll", "campaign consulting"),
       num_merged = 1,
       edges = Set(edge1)
@@ -43,8 +47,10 @@ trait VendorsVertexJobFixtures {
       uids = Seq(2L, 3L, 4L),
       name = "Domino's",
       names = Set("Domino's"),
+      name_freq = Map("Domino's" -> 1L),
       address = address,
       addresses = Set(address),
+      address_freq = Map(address -> 1L),
       memos = Set("food", "dinner"),
       num_merged = 3,
       edges = Set(edge2, edge3, edge4)
@@ -65,8 +71,10 @@ trait VendorsVertexJobFixtures {
       uids = Seq(5L),
       name = "Raphael Saadiq",
       names = Set("Raphael Saadiq"),
+      name_freq = Map("Raphael Saadiq" -> 1L),
       address = address,
       addresses = Set(address),
+      address_freq = Map(address -> 1L),
       memos = Set("media consulting"),
       num_merged = 1,
       edges = Set(edge5)

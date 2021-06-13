@@ -8,19 +8,24 @@ import in.tap.we.poli.analytic.jobs.transformers.VendorsTransformerJob.Address
 trait UniqueVendorConnectorFlattenJobFixtures {
 
   val uniqueVendor1: UniqueVendor = {
-    UniqueVendor(
-      uid = 1L,
-      uids = Seq(1L, 2L),
-      name = "vendor1",
-      names = Set("vendor1"),
-      address = Address
+    val address = {
+      Address
         .empty
         .copy(
           city = Some("Los Angeles"),
           state = Some("CA"),
           zip_code = Some("90041")
-        ),
-      addresses = Set.empty[Address],
+        )
+    }
+    UniqueVendor(
+      uid = 1L,
+      uids = Seq(1L, 2L),
+      name = "vendor1",
+      names = Set("vendor1"),
+      name_freq = Map("vendor1" -> 1L),
+      address = address,
+      addresses = Set(address),
+      address_freq = Map(address -> 1L),
       memos = Set("memo"),
       edges = Set(
         ExpenditureEdge(
