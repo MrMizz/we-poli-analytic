@@ -63,7 +63,7 @@ resource "aws_api_gateway_integration" "sub-prefix-integration" {
   request_templates = {
     "application/json" = <<EOF
     {
-      "TableName": "PoliVertexNameAutoComplete2",
+      "TableName": "PoliVertexNameAutoComplete${terraform.workspace}",
       "KeyConditionExpression": "prefix = :key",
       "ExpressionAttributeValues": {
         ":key": {
@@ -216,24 +216,24 @@ resource "aws_api_gateway_integration_response" "cors-integration-response" {
 ################################################################################
 ## Deploy the Gateway Stage
 ## it seems you have to update the variable to actually force a deployment
-resource "aws_api_gateway_deployment" "prod" {
-  depends_on = [
-    aws_api_gateway_resource.poli
-  ]
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name = "prod"
-  variables = {
-    "answer" = var.deployment_id_prod
-  }
-}
-
-resource "aws_api_gateway_deployment" "dev" {
-  depends_on = [
-    aws_api_gateway_resource.poli
-  ]
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name = "dev"
-  variables = {
-    "answer" = var.deployment_id_dev
-  }
-}
+##resource "aws_api_gateway_deployment" "prod" {
+##  depends_on = [
+##    aws_api_gateway_resource.poli
+##  ]
+##  rest_api_id = aws_api_gateway_rest_api.api.id
+##  stage_name = "prod"
+##  variables = {
+##    "answer" = var.deployment_id_prod
+##  }
+##}
+##
+##resource "aws_api_gateway_deployment" "dev" {
+##  depends_on = [
+##    aws_api_gateway_resource.poli
+##  ]
+##  rest_api_id = aws_api_gateway_rest_api.api.id
+##  stage_name = "dev"
+##  variables = {
+##    "answer" = var.deployment_id_dev
+##  }
+##}

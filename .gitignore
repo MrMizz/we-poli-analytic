@@ -1,3 +1,5 @@
+## tf secrets
+./deployment/secrets.tfvars
 .idea
 project/target
 target
