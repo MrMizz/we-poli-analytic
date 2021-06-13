@@ -33,7 +33,7 @@ object EdgeDataJob {
   final case class EdgeData(
     src_id: VertexId,
     dst_id: VertexId,
-    num_transactions: BigInt,
+    num_transactions: Long,
     total_spend: Option[Long],
     avg_spend: Option[Long],
     min_spend: Option[Long],

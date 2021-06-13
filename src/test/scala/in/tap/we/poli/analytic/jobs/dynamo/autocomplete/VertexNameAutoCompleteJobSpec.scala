@@ -91,7 +91,7 @@ class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAuto
       .toSeq
       .sortBy(_.prefix)
       .map { autoComplete: VertexNameAutoComplete =>
-        val pretty: (String, BigInt, Seq[VertexId]) = {
+        val pretty: (String, Long, Seq[VertexId]) = {
           (autoComplete.prefix, autoComplete.prefix_size, autoComplete.vertexIds)
         }
         val prettyPrint = {

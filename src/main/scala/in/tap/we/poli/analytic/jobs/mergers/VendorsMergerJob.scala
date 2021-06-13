@@ -57,7 +57,7 @@ object VendorsMergerJob {
     address_freq: Map[Address, Long],
     memos: Set[String],
     edges: Set[ExpenditureEdge],
-    num_merged: BigInt
+    num_merged: Long
   ) extends VendorLike
 
   object UniqueVendor {
