@@ -54,7 +54,7 @@ object CommitteeToVendorEdgeJob {
   )
 
   final case class Analytics(
-    num_edges: BigInt,
+    num_edges: Long,
     total_spend: Option[Double],
     avg_spend: Option[Double],
     min_spend: Option[Double],

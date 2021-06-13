@@ -41,18 +41,18 @@ class VertexNameAutoCompleteJob(val inArgs: TwoInArgs, val outArgs: OneOutArgs, 
           .reduceByKey(_ + _)
       )
       .map {
-        case (_, ((vertex: AgnosticVertex, prefix: String), rank: BigInt)) =>
+        case (_, ((vertex: AgnosticVertex, prefix: String), rank: Long)) =>
           (prefix -> vertex.is_committee) -> Set(vertex -> rank)
       }
       .reduceByKey(_ ++ _)
       .map {
-        case ((prefix: String, isCommittee: Boolean), verticesWithRank: Set[(AgnosticVertex, BigInt)]) =>
+        case ((prefix: String, isCommittee: Boolean), verticesWithRank: Set[(AgnosticVertex, Long)]) =>
           val top = {
             takeTop(BC_MAX_RESPONSE_SIZE.value)(verticesWithRank)
           }
           VertexNameAutoComplete(
             prefix = s"${prefix}_$isCommittee",
-            prefix_size = prefix.length,
+            prefix_size = prefix.length.toLong,
             vertexIds = top.map(_._1.uid)
           )
       }
@@ -74,7 +74,7 @@ object VertexNameAutoCompleteJob {
    */
   final case class VertexNameAutoComplete(
     prefix: String,
-    prefix_size: BigInt,
+    prefix_size: Long,
     vertexIds: Seq[VertexId]
   )
 
@@ -92,13 +92,13 @@ object VertexNameAutoCompleteJob {
       }
     }
 
-    type VertexIdWithRank = (VertexId, BigInt)
+    type VertexIdWithRank = (VertexId, Long)
 
     def fromEdge(edge: AggregateExpenditureEdge): Seq[VertexIdWithRank] = {
       Seq(edge.src_id -> edge.analytics.num_edges, edge.dst_id -> edge.analytics.num_edges)
     }
 
-    type VertexWithRank = (AgnosticVertex, BigInt)
+    type VertexWithRank = (AgnosticVertex, Long)
 
     def takeTop(MAX_RESPONSE_SIZE: Int)(grouped: Set[VertexWithRank]): Seq[VertexWithRank] = {
       grouped.toSeq.sortBy(_._2).reverse.take(MAX_RESPONSE_SIZE)
