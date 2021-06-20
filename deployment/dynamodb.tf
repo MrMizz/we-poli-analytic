@@ -161,25 +161,25 @@ resource "aws_dynamodb_table" "poli-vertex-name-autocomplete" {
 ##  }
 ##}
 ##
-##resource "aws_dynamodb_table" "poli-vertex" {
-##  name = "PoliVertex${terraform.workspace}"
-##  billing_mode = "PAY_PER_REQUEST"
-##  #billing_mode = "PROVISIONED"
-##  #read_capacity = 5
-##  #write_capacity = 5000
-##  hash_key = "uid"
-##
-##  attribute {
-##    name = "uid"
-##    type = "N"
-##  }
-##
-##  tags = {
-##    Name = "poli"
-##    Environment = "dev"
-##  }
-##}
-##
+resource "aws_dynamodb_table" "poli-vertex" {
+  name = "PoliVertex${terraform.workspace}"
+  billing_mode = "PAY_PER_REQUEST"
+  #billing_mode = "PROVISIONED"
+  #read_capacity = 5
+  #write_capacity = 5000
+  hash_key = "uid"
+
+  attribute {
+    name = "uid"
+    type = "N"
+  }
+
+  tags = {
+    Name = "poli"
+    Environment = "dev"
+  }
+}
+
 ##resource "aws_dynamodb_table" "poli-edge" {
 ##  name = "PoliEdge${terraform.workspace}"
 ##  billing_mode = "PAY_PER_REQUEST"
