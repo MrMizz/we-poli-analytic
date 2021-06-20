@@ -180,27 +180,27 @@ resource "aws_dynamodb_table" "poli-vertex" {
   }
 }
 
-##resource "aws_dynamodb_table" "poli-edge" {
-##  name = "PoliEdge${terraform.workspace}"
-##  billing_mode = "PAY_PER_REQUEST"
-##  #billing_mode = "PROVISIONED"
-##  #read_capacity = 5
-##  #write_capacity = 5000
-##  hash_key = "src_id"
-##  range_key = "dst_id"
-##
-##  attribute {
-##    name = "src_id"
-##    type = "N"
-##  }
-##
-##  attribute {
-##    name = "dst_id"
-##    type = "N"
-##  }
-##
-##  tags = {
-##    Name = "poli"
-##    Environment = "dev"
-##  }
-##}
+resource "aws_dynamodb_table" "poli-edge" {
+  name = "PoliEdge${terraform.workspace}"
+  billing_mode = "PAY_PER_REQUEST"
+  #billing_mode = "PROVISIONED"
+  #read_capacity = 5
+  #write_capacity = 5000
+  hash_key = "src_id"
+  range_key = "dst_id"
+
+  attribute {
+    name = "src_id"
+    type = "N"
+  }
+
+  attribute {
+    name = "dst_id"
+    type = "N"
+  }
+
+  tags = {
+    Name = "poli"
+    Environment = "dev"
+  }
+}
