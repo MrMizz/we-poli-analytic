@@ -1,7 +1,9 @@
-## tf secrets
-./deployment/secrets.tfvars
+## terraform
+deployment/.terraform.lock.hcl
+*.terraform
+## idea
 .idea
+## target
 project/target
 target
 data
-*.terraform
