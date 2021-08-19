@@ -1,6 +1,6 @@
 [
   {
-    "InstanceCount": 10,
+    "InstanceCount": 5,
     "BidPrice": "OnDemandPrice",
     "EbsConfiguration": {
       "EbsOptimized": true
