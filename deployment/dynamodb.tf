@@ -92,75 +92,75 @@ resource "aws_dynamodb_table" "poli-traversals-page-sb3" {
   }
 }
 
-##resource "aws_dynamodb_table" "poli-traversals-page-sb4" {
-##  name = "PoliTraversalsPageSB4${terraform.workspace}"
-##  billing_mode = "PAY_PER_REQUEST"
-##  #billing_mode = "PROVISIONED"
-##  #read_capacity = 5
-##  #write_capacity = 5000
-##  hash_key = "vertex_id"
-##  range_key = "page_num"
-##
-##  attribute {
-##    name = "vertex_id"
-##    type = "N"
-##  }
-##
-##  attribute {
-##    name = "page_num"
-##    type = "N"
-##  }
-##
-##  tags = {
-##    Name = "poli"
-##    Environment = "dev"
-##  }
-##}
-##
-##resource "aws_dynamodb_table" "poli-traversals-page-sb5" {
-##  name = "PoliTraversalsPageSB5${terraform.workspace}"
-##  billing_mode = "PAY_PER_REQUEST"
-##  #billing_mode = "PROVISIONED"
-##  #read_capacity = 5
-##  #write_capacity = 5000
-##  hash_key = "vertex_id"
-##  range_key = "page_num"
-##
-##  attribute {
-##    name = "vertex_id"
-##    type = "N"
-##  }
-##
-##  attribute {
-##    name = "page_num"
-##    type = "N"
-##  }
-##
-##  tags = {
-##    Name = "poli"
-##    Environment = "dev"
-##  }
-##}
-##
-##resource "aws_dynamodb_table" "poli-traversals-page-count" {
-##  name = "PoliTraversalsPageCount${terraform.workspace}"
-##  billing_mode = "PAY_PER_REQUEST"
-##  #billing_mode = "PROVISIONED"
-##  #read_capacity = 5
-##  #write_capacity = 5000
-##  hash_key = "vertex_id"
-##
-##  attribute {
-##    name = "vertex_id"
-##    type = "N"
-##  }
-##
-##  tags = {
-##    Name = "poli"
-##    Environment = "dev"
-##  }
-##}
-##
+resource "aws_dynamodb_table" "poli-traversals-page-sb4" {
+  name = "PoliTraversalsPageSB4${terraform.workspace}"
+  billing_mode = "PAY_PER_REQUEST"
+  #billing_mode = "PROVISIONED"
+  #read_capacity = 5
+  #write_capacity = 5000
+  hash_key = "vertex_id"
+  range_key = "page_num"
+
+  attribute {
+    name = "vertex_id"
+    type = "N"
+  }
+
+  attribute {
+    name = "page_num"
+    type = "N"
+  }
+
+  tags = {
+    Name = "poli"
+    Environment = "dev"
+  }
+}
+
+resource "aws_dynamodb_table" "poli-traversals-page-sb5" {
+  name = "PoliTraversalsPageSB5${terraform.workspace}"
+  billing_mode = "PAY_PER_REQUEST"
+  #billing_mode = "PROVISIONED"
+  #read_capacity = 5
+  #write_capacity = 5000
+  hash_key = "vertex_id"
+  range_key = "page_num"
+
+  attribute {
+    name = "vertex_id"
+    type = "N"
+  }
+
+  attribute {
+    name = "page_num"
+    type = "N"
+  }
+
+  tags = {
+    Name = "poli"
+    Environment = "dev"
+  }
+}
+
+resource "aws_dynamodb_table" "poli-traversals-page-count" {
+  name = "PoliTraversalsPageCount${terraform.workspace}"
+  billing_mode = "PAY_PER_REQUEST"
+  #billing_mode = "PROVISIONED"
+  #read_capacity = 5
+  #write_capacity = 5000
+  hash_key = "vertex_id"
+
+  attribute {
+    name = "vertex_id"
+    type = "N"
+  }
+
+  tags = {
+    Name = "poli"
+    Environment = "dev"
+  }
+}
+
 resource "aws_dynamodb_table" "poli-vertex" {
   name = "PoliVertex${terraform.workspace}"
   billing_mode = "PAY_PER_REQUEST"
