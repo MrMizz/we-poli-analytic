@@ -1,11 +1,6 @@
-variable "deployment_id_dev" {
+variable "deployment_id" {
   ### increment to force deployment
   default = "1"
-}
-
-variable "deployment_id_prod" {
-  ### increment to force deployment
-  default = "2"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -126,7 +121,7 @@ resource "aws_api_gateway_integration" "graph-integration" {
   http_method = aws_api_gateway_method.graph-method.http_method
   integration_http_method = "POST"
   type = "AWS"
-  uri = "arn:aws:apigateway:us-west-2:dynamodb:action/BatchGetItem"
+  uri = "arn:aws:apigateway:us-west-2:dynamodb:action/GetItem"
   credentials = "arn:aws:iam::504084586672:role/PoliGraphDataAccess"
 }
 
@@ -223,6 +218,6 @@ resource "aws_api_gateway_deployment" "deploy" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name = lower(terraform.workspace)
   variables = {
-    "answer" = var.deployment_id_prod
+    "answer" = var.deployment_id
   }
 }
