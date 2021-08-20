@@ -1,6 +1,6 @@
 variable "deployment_id" {
   ### increment to force deployment
-  default = "2"
+  default = "1"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -97,37 +97,37 @@ resource "aws_api_gateway_integration_response" "sub-prefix-integration-response
 }
 
 ################################################################################
-## VERTEX DATA POST REQUEST ####################################################
+## DYNAMO-BATCH-GET POST REQUEST ######################################################
 ################################################################################
-resource "aws_api_gateway_resource" "vertex" {
+resource "aws_api_gateway_resource" "batch-get-item" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id = aws_api_gateway_resource.poli.id
-  path_part = "vertex"
+  path_part = "batch-get-item"
 }
 
-resource "aws_api_gateway_method" "vertex-method" {
+resource "aws_api_gateway_method" "batch-get-item-method" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
+  resource_id = aws_api_gateway_resource.batch-get-item.id
   http_method = "POST"
   authorization = "NONE"
 }
 
 # https://github.com/tillkuhn/yummy-aws/blob/master/terraform/terraform-apigw.tf
 # great example for ddb tf
-resource "aws_api_gateway_integration" "vertex-integration" {
+resource "aws_api_gateway_integration" "batch-get-item-integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-method.http_method
+  resource_id = aws_api_gateway_resource.batch-get-item.id
+  http_method = aws_api_gateway_method.batch-get-item-method.http_method
   integration_http_method = "POST"
   type = "AWS"
   uri = "arn:aws:apigateway:us-west-2:dynamodb:action/BatchGetItem"
   credentials = "arn:aws:iam::504084586672:role/PoliGraphDataAccess"
 }
 
-resource "aws_api_gateway_method_response" "vertex-response" {
+resource "aws_api_gateway_method_response" "batch-get-item-response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-method.http_method
+  resource_id = aws_api_gateway_resource.batch-get-item.id
+  http_method = aws_api_gateway_method.batch-get-item-method.http_method
   status_code = "200"
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
@@ -136,14 +136,14 @@ resource "aws_api_gateway_method_response" "vertex-response" {
 
 ## Mapping reference: https://docs.aws.amazon.com/de_de/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
 ## conditional? https://stackoverflow.com/questions/32511087/aws-api-gateway-how-do-i-make-querystring-parameters-optional-in-mapping-templa
-resource "aws_api_gateway_integration_response" "vertex-integration-response" {
+resource "aws_api_gateway_integration_response" "batch-get-item-integration-response" {
   depends_on = [
-    aws_api_gateway_integration.vertex-integration
+    aws_api_gateway_integration.batch-get-item-integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-method.http_method
-  status_code = aws_api_gateway_method_response.vertex-response.status_code
+  resource_id = aws_api_gateway_resource.batch-get-item.id
+  http_method = aws_api_gateway_method.batch-get-item-method.http_method
+  status_code = aws_api_gateway_method_response.batch-get-item-response.status_code
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
@@ -151,37 +151,37 @@ resource "aws_api_gateway_integration_response" "vertex-integration-response" {
 
 
 ################################################################################
-## GRAPH DATA POST REQUEST #####################################################
+## DYNAMO-GET POST REQUEST #####################################################
 ################################################################################
-resource "aws_api_gateway_resource" "graph" {
+resource "aws_api_gateway_resource" "get-item" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id = aws_api_gateway_resource.poli.id
-  path_part = "graph"
+  path_part = "get-item"
 }
 
-resource "aws_api_gateway_method" "graph-method" {
+resource "aws_api_gateway_method" "get-item-method" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
+  resource_id = aws_api_gateway_resource.get-item.id
   http_method = "POST"
   authorization = "NONE"
 }
 
 # https://github.com/tillkuhn/yummy-aws/blob/master/terraform/terraform-apigw.tf
 # great example for ddb tf
-resource "aws_api_gateway_integration" "graph-integration" {
+resource "aws_api_gateway_integration" "get-item-integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph-method.http_method
+  resource_id = aws_api_gateway_resource.get-item.id
+  http_method = aws_api_gateway_method.get-item-method.http_method
   integration_http_method = "POST"
   type = "AWS"
   uri = "arn:aws:apigateway:us-west-2:dynamodb:action/GetItem"
   credentials = "arn:aws:iam::504084586672:role/PoliGraphDataAccess"
 }
 
-resource "aws_api_gateway_method_response" "graph-response" {
+resource "aws_api_gateway_method_response" "get-item-response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph-method.http_method
+  resource_id = aws_api_gateway_resource.get-item.id
+  http_method = aws_api_gateway_method.get-item-method.http_method
   status_code = "200"
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
@@ -190,14 +190,14 @@ resource "aws_api_gateway_method_response" "graph-response" {
 
 ## Mapping reference: https://docs.aws.amazon.com/de_de/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
 ## conditional? https://stackoverflow.com/questions/32511087/aws-api-gateway-how-do-i-make-querystring-parameters-optional-in-mapping-templa
-resource "aws_api_gateway_integration_response" "graph-integration-response" {
+resource "aws_api_gateway_integration_response" "get-item-integration-response" {
   depends_on = [
-    aws_api_gateway_integration.graph-integration
+    aws_api_gateway_integration.get-item-integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph-method.http_method
-  status_code = aws_api_gateway_method_response.graph-response.status_code
+  resource_id = aws_api_gateway_resource.get-item.id
+  http_method = aws_api_gateway_method.get-item-method.http_method
+  status_code = aws_api_gateway_method_response.get-item-response.status_code
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
@@ -206,20 +206,20 @@ resource "aws_api_gateway_integration_response" "graph-integration-response" {
 ################################################################################
 ## CORS (Mock Method) ##########################################################
 ################################################################################
-resource "aws_api_gateway_method" "graph-cors-method" {
+resource "aws_api_gateway_method" "batch-get-item-cors-method" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
+  resource_id = aws_api_gateway_resource.batch-get-item.id
   http_method = "OPTIONS"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "graph-cors-integration" {
+resource "aws_api_gateway_integration" "batch-get-item-cors-integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph-cors-method.http_method
+  resource_id = aws_api_gateway_resource.batch-get-item.id
+  http_method = aws_api_gateway_method.batch-get-item-cors-method.http_method
   type = "MOCK"
   depends_on = [
-    aws_api_gateway_method.graph-cors-method]
+    aws_api_gateway_method.batch-get-item-cors-method]
   passthrough_behavior = "WHEN_NO_TEMPLATES"
   request_templates = {
     "application/json" = <<EOF
@@ -230,10 +230,10 @@ resource "aws_api_gateway_integration" "graph-cors-integration" {
   }
 }
 
-resource "aws_api_gateway_method_response" "graph-cors-response" {
+resource "aws_api_gateway_method_response" "batch-get-item-cors-response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph-cors-method.http_method
+  resource_id = aws_api_gateway_resource.batch-get-item.id
+  http_method = aws_api_gateway_method.batch-get-item-cors-method.http_method
   status_code = "200"
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = true,
@@ -241,17 +241,17 @@ resource "aws_api_gateway_method_response" "graph-cors-response" {
     "method.response.header.Access-Control-Allow-Origin" = true
   }
   depends_on = [
-    aws_api_gateway_method.graph-cors-method]
+    aws_api_gateway_method.batch-get-item-cors-method]
 }
 
-resource "aws_api_gateway_integration_response" "graph-cors-integration-response" {
+resource "aws_api_gateway_integration_response" "batch-get-item-cors-integration-response" {
   depends_on = [
-    aws_api_gateway_integration.graph-cors-integration
+    aws_api_gateway_integration.batch-get-item-cors-integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.graph.id
-  http_method = aws_api_gateway_method.graph-cors-method.http_method
-  status_code = aws_api_gateway_method_response.graph-cors-response.status_code
+  resource_id = aws_api_gateway_resource.batch-get-item.id
+  http_method = aws_api_gateway_method.batch-get-item-cors-method.http_method
+  status_code = aws_api_gateway_method_response.batch-get-item-cors-response.status_code
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
@@ -262,20 +262,20 @@ resource "aws_api_gateway_integration_response" "graph-cors-integration-response
 ################################################################################
 ## CORS (Mock Method) ##########################################################
 ################################################################################
-resource "aws_api_gateway_method" "vertex-cors-method" {
+resource "aws_api_gateway_method" "get-item-cors-method" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
+  resource_id = aws_api_gateway_resource.get-item.id
   http_method = "OPTIONS"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "vertex-cors-integration" {
+resource "aws_api_gateway_integration" "get-item-cors-integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-cors-method.http_method
+  resource_id = aws_api_gateway_resource.get-item.id
+  http_method = aws_api_gateway_method.get-item-cors-method.http_method
   type = "MOCK"
   depends_on = [
-    aws_api_gateway_method.vertex-cors-method]
+    aws_api_gateway_method.get-item-cors-method]
   passthrough_behavior = "WHEN_NO_TEMPLATES"
   request_templates = {
     "application/json" = <<EOF
@@ -286,10 +286,10 @@ resource "aws_api_gateway_integration" "vertex-cors-integration" {
   }
 }
 
-resource "aws_api_gateway_method_response" "vertex-cors-response" {
+resource "aws_api_gateway_method_response" "get-item-cors-response" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-cors-method.http_method
+  resource_id = aws_api_gateway_resource.get-item.id
+  http_method = aws_api_gateway_method.get-item-cors-method.http_method
   status_code = "200"
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = true,
@@ -297,17 +297,17 @@ resource "aws_api_gateway_method_response" "vertex-cors-response" {
     "method.response.header.Access-Control-Allow-Origin" = true
   }
   depends_on = [
-    aws_api_gateway_method.vertex-cors-method]
+    aws_api_gateway_method.get-item-cors-method]
 }
 
-resource "aws_api_gateway_integration_response" "vertex-cors-integration-response" {
+resource "aws_api_gateway_integration_response" "get-item-cors-integration-response" {
   depends_on = [
-    aws_api_gateway_integration.vertex-cors-integration
+    aws_api_gateway_integration.get-item-cors-integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.vertex.id
-  http_method = aws_api_gateway_method.vertex-cors-method.http_method
-  status_code = aws_api_gateway_method_response.vertex-cors-response.status_code
+  resource_id = aws_api_gateway_resource.get-item.id
+  http_method = aws_api_gateway_method.get-item-cors-method.http_method
+  status_code = aws_api_gateway_method_response.get-item-cors-response.status_code
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
