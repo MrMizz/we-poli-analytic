@@ -10,6 +10,27 @@ import org.apache.spark.sql.SaveMode
 
 class VertexNameAutoCompleteJobSpec extends BaseSparkJobSpec with VertexNameAutoCompleteJobFixtures {
 
+  it should "take top sorted" in {
+    val actual = {
+      Set(
+        (agnosticVertex1, 7L),
+        (agnosticVertex1, 2L),
+        (agnosticVertex1, 3L),
+        (agnosticVertex1, 5L),
+        (agnosticVertex1, 1L),
+        (agnosticVertex1, 4L),
+        (agnosticVertex1, 6L)
+      )
+    }
+    VertexNameAutoComplete.takeTop(3)(actual) shouldBe {
+      Seq(
+        (agnosticVertex1, 7L),
+        (agnosticVertex1, 6L),
+        (agnosticVertex1, 5L)
+      )
+    }
+  }
+
   it should "build prefixes from vertex names" in {
     VertexNameAutoComplete.fromVertex(agnosticVertex1).sortBy(_._2._2) shouldBe {
       Seq(
