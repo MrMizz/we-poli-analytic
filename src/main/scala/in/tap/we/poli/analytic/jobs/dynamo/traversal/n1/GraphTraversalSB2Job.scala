@@ -1,9 +1,9 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal
+package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal.TraversalWithCount
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalSB2Job.sortBy
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal.TraversalWithCount
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalSB2Job.sortBy
 import org.apache.spark.sql.SparkSession
 
 /**

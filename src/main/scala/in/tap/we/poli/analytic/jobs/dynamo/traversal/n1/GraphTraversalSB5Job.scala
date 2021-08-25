@@ -1,16 +1,16 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal
+package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal.TraversalWithCount
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalSB1Job.sortBy
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal.TraversalWithCount
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalSB5Job.sortBy
 import org.apache.spark.sql.SparkSession
 
 /**
  * Paginated Graph Traversals
- * Sorted By => Number of Total Transactions (num_edges).
+ * Sorted By => Maximum Spend.
  */
-class GraphTraversalSB1Job(
+class GraphTraversalSB5Job(
   override val inArgs: OneInArgs,
   override val outArgs: OneOutArgs
 )(
@@ -22,12 +22,12 @@ class GraphTraversalSB1Job(
       sortBy
     )
 
-object GraphTraversalSB1Job {
+object GraphTraversalSB5Job {
 
   def sortBy(traversalWithCount: TraversalWithCount): TraversalWithCount = {
     traversalWithCount match {
       case (traversal, count) =>
-        (traversal.sortBy(_._2.num_edges).reverse, count)
+        (traversal.sortBy(_._2.max_spend).reverse, count)
     }
   }
 

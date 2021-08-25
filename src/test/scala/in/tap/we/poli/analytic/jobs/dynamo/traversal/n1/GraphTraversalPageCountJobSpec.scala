@@ -1,10 +1,10 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal
+package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalPageCountJob.GraphTraversalPageCount
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalPageCountJob.GraphTraversalPageCount
 import org.apache.spark.sql.Dataset
 import org.scalatest.DoNotDiscover
 
@@ -13,7 +13,7 @@ class GraphTraversalPageCountJobSpec extends BaseSparkJobSpec {
 
   it should "build page counts from traversals" in {
     val resourcePath: String = {
-      getClass.getResource("../../../../../../../../dynamo/graph_traversal_page_count/").toString
+      getClass.getResource("../../../../../../../../../dynamo/graph_traversal_page_count/").toString
     }
     val inPath: String = {
       s"$resourcePath/in/"
@@ -21,13 +21,13 @@ class GraphTraversalPageCountJobSpec extends BaseSparkJobSpec {
     val outPath: String = {
       s"$resourcePath/out/"
     }
-    import spark.implicits._
     val _: Unit = {
       new GraphTraversalPageCountJob(
         OneInArgs(In(inPath, Formats.PARQUET)),
         OneOutArgs(Out(outPath, Formats.PARQUET))
       ).execute()
     }
+    import spark.implicits._
     val pageCounts: Dataset[GraphTraversalPageCount] = {
       spark
         .read

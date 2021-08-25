@@ -1,11 +1,11 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal
+package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJobFixtures
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal
 import org.apache.spark.sql.{Dataset, SaveMode}
 import org.scalatest.DoNotDiscover
 
@@ -14,7 +14,7 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
 
   it should "build graph traversal look ups from edges" in {
     val resourcePath: String = {
-      getClass.getResource("../../../../../../../../dynamo/").toString
+      getClass.getResource("../../../../../../../../../dynamo/").toString
     }
     val inPath: String = {
       s"$resourcePath/graph_traversal/in/"

@@ -1,6 +1,6 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal
+package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal.TraversalWithCount
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal.TraversalWithCount
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.Analytics
 
 trait GraphTraversalJobFixtures {

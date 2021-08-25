@@ -1,7 +1,7 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal
+package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob.GraphTraversal
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal
 
 class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
 
