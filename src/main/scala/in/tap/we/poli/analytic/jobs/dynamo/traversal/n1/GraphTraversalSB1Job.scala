@@ -2,8 +2,9 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal.TraversalWithCount
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalSB1Job.sortBy
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxTraversalBuilder.N1TraversalBuilder
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.Analytics
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -19,16 +20,14 @@ class GraphTraversalSB1Job(
 ) extends GraphTraversalJob(
       inArgs,
       outArgs,
-      sortBy
+      sortBy,
+      N1TraversalBuilder
     )
 
 object GraphTraversalSB1Job {
 
-  def sortBy(traversalWithCount: TraversalWithCount): TraversalWithCount = {
-    traversalWithCount match {
-      case (traversal, count) =>
-        (traversal.sortBy(_._2.num_edges).reverse, count)
-    }
+  def sortBy(analytics: Analytics): Option[Double] = {
+    Some(analytics.num_edges.toDouble)
   }
 
 }

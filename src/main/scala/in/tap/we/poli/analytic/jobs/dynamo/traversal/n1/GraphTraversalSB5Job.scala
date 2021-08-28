@@ -2,8 +2,7 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal.TraversalWithCount
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalSB5Job.sortBy
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxTraversalBuilder.N1TraversalBuilder
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -19,16 +18,6 @@ class GraphTraversalSB5Job(
 ) extends GraphTraversalJob(
       inArgs,
       outArgs,
-      sortBy
+      _.max_spend,
+      N1TraversalBuilder
     )
-
-object GraphTraversalSB5Job {
-
-  def sortBy(traversalWithCount: TraversalWithCount): TraversalWithCount = {
-    traversalWithCount match {
-      case (traversal, count) =>
-        (traversal.sortBy(_._2.max_spend).reverse, count)
-    }
-  }
-
-}

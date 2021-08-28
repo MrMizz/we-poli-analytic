@@ -5,7 +5,7 @@ import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJobFixtures
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.Traversal
 import org.apache.spark.sql.{Dataset, SaveMode}
 import org.scalatest.DoNotDiscover
 
@@ -37,11 +37,11 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
         OneOutArgs(Out(outPath, Formats.PARQUET))
       ).execute()
     }
-    val graphTraversals: Dataset[GraphTraversal] = {
-      val ds: Dataset[GraphTraversal] = spark
+    val graphTraversals: Dataset[Traversal] = {
+      val ds: Dataset[Traversal] = spark
         .read
         .parquet(outPath)
-        .as[GraphTraversal]
+        .as[Traversal]
       val _: Unit = {
         ds.write
           .mode(SaveMode.Overwrite)
@@ -52,9 +52,9 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
     graphTraversals
       .collect()
       .toSeq
-      .sortBy(_.vertex_id)
-      .map { graphTraversal: GraphTraversal =>
-        (graphTraversal.vertex_id, graphTraversal.page_num, graphTraversal.related_vertex_ids)
+      .sortBy(_.src_ids.toLong)
+      .map { graphTraversal: Traversal =>
+        (graphTraversal.src_ids.toLong, graphTraversal.page_num, graphTraversal.dst_ids)
       } shouldBe {
       Seq(
         (

@@ -3,9 +3,8 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalJob.GraphTraversal
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.Traversal
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalPageCountJob.GraphTraversalPageCount
-import org.apache.spark.graphx.VertexId
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe
@@ -13,20 +12,20 @@ import scala.reflect.runtime.universe
 class GraphTraversalPageCountJob(val inArgs: OneInArgs, val outArgs: OneOutArgs)(
   implicit
   val spark: SparkSession,
-  val readTypeTagA: universe.TypeTag[GraphTraversal],
+  val readTypeTagA: universe.TypeTag[Traversal],
   val writeTypeTagA: universe.TypeTag[GraphTraversalPageCount]
-) extends OneInOneOutJob[GraphTraversal, GraphTraversalPageCount](inArgs, outArgs) {
+) extends OneInOneOutJob[Traversal, GraphTraversalPageCount](inArgs, outArgs) {
 
-  override def transform(input: Dataset[GraphTraversal]): Dataset[GraphTraversalPageCount] = {
+  override def transform(input: Dataset[Traversal]): Dataset[GraphTraversalPageCount] = {
     import spark.implicits._
     input
       .map(GraphTraversalPageCount.apply)
       .rdd
       .reduceByKey(GraphTraversalPageCount.reduce)
       .map {
-        case (vertexId: VertexId, pageCount: Long) =>
+        case (srcIds: String, pageCount: Long) =>
           GraphTraversalPageCount(
-            vertex_id = vertexId,
+            src_ids = srcIds,
             page_count = pageCount
           )
       }
@@ -40,18 +39,18 @@ object GraphTraversalPageCountJob {
   /**
    * Traversal Page Count Lookup.
    *
-   * @param vertex_id  either a src_id or dst_id
+   * @param src_ids  1 or more Src Ids aggregated as AND statement
    * @param page_count total number of pages
    */
   final case class GraphTraversalPageCount(
-    vertex_id: VertexId,
+    src_ids: String,
     page_count: Long
   )
 
   object GraphTraversalPageCount {
 
-    def apply(graphTraversal: GraphTraversal): (VertexId, Long) = {
-      graphTraversal.vertex_id -> graphTraversal.page_num
+    def apply(traversal: Traversal): (String, Long) = {
+      traversal.src_ids -> traversal.page_num
     }
 
     def reduce(left: Long, right: Long): Long = {

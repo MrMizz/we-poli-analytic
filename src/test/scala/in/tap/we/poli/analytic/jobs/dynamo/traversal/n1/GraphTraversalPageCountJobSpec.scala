@@ -37,58 +37,58 @@ class GraphTraversalPageCountJobSpec extends BaseSparkJobSpec {
     pageCounts
       .collect
       .toSeq
-      .sortBy(_.vertex_id) shouldBe {
+      .sortBy(_.src_ids.toLong) shouldBe {
       Seq(
         GraphTraversalPageCount(
-          vertex_id = 1L,
+          src_ids = "1",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 2L,
+          src_ids = "2",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 11L,
+          src_ids = "11",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 22L,
+          src_ids = "22",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 33L,
+          src_ids = "33",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 44L,
+          src_ids = "44",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 55L,
+          src_ids = "55",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 66L,
+          src_ids = "66",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 77L,
+          src_ids = "77",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 88L,
+          src_ids = "88",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 99L,
+          src_ids = "99",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 110L,
+          src_ids = "110",
           page_count = 1L
         ),
         GraphTraversalPageCount(
-          vertex_id = 121L,
+          src_ids = "121",
           page_count = 1L
         )
       )
