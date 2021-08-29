@@ -17,10 +17,10 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
       getClass.getResource("../../../../../../../../../dynamo/").toString
     }
     val inPath: String = {
-      s"$resourcePath/graph_traversal/in/"
+      s"$resourcePath/graph_traversal/n1/in/"
     }
     val outPath: String = {
-      s"$resourcePath/graph_traversal/out/"
+      s"$resourcePath/graph_traversal/n1/out/"
     }
     val pageCountInPath: String = {
       s"$resourcePath/graph_traversal_page_count/in/"
