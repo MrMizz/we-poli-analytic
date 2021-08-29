@@ -1,6 +1,7 @@
 package in.tap.we.poli.analytic.jobs.dynamo.traversal
 
 import in.tap.we.poli.analytic.jobs.BaseSpec
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalSB1Job
 
 class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
 
@@ -48,6 +49,41 @@ class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
           page_num = 3L,
           dst_ids = (200 to 299 by 1).map(_.toLong)
         )
+      )
+    }
+  }
+
+  it should "sort" in {
+    // num-edges
+    Traversal.sort(
+      GraphTraversalSB1Job.sortBy,
+      Seq(
+        traversalWithAnalytics1,
+        traversalWithAnalytics2,
+        traversalWithAnalytics3
+      )
+    ) shouldBe {
+      Seq(
+        2L,
+        3L,
+        1L
+      )
+    }
+    // max-spend
+    Traversal.sort(
+      _.max_spend,
+      Seq(
+        traversalWithAnalytics4,
+        traversalWithAnalytics5,
+        traversalWithAnalytics6,
+        traversalWithAnalytics7
+      )
+    ) shouldBe {
+      Seq(
+        7,
+        5,
+        6,
+        4
       )
     }
   }
