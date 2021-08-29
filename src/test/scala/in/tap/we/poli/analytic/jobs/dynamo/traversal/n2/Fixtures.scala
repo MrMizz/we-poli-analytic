@@ -4,7 +4,7 @@ import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{
   AggregateExpenditureEdge, Analytics, ExpenditureEdge
 }
 
-trait GraphTraversalN2SB2JobFixtures {
+trait Fixtures {
 
   val aggregateExpenditureEdge1: AggregateExpenditureEdge = {
     edge(

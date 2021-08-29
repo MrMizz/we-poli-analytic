@@ -10,7 +10,7 @@ import org.apache.spark.sql.SparkSession
  * Paginated Graph Traversals
  * Sorted By => Total Spend.
  */
-class GraphTraversalN2SB2Job(
+class GraphTraversalSB2Job(
   override val inArgs: OneInArgs,
   override val outArgs: OneOutArgs
 )(

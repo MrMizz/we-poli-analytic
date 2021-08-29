@@ -5,10 +5,10 @@ import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.Traversal
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n2.GraphTraversalN2SB2JobFixtures
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n2.Fixtures
 import org.apache.spark.sql.{Dataset, SaveMode}
 
-class GraphTraversalN3SB2JobSpec extends BaseSparkJobSpec with GraphTraversalN2SB2JobFixtures {
+class GraphTraversalSB2JobSpec extends BaseSparkJobSpec with Fixtures {
 
   it should "build graph traversal look ups from edges" in {
     val resourcePath: String = {
@@ -27,7 +27,7 @@ class GraphTraversalN3SB2JobSpec extends BaseSparkJobSpec with GraphTraversalN2S
         .write
         .mode(SaveMode.Overwrite)
         .parquet(inPath)
-      new GraphTraversalN3SB2Job(
+      new GraphTraversalSB2Job(
         OneInArgs(In(inPath, Formats.PARQUET)),
         OneOutArgs(Out(outPath, Formats.PARQUET))
       ).execute()
