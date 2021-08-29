@@ -43,14 +43,7 @@ object Traversal {
     count: Long
   ): Seq[Traversal] = {
     val sorted: List[VertexId] = {
-      unsorted
-        .sortBy {
-          case (_, analytics) =>
-            sortBy(analytics)
-        }
-        .map(_._1)
-        .reverse
-        .toList
+      sort(sortBy, unsorted)
     }
     paginate(srcIds, sorted, count)
   }
@@ -74,6 +67,17 @@ object Traversal {
         dst_ids = page
       )
     }
+  }
+
+  def sort(sortBy: Analytics => Option[Double], unsorted: Seq[(VertexId, Analytics)]): List[VertexId] = {
+    unsorted
+      .sortBy {
+        case (_, analytics) =>
+          sortBy(analytics)
+      }
+      .map(_._1)
+      .reverse
+      .toList
   }
 
 }
