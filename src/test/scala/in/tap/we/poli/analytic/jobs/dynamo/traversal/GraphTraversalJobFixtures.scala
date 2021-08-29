@@ -1,4 +1,4 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
+package in.tap.we.poli.analytic.jobs.dynamo.traversal
 
 trait GraphTraversalJobFixtures {
 

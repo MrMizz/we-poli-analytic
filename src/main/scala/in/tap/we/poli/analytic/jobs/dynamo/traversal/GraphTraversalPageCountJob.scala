@@ -1,10 +1,9 @@
-package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
+package in.tap.we.poli.analytic.jobs.dynamo.traversal
 
 import in.tap.base.spark.jobs.composite.OneInOneOutJob
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.Traversal
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalPageCountJob.GraphTraversalPageCount
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalPageCountJob.GraphTraversalPageCount
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe

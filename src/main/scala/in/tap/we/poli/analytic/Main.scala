@@ -13,7 +13,8 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTrans
 import in.tap.we.poli.analytic.jobs.connectors.unify.ConnectorsUnifyJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.dynamo.edge.{EdgeDataDDBJob, EdgeDataJob}
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.{GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob, GraphTraversalSB1Job, GraphTraversalSB2Job, GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.{GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.{GraphTraversalSB1Job, GraphTraversalSB2Job, GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job}
 import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
