@@ -13,8 +13,10 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTrans
 import in.tap.we.poli.analytic.jobs.connectors.unify.ConnectorsUnifyJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.dynamo.edge.{EdgeDataDDBJob, EdgeDataJob}
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.{GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob}
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.{GraphTraversalSB1Job, GraphTraversalSB2Job, GraphTraversalSB3Job, GraphTraversalSB4Job, GraphTraversalSB5Job}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.{
+  GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob
+}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.{n1, n2, n3, n4, n5}
 import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
 import in.tap.we.poli.analytic.jobs.graph.vertices.{CommitteesVertexJob, VendorsVertexJob, VerticesUnionJob}
@@ -60,16 +62,62 @@ object Main extends in.tap.base.spark.main.Main {
         new EdgeDataJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-edge-data-writer" =>
         new EdgeDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "dynamo-graph-traversal-sb1" =>
-        new GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "dynamo-graph-traversal-sb2" =>
-        new GraphTraversalSB2Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "dynamo-graph-traversal-sb3" =>
-        new GraphTraversalSB3Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "dynamo-graph-traversal-sb4" =>
-        new GraphTraversalSB4Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
-      case "dynamo-graph-traversal-sb5" =>
-        new GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // n1 traversals
+      case "dynamo-graph-traversal-n1-sb1" =>
+        new n1.GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n1-sb2" =>
+        new n1.GraphTraversalSB2Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n1-sb3" =>
+        new n1.GraphTraversalSB3Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n1-sb4" =>
+        new n1.GraphTraversalSB4Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n1-sb5" =>
+        new n1.GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // n2 traversals
+      case "dynamo-graph-traversal-n2-sb1" =>
+        new n2.GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n2-sb2" =>
+        new n2.GraphTraversalSB2Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n2-sb3" =>
+        new n2.GraphTraversalSB3Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n2-sb4" =>
+        new n2.GraphTraversalSB4Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n2-sb5" =>
+        new n2.GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // n3 traversals
+      case "dynamo-graph-traversal-n3-sb1" =>
+        new n3.GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n3-sb2" =>
+        new n3.GraphTraversalSB2Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n3-sb3" =>
+        new n3.GraphTraversalSB3Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n3-sb4" =>
+        new n3.GraphTraversalSB4Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n3-sb5" =>
+        new n3.GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // n4 traversals
+      case "dynamo-graph-traversal-n4-sb1" =>
+        new n4.GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n4-sb2" =>
+        new n4.GraphTraversalSB2Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n4-sb3" =>
+        new n4.GraphTraversalSB3Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n4-sb4" =>
+        new n4.GraphTraversalSB4Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n4-sb5" =>
+        new n4.GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // n5 traversals
+      case "dynamo-graph-traversal-n5-sb1" =>
+        new n5.GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n5-sb2" =>
+        new n5.GraphTraversalSB2Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n5-sb3" =>
+        new n5.GraphTraversalSB3Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n5-sb4" =>
+        new n5.GraphTraversalSB4Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      case "dynamo-graph-traversal-n5-sb5" =>
+        new n5.GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // traversal page writers
       case "dynamo-graph-traversal-page-writer" =>
         new GraphTraversalPageDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-page-count" =>
