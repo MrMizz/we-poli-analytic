@@ -124,6 +124,7 @@ object Main extends in.tap.base.spark.main.Main {
         new GraphTraversalPageCountJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-page-count-writer" =>
         new GraphTraversalPageCountDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // id-res
       case "id-res-features" =>
         new VendorsFuzzyConnectorFeaturesJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "id-res-name-training" =>

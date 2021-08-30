@@ -140,6 +140,21 @@ $JAR_PATH,\
 --out1-format,no-op\
 ]
 
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsPageCountWriterN1,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsPageCountWriterN1,\
+--class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-page-count-writer,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/n1/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,PoliTraversalsPageCountN1"${INCR}",\
+--out1-format,no-op\
+]
+
 
 ############################################################################
 ## GRAPH TRAVERSALS N2 #####################################################
@@ -216,6 +231,21 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/sb5/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,PoliTraversalsPageN2SB5"${INCR}",\
+--out1-format,no-op\
+]
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsPageCountWriterN2,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsPageCountWriterN2,\
+--class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-page-count-writer,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/n2/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,PoliTraversalsPageCountN2"${INCR}",\
 --out1-format,no-op\
 ]
 
@@ -298,6 +328,22 @@ $JAR_PATH,\
 --out1-format,no-op\
 ]
 
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsPageCountWriterN3,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsPageCountWriterN3,\
+--class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-page-count-writer,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/n3/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,PoliTraversalsPageCountN3"${INCR}",\
+--out1-format,no-op\
+]
+
+
 ############################################################################
 ## GRAPH TRAVERSALS N4 #####################################################
 ############################################################################
@@ -373,6 +419,21 @@ $JAR_PATH,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n4/sb5/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,PoliTraversalsPageN4SB5"${INCR}",\
+--out1-format,no-op\
+]
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsPageCountWriterN4,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsPageCountWriterN4,\
+--class,in.tap.we.poli.analytic.Main,\
+--packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-page-count-writer,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/n4/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,PoliTraversalsPageCountN4"${INCR}",\
 --out1-format,no-op\
 ]
 
@@ -454,22 +515,17 @@ $JAR_PATH,\
 --out1-format,no-op\
 ]
 
-
-############################################################################
-## GRAPH TRAVERSALS Page Count #############################################
-############################################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsPageCountWriter,\
+--steps Type=spark,Name=DynamoGraphTraversalsPageCountWriterN5,\
 Args=[\
 --deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsPageCountWriter,\
+--conf,spark.app.name=DynamoGraphTraversalsPageCountWriterN5,\
 --class,in.tap.we.poli.analytic.Main,\
 --packages,com.audienceproject:spark-dynamodb_2.11:1.0.4,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-page-count-writer,\
---in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page-count/n5/$RUN_DATE/,\
 --in1-format,parquet,\
---out1,PoliTraversalsPageCount"${INCR}",\
+--out1,PoliTraversalsPageCountN5"${INCR}",\
 --out1-format,no-op\
 ]
-
