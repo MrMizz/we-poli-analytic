@@ -7,5 +7,6 @@ class GraphTraversalPipelineSpec
       new InitJobSpec,
       new n1.GraphTraversalSB1JobSpec,
       new n2.GraphTraversalSB1JobSpec,
+      new n3.GraphTraversalSB1JobSpec,
       new GraphTraversalPageCountJobSpec
     )

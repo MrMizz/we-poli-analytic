@@ -32,13 +32,13 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec {
       ).execute()
       new GraphTraversalSB1Job(
         OneInArgs(In(inPath, Formats.PARQUET)),
-        OneOutArgs(Out(outPath, Formats.JSON))
+        OneOutArgs(Out(outPath, Formats.PARQUET))
       ).execute()
     }
     val traversals: List[Traversal] = {
       spark
         .read
-        .json(outPath)
+        .parquet(outPath)
         .as[Traversal]
         .collect()
         .toList
