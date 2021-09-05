@@ -2,8 +2,6 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxTraversalBuilder.N1TraversalBuilder
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -16,9 +14,8 @@ class GraphTraversalSB5Job(
 )(
   implicit
   override val spark: SparkSession
-) extends GraphTraversalJob(
+) extends N1Job(
       inArgs,
       outArgs,
-      _.max_spend,
-      N1TraversalBuilder
+      _.max_spend
     )

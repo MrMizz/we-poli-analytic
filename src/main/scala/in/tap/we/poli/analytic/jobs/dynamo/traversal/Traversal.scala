@@ -1,6 +1,7 @@
 package in.tap.we.poli.analytic.jobs.dynamo.traversal
 
-import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.{AggregateExpenditureEdge, Analytics}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.InitJob.DstId
+import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.Analytics
 import org.apache.spark.graphx.VertexId
 
 /**
@@ -23,23 +24,10 @@ object Traversal {
     100
   }
 
-  type TraversalWithCount = (Seq[(VertexId, Analytics)], Long)
-
-  def apply(edge: AggregateExpenditureEdge): Seq[(VertexId, Seq[(VertexId, Analytics)])] = {
-    Seq(
-      edge.src_id -> Seq(edge.dst_id -> edge.analytics),
-      edge.dst_id -> Seq(edge.src_id -> edge.analytics)
-    )
-  }
-
-  def reduce(left: TraversalWithCount, right: TraversalWithCount): TraversalWithCount = {
-    (left._1 ++ right._1, left._2 + right._2)
-  }
-
   def paginate(
     sortBy: Analytics => Option[Double],
     srcIds: String,
-    unsorted: Seq[(VertexId, Analytics)],
+    unsorted: Seq[DstId],
     count: Long
   ): Seq[Traversal] = {
     val sorted: List[VertexId] = {
@@ -69,13 +57,12 @@ object Traversal {
     }
   }
 
-  def sort(sortBy: Analytics => Option[Double], unsorted: Seq[(VertexId, Analytics)]): List[VertexId] = {
+  def sort(sortBy: Analytics => Option[Double], unsorted: Seq[DstId]): List[VertexId] = {
     unsorted
-      .sortBy {
-        case (_, analytics) =>
-          sortBy(analytics)
+      .sortBy { dstId: DstId =>
+        sortBy(dstId.analytics)
       }
-      .map(_._1)
+      .map(_.dst_id)
       .reverse
       .toList
   }
