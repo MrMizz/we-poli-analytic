@@ -6,7 +6,7 @@ import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.InitJob.DstId
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.Analytics
 import org.apache.spark.graphx.VertexId
-import org.apache.spark.sql.{Dataset, SparkSession}
+import org.apache.spark.sql.{Dataset, Encoder, SparkSession}
 
 import scala.reflect.runtime.universe
 
@@ -15,7 +15,8 @@ class NxInitJob[A <: NxKey, B <: NxKey](val inArgs: TwoInArgs, val outArgs: OneO
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[(VertexId, DstId)],
   val readTypeTagB: universe.TypeTag[(A, DstId.WithCount)],
-  val writeTypeTagA: universe.TypeTag[(B, DstId.WithCount)]
+  val writeTypeTagA: universe.TypeTag[(B, DstId.WithCount)],
+  val encoder: Encoder[(VertexId, (Analytics, A))]
 ) extends TwoInOneOutJob[(VertexId, DstId), (A, DstId.WithCount), (B, DstId.WithCount)](inArgs, outArgs) {
 
   override def transform(
@@ -31,8 +32,8 @@ class NxInitJob[A <: NxKey, B <: NxKey](val inArgs: TwoInArgs, val outArgs: OneO
     init
       .rdd
       .join {
-        nxInit.flatMap {
-          NxInitJob.apply
+        nxInit.flatMap { tup: (A, DstId.WithCount) =>
+          NxInitJob.apply(tup)
         }.rdd
       }
       .map {
@@ -40,7 +41,7 @@ class NxInitJob[A <: NxKey, B <: NxKey](val inArgs: TwoInArgs, val outArgs: OneO
           NxInitJob.apply[A, B](fBroadcast.value)(srcId)(dstId, analytics, a)
       }
       .reduceByKey {
-        NxInitJob.reduce
+        NxInitJob.reduce[B]
       }
       .map {
         _._2

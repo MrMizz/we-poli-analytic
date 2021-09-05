@@ -16,6 +16,9 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
     val resourcePath: String = {
       getClass.getResource("../../../../../../../../../dynamo/").toString
     }
+    val initPath: String = {
+      s"$resourcePath/graph_traversal/init/out/"
+    }
     val inPath: String = {
       s"$resourcePath/graph_traversal/n1/in/"
     }
@@ -27,11 +30,12 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompl
     }
     import spark.implicits._
     val _: Unit = {
-      aggregateExpenditureEdges
-        .toDS()
-        .write
-        .mode(SaveMode.Overwrite)
-        .parquet(inPath)
+      // init job
+      new N1InitJob(
+        OneInArgs(In(initPath, Formats.PARQUET)),
+        OneOutArgs(Out(inPath, Formats.PARQUET))
+      ).execute()
+      // sb1 job
       new GraphTraversalSB1Job(
         OneInArgs(In(inPath, Formats.PARQUET)),
         OneOutArgs(Out(outPath, Formats.PARQUET))

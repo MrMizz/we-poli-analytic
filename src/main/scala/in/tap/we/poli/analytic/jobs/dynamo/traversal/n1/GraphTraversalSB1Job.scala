@@ -3,6 +3,8 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal.n1
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalSB1Job.sortBy
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxJob
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxKey.N1Key
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob.Analytics
 import org.apache.spark.sql.SparkSession
 
@@ -16,7 +18,7 @@ class GraphTraversalSB1Job(
 )(
   implicit
   override val spark: SparkSession
-) extends N1Job(
+) extends NxJob[N1Key](
       inArgs,
       outArgs,
       sortBy

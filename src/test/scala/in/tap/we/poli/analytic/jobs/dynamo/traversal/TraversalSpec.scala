@@ -3,7 +3,7 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal
 import in.tap.we.poli.analytic.jobs.BaseSpec
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.GraphTraversalSB1Job
 
-class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
+class TraversalSpec extends BaseSpec with TraversalFixtures {
 
   it should "paginate" in {
     // one page
@@ -58,9 +58,9 @@ class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
     Traversal.sort(
       GraphTraversalSB1Job.sortBy,
       Seq(
-        traversalWithAnalytics1,
-        traversalWithAnalytics2,
-        traversalWithAnalytics3
+        dstId1,
+        dstId2,
+        dstId3
       )
     ) shouldBe {
       Seq(
@@ -73,10 +73,10 @@ class GraphTraversalJobSpec extends BaseSpec with GraphTraversalJobFixtures {
     Traversal.sort(
       _.max_spend,
       Seq(
-        traversalWithAnalytics4,
-        traversalWithAnalytics5,
-        traversalWithAnalytics6,
-        traversalWithAnalytics7
+        dstId4,
+        dstId5,
+        dstId6,
+        dstId7
       )
     ) shouldBe {
       Seq(

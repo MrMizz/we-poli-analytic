@@ -2,8 +2,8 @@ package in.tap.we.poli.analytic.jobs.dynamo.traversal.n2
 
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.GraphTraversalJob
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxTraversalBuilder.N2TraversalBuilder
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxJob
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.NxKey.N2Key
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -16,9 +16,8 @@ class GraphTraversalSB3Job(
 )(
   implicit
   override val spark: SparkSession
-) extends GraphTraversalJob(
+) extends NxJob[N2Key](
       inArgs,
       outArgs,
-      _.avg_spend,
-      N2TraversalBuilder
+      _.avg_spend
     )

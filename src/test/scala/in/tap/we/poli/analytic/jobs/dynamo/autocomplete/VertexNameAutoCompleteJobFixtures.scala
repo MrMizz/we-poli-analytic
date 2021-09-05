@@ -141,7 +141,7 @@ trait VertexNameAutoCompleteJobFixtures extends VerticesUnionJobFixtures {
     )
   }
 
-  private def analytics(numEdges: Long): Analytics = {
+  def analytics(numEdges: Long): Analytics = {
     Analytics(
       num_edges = numEdges,
       total_spend = None,
