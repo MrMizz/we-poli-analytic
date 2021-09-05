@@ -10,7 +10,11 @@ import org.apache.spark.sql.{Dataset, Encoder, SparkSession}
 
 import scala.reflect.runtime.universe
 
-class NxInitJob[A <: NxKey, B <: NxKey](val inArgs: TwoInArgs, val outArgs: OneOutArgs, val f: (A, VertexId) => B)(
+class NxInitJob[A <: NxKey, B <: NxKey](
+  val inArgs: TwoInArgs,
+  val outArgs: OneOutArgs,
+  val f: (A, VertexId) => Option[B]
+)(
   implicit
   val spark: SparkSession,
   val readTypeTagA: universe.TypeTag[(VertexId, DstId)],
@@ -33,10 +37,10 @@ class NxInitJob[A <: NxKey, B <: NxKey](val inArgs: TwoInArgs, val outArgs: OneO
       .rdd
       .join {
         nxInit.flatMap { tup: (A, DstId.WithCount) =>
-          NxInitJob.apply(tup)
+          NxInitJob.apply[A](tup)
         }.rdd
       }
-      .map {
+      .flatMap {
         case (srcId: VertexId, (dstId: DstId, (analytics: Analytics, a: A))) =>
           NxInitJob.apply[A, B](fBroadcast.value)(srcId)(dstId, analytics, a)
       }
@@ -60,26 +64,28 @@ object NxInitJob {
   }
 
   def apply[A <: NxKey, B <: NxKey](
-    f: (A, VertexId) => B
+    f: (A, VertexId) => Option[B]
   )(
     srcId: VertexId
-  )(dstId: DstId, analytics: Analytics, a: A): (String, (B, DstId.WithCount)) = {
-    val b: B = {
+  )(dstId: DstId, analytics: Analytics, a: A): Option[(String, (B, DstId.WithCount))] = {
+    val maybeB: Option[B] = {
       f(a, dstId.dst_id)
     }
-    b.key -> {
-      (
-        b,
-        DstId.WithCount(
-          Seq(
-            DstId(
-              srcId,
-              reduce(analytics, dstId.analytics)
-            )
-          ),
-          1L
+    maybeB.map { b =>
+      b.key -> {
+        (
+          b,
+          DstId.WithCount(
+            Seq(
+              DstId(
+                srcId,
+                reduce(analytics, dstId.analytics)
+              )
+            ),
+            1L
+          )
         )
-      )
+      }
     }
   }
 

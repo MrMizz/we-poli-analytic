@@ -49,7 +49,7 @@ object InitJob {
 
       def reduce(left: WithCount, right: WithCount): WithCount = {
         WithCount(
-          left.dst_ids ++ right.dst_ids,
+          (left.dst_ids ++ right.dst_ids).distinct,
           left.count + right.count
         )
       }

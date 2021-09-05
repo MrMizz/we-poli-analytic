@@ -5,7 +5,6 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.Traversal
-import org.apache.spark.sql.Dataset
 
 class GraphTraversalSB1JobSpec extends BaseSparkJobSpec {
 
@@ -36,18 +35,69 @@ class GraphTraversalSB1JobSpec extends BaseSparkJobSpec {
         OneOutArgs(Out(outPath, Formats.JSON))
       ).execute()
     }
-    val traversals: Dataset[Traversal] = {
+    val traversals: List[Traversal] = {
       spark
         .read
         .json(outPath)
         .as[Traversal]
+        .collect()
+        .toList
+        .sortBy(_.src_ids)
     }
-    traversals
-      .collect()
-      .toList
-      .sortBy(_.src_ids) shouldBe {
+    traversals.foreach { tr =>
+      val pp = {
+        s"Traversal(${tr.src_ids}, ${tr.page_num}L, ${tr.dst_ids}),"
+      }
+      println(pp)
+    }
+    traversals shouldBe {
       List(
-        )
+        Traversal("110_121", 1L, List(11)),
+        Traversal("22_110", 1L, List(11)),
+        Traversal("22_121", 1L, List(11)),
+        Traversal("22_33", 1L, List(11)),
+        Traversal("22_44", 1L, List(11)),
+        Traversal("22_55", 1L, List(11)),
+        Traversal("22_66", 1L, List(11)),
+        Traversal("22_77", 1L, List(11)),
+        Traversal("22_88", 1L, List(11)),
+        Traversal("22_99", 1L, List(11)),
+        Traversal("33_110", 1L, List(11)),
+        Traversal("33_121", 1L, List(11)),
+        Traversal("33_44", 1L, List(11)),
+        Traversal("33_55", 1L, List(11)),
+        Traversal("33_66", 1L, List(11)),
+        Traversal("33_77", 1L, List(11)),
+        Traversal("33_88", 1L, List(11)),
+        Traversal("33_99", 1L, List(11)),
+        Traversal("44_110", 1L, List(11)),
+        Traversal("44_121", 1L, List(11)),
+        Traversal("44_55", 1L, List(11)),
+        Traversal("44_66", 1L, List(11)),
+        Traversal("44_77", 1L, List(11)),
+        Traversal("44_88", 1L, List(11)),
+        Traversal("44_99", 1L, List(11)),
+        Traversal("55_110", 1L, List(11)),
+        Traversal("55_121", 1L, List(11)),
+        Traversal("55_66", 1L, List(11)),
+        Traversal("55_77", 1L, List(11)),
+        Traversal("55_88", 1L, List(11)),
+        Traversal("55_99", 1L, List(11)),
+        Traversal("66_110", 1L, List(11)),
+        Traversal("66_121", 1L, List(11)),
+        Traversal("66_77", 1L, List(11)),
+        Traversal("66_88", 1L, List(11)),
+        Traversal("66_99", 1L, List(11)),
+        Traversal("77_110", 1L, List(11)),
+        Traversal("77_121", 1L, List(11)),
+        Traversal("77_88", 1L, List(11)),
+        Traversal("77_99", 1L, List(11)),
+        Traversal("88_110", 1L, List(11)),
+        Traversal("88_121", 1L, List(11)),
+        Traversal("88_99", 1L, List(11)),
+        Traversal("99_110", 1L, List(11)),
+        Traversal("99_121", 1L, List(11))
+      )
     }
   }
 
