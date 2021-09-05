@@ -13,9 +13,10 @@ import in.tap.we.poli.analytic.jobs.connectors.fuzzy.transfomer.IdResVendorTrans
 import in.tap.we.poli.analytic.jobs.connectors.unify.ConnectorsUnifyJob
 import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.{VertexNameAutoCompleteDDBJob, VertexNameAutoCompleteJob}
 import in.tap.we.poli.analytic.jobs.dynamo.edge.{EdgeDataDDBJob, EdgeDataJob}
-import in.tap.we.poli.analytic.jobs.dynamo.traversal.{
-  GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob
-}
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n1.N1InitJob
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.n2.N2InitJob
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.nx.InitJob
+import in.tap.we.poli.analytic.jobs.dynamo.traversal.{GraphTraversalPageCountDDBJob, GraphTraversalPageCountJob, GraphTraversalPageDDBJob}
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.{n1, n2, n3, n4, n5}
 import in.tap.we.poli.analytic.jobs.dynamo.vertex.VertexDataDDBJob
 import in.tap.we.poli.analytic.jobs.graph.edges.CommitteeToVendorEdgeJob
@@ -62,7 +63,12 @@ object Main extends in.tap.base.spark.main.Main {
         new EdgeDataJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-edge-data-writer" =>
         new EdgeDataDDBJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
+      // traversals init
+      case "dynamo-graph-traversal-init" =>
+        new InitJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       // n1 traversals
+      case "dynamo-graph-traversal-n1-init" =>
+        new N1InitJob(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-n1-sb1" =>
         new n1.GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-n1-sb2" =>
@@ -74,6 +80,8 @@ object Main extends in.tap.base.spark.main.Main {
       case "dynamo-graph-traversal-n1-sb5" =>
         new n1.GraphTraversalSB5Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       // n2 traversals
+      case "dynamo-graph-traversal-n2-init" =>
+        new N2InitJob(inArgs.asInstanceOf[TwoInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-n2-sb1" =>
         new n2.GraphTraversalSB1Job(inArgs.asInstanceOf[OneInArgs], outArgs.asInstanceOf[OneOutArgs])
       case "dynamo-graph-traversal-n2-sb2" =>

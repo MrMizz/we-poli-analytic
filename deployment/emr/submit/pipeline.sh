@@ -222,6 +222,24 @@ $JAR_PATH,\
 ]
 
 ############################################################################
+## GRAPH TRAVERSALS INIT ###################################################
+############################################################################
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsInit,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsInit,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-init,\
+--in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/init/$RUN_DATE/,\
+--out1-format,parquet\
+]
+
+
+############################################################################
 ## GRAPH TRAVERSALS N1 #####################################################
 ############################################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
@@ -231,8 +249,23 @@ Args=[\
 --conf,spark.app.name=DynamoGraphTraversalsN1SB1,\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
+--step,dynamo-graph-traversal-n1-init,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/init/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/init/$RUN_DATE/,\
+--out1-format,parquet\
+]
+
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsN1N1SB1,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsN1SB1,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
 --step,dynamo-graph-traversal-n1-sb1,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/sb1/$RUN_DATE/,\
 --out1-format,parquet\
@@ -246,7 +279,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n1-sb2,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/sb2/$RUN_DATE/,\
 --out1-format,parquet\
@@ -260,7 +293,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n1-sb3,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/sb3/$RUN_DATE/,\
 --out1-format,parquet\
@@ -274,7 +307,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n1-sb4,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/sb4/$RUN_DATE/,\
 --out1-format,parquet\
@@ -288,7 +321,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n1-sb5,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/sb5/$RUN_DATE/,\
 --out1-format,parquet\
@@ -312,14 +345,29 @@ $JAR_PATH,\
 ## GRAPH TRAVERSALS N2 #####################################################
 ############################################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsN2SB1,\
+--steps Type=spark,Name=DynamoGraphTraversalsN2N2SB1,\
+Args=[\
+--deploy-mode,cluster,\
+--conf,spark.app.name=DynamoGraphTraversalsN2SB1,\
+--class,in.tap.we.poli.analytic.Main,\
+$JAR_PATH,\
+--step,dynamo-graph-traversal-n2-init,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/init/$RUN_DATE/,\
+--in1-format,parquet,\
+--out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/init/$RUN_DATE/,\
+--out1-format,parquet\
+]
+
+
+aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
+--steps Type=spark,Name=DynamoGraphTraversalsN2N2SB1,\
 Args=[\
 --deploy-mode,cluster,\
 --conf,spark.app.name=DynamoGraphTraversalsN2SB1,\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n2-sb1,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/sb1/$RUN_DATE/,\
 --out1-format,parquet\
@@ -333,7 +381,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n2-sb2,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/sb2/$RUN_DATE/,\
 --out1-format,parquet\
@@ -347,7 +395,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n2-sb3,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/sb3/$RUN_DATE/,\
 --out1-format,parquet\
@@ -361,7 +409,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n2-sb4,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/sb4/$RUN_DATE/,\
 --out1-format,parquet\
@@ -375,7 +423,7 @@ Args=[\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n2-sb5,\
---in1,s3://big-time-tap-in-spark/poli/graph/edges/committee-to-vendor/$RUN_DATE/,\
+--in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/init/$RUN_DATE/,\
 --in1-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/sb5/$RUN_DATE/,\
 --out1-format,parquet\
