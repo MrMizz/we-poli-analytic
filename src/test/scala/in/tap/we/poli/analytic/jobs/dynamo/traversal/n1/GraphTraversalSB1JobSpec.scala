@@ -4,13 +4,12 @@ import in.tap.base.spark.io.{Formats, In, Out}
 import in.tap.base.spark.main.InArgs.OneInArgs
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
-import in.tap.we.poli.analytic.jobs.dynamo.autocomplete.VertexNameAutoCompleteJobFixtures
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.Traversal
 import org.apache.spark.sql.{Dataset, SaveMode}
 import org.scalatest.DoNotDiscover
 
 @DoNotDiscover
-class GraphTraversalSB1JobSpec extends BaseSparkJobSpec with VertexNameAutoCompleteJobFixtures {
+class GraphTraversalSB1JobSpec extends BaseSparkJobSpec {
 
   it should "build graph traversal look ups from edges" in {
     val resourcePath: String = {
