@@ -243,10 +243,10 @@ $JAR_PATH,\
 ## GRAPH TRAVERSALS N1 #####################################################
 ############################################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsN1N1SB1,\
+--steps Type=spark,Name=DynamoGraphTraversalsInit,\
 Args=[\
 --deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsN1SB1,\
+--conf,spark.app.name=DynamoGraphTraversalsInit,\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n1-init,\
@@ -345,15 +345,17 @@ $JAR_PATH,\
 ## GRAPH TRAVERSALS N2 #####################################################
 ############################################################################
 aws emr add-steps --cluster-id $CLUSTER --profile tap-in \
---steps Type=spark,Name=DynamoGraphTraversalsN2N2SB1,\
+--steps Type=spark,Name=DynamoGraphTraversalsInit,\
 Args=[\
 --deploy-mode,cluster,\
---conf,spark.app.name=DynamoGraphTraversalsN2SB1,\
+--conf,spark.app.name=DynamoGraphTraversalsInit,\
 --class,in.tap.we.poli.analytic.Main,\
 $JAR_PATH,\
 --step,dynamo-graph-traversal-n2-init,\
 --in1,s3://big-time-tap-in-spark/poli/dynamo/traversals/init/$RUN_DATE/,\
 --in1-format,parquet,\
+--in2,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n1/init/$RUN_DATE/,\
+--in2-format,parquet,\
 --out1,s3://big-time-tap-in-spark/poli/dynamo/traversals/page/n2/init/$RUN_DATE/,\
 --out1-format,parquet\
 ]
