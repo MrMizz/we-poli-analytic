@@ -61,7 +61,7 @@ class NxInitJob[A <: NxKey, B <: NxKey](
 object NxInitJob {
 
   private val N: Int = {
-    1000
+    100
   }
 
   def apply[A <: NxKey](tup: (A, DstId.WithCount)): Seq[(VertexId, (Analytics, A))] = {
