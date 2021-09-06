@@ -5,7 +5,9 @@ import in.tap.base.spark.main.InArgs.{OneInArgs, TwoInArgs}
 import in.tap.base.spark.main.OutArgs.OneOutArgs
 import in.tap.we.poli.analytic.jobs.BaseSparkJobSpec
 import in.tap.we.poli.analytic.jobs.dynamo.traversal.Traversal
+import org.scalatest.DoNotDiscover
 
+@DoNotDiscover
 class GraphTraversalSB1JobSpec extends BaseSparkJobSpec {
 
   it should "build graph traversal look ups from edges" in {
