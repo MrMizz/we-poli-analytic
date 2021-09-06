@@ -60,9 +60,17 @@ class NxInitJob[A <: NxKey, B <: NxKey](
 
 object NxInitJob {
 
+  private val N: Int = {
+    1000
+  }
+
   def apply[A <: NxKey](tup: (A, DstId.WithCount)): Seq[(VertexId, (Analytics, A))] = {
-    tup._2.dst_ids.map { dstId: DstId =>
-      (dstId.dst_id, (dstId.analytics, tup._1))
+    if (tup._2.count <= N) {
+      tup._2.dst_ids.map { dstId: DstId =>
+        (dstId.dst_id, (dstId.analytics, tup._1))
+      }
+    } else {
+      Seq.empty
     }
   }
 

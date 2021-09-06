@@ -23,7 +23,7 @@ class NxJob[A <: NxKey](val inArgs: OneInArgs, val outArgs: OneOutArgs, val sort
     }
     input
       .flatMap {
-        case (nxKey: A, withCount: DstId.WithCount) =>
+        case (nxKey, withCount: DstId.WithCount) =>
           Traversal.paginate(
             sortByBroadcast.value,
             nxKey.key,
